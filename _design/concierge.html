@@ -1,0 +1,4417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EDU Concierge — Education Delivered</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#E8E2D4;
+    --bg-2:#DFD7C5;
+    --paper:#F1ECE0;
+    --ink:#1A1612;
+    --ink-soft:#3A332C;
+    --muted:#7A7268;
+    --line:rgba(26,22,18,0.12);
+    --line-soft:rgba(26,22,18,0.06);
+    --plum:#5B3A5C;
+    --plum-deep:#3F2740;
+    --leaf:#7A9472;
+    --leaf-glow:#9DBA94;
+    --accent:#C77B4F;          /* terracotta */
+    --accent-bright:#E89066;
+    --butter:#F5D88A;
+    --display:'Archivo', sans-serif;
+    --sans:'Inter', sans-serif;
+    --mono:'JetBrains Mono', monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.55;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:1000;
+    opacity:0.06;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode:multiply;
+  }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+
+  /* HERO */
+  .hero{
+    height:100vh; min-height:780px;
+    position:relative; overflow:hidden;
+    background:var(--bg);
+  }
+  .hero::before{
+    content:""; position:absolute; inset:24px;
+    border-radius:18px;
+    background: var(--bg);
+    box-shadow:
+      0 0 0 1px rgba(26,22,18,0.05),
+      0 40px 80px -30px rgba(26,22,18,0.18);
+    pointer-events:none;
+  }
+
+  .brand-mark{
+    position:absolute; top:60px; left:72px; z-index:10;
+    font-family:var(--display); font-weight:700;
+    font-size:22px; letter-spacing:0.04em;
+    color:var(--ink);
+    display:flex; flex-direction:column; gap:24px;
+    text-decoration:none;
+  }
+  .brand-mark .logo-row{
+    display:flex; align-items:center; gap:14px;
+  }
+  .brand-mark .logo-img{ width:42px; height:42px;}
+  .brand-mark .logo-img img{ width:100%; height:100%; object-fit:contain;}
+  .brand-mark .name{ display:flex; align-items:center; gap:2px;}
+  .brand-mark .br{ color:var(--accent); font-weight:500; opacity:0.9;}
+  .brand-mark .version{
+    font-family:var(--mono); font-size:11px; font-weight:400;
+    color:var(--ink-soft); letter-spacing:0.1em;
+  }
+  .brand-mark .version .br{font-weight:400; margin: 0 4px;}
+
+  .nav{
+    position:absolute; top:60px; right:72px; z-index:10;
+    display:flex; flex-direction:column; gap:14px; align-items:flex-end;
+  }
+  .nav-item{
+    position: relative;
+    display: flex; flex-direction: column; align-items: flex-end;
+  }
+  .nav-item > a, .nav-item > .nav-trigger{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:var(--display); font-size:15px; font-weight:500;
+    color:var(--ink-soft);
+    transition: color .25s, gap .25s;
+    cursor: pointer;
+    background: none; border: none; padding: 0;
+  }
+  .nav-item > a:hover, .nav-item > .nav-trigger:hover, .nav-item.open > .nav-trigger{
+    color: var(--ink); gap: 14px;
+  }
+  .nav a, .nav .nav-trigger{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:var(--display); font-size:15px; font-weight:500;
+    color:var(--ink-soft);
+    transition: color .25s, gap .25s;
+  }
+  .nav a:hover{ color:var(--ink); gap:14px;}
+  .nav a .arr, .nav .nav-trigger .arr{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:14px; height:14px; transform:rotate(-45deg);
+    transition: transform .25s;
+  }
+  .nav a:hover .arr{ transform: rotate(-45deg) translateX(2px); }
+
+  /* Chevron for dropdown items — replaces arrow */
+  .nav-item .chev{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:12px; height:12px;
+    transition: transform .3s;
+  }
+  .nav-item.open .chev{ transform: rotate(180deg); }
+
+  /* Dropdown panel — absolutely positioned so it floats OVER the nav column instead of pushing siblings */
+  .nav-sub{
+    position: absolute;
+    top: 100%; right: 0;
+    /* Top padding creates a hover bridge to the trigger — no gap to lose hover */
+    padding: 14px 0 10px;
+    margin-top: -4px; /* small overlap with trigger so cursor stays inside the bridge */
+    min-width: 220px;
+    opacity: 0; transform: translateY(-6px);
+    pointer-events: none;
+    transition: opacity .22s ease, transform .22s ease;
+    z-index: 20;
+  }
+  .nav-sub::before{
+    /* The actual visible panel — drawn as a pseudo so the hover bridge stays invisible */
+    content: "";
+    position: absolute;
+    top: 14px; left: 0; right: 0; bottom: 10px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 24px 60px -20px rgba(26,22,18,0.28),
+                0 8px 20px -8px rgba(26,22,18,0.12);
+    z-index: -1;
+  }
+  .nav-item.open .nav-sub{
+    opacity: 1; transform: translateY(0);
+    pointer-events: auto;
+  }
+  .nav-sub a{
+    display: block;
+    padding: 9px 18px;
+    font-family: var(--display); font-size: 13.5px; font-weight: 500;
+    color: var(--ink-soft);
+    letter-spacing: 0;
+    line-height: 1.3;
+    transition: color .2s, background .2s, padding .2s;
+    text-align: left;
+    border-left: 2px solid transparent;
+    white-space: nowrap;
+  }
+  .nav-sub a:hover{
+    color: var(--ink);
+    background: var(--bg);
+    border-left-color: var(--accent);
+    padding-left: 22px;
+  }
+  .nav-sub a .sub-num{
+    display: inline-block;
+    font-family: var(--mono); font-size: 9.5px;
+    color: var(--accent); letter-spacing: 0.12em;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .nav-sub-divider{
+    height: 1px; background: var(--line);
+    margin: 6px 12px;
+  }
+
+  .hero-viz{
+    position:absolute; inset:0; z-index:1;
+    display:flex; align-items:center; justify-content:center;
+    pointer-events:none;
+  }
+  .hero-viz svg{ width: clamp(560px, 65vw, 1000px); height:100%; overflow:visible;}
+  .particle{
+    position:absolute; border-radius:50%;
+    background: var(--accent-bright);
+    box-shadow: 0 0 8px 2px rgba(232,144,102,0.6);
+    pointer-events:none; z-index:2;
+    animation: drift 8s ease-in-out infinite;
+    opacity:0;
+  }
+  @keyframes drift{
+    0%{ opacity:0; transform: translate(0,0) scale(0.6);}
+    20%{ opacity:1;}
+    100%{ opacity:0; transform: translate(var(--dx,0), var(--dy,40px)) scale(1);}
+  }
+
+  .hero-headline{
+    position:absolute; bottom:80px; left:72px; z-index:10;
+    font-family:var(--display); font-weight:700;
+    font-size: clamp(34px, 4.6vw, 64px);
+    line-height:0.95;
+    text-transform:uppercase;
+    letter-spacing:-0.005em;
+    color:var(--ink);
+    max-width:600px;
+  }
+  .hero-headline .row{ display:block; overflow:hidden;}
+  .hero-headline .row > span{
+    display:inline-block; transform:translateY(105%);
+    animation: rise 1.1s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  .hero-headline .row:nth-child(1) > span{animation-delay:.2s;}
+  .hero-headline .row:nth-child(2) > span{animation-delay:.32s;}
+  .hero-headline .row:nth-child(3) > span{animation-delay:.44s;}
+  .hero-headline .row:nth-child(4) > span{animation-delay:.56s;}
+  @keyframes rise{ to{ transform: translateY(0);}}
+  .hero-headline em{
+    font-style:italic; font-weight:500;
+    text-transform:lowercase; letter-spacing:0;
+    padding: 0 6px;
+  }
+  .hero-headline .slash{
+    display:inline-block; color:var(--accent);
+    margin-right:14px; font-weight:600;
+  }
+
+  .hero-corner{
+    position:absolute; bottom:80px; right:72px; z-index:10;
+    max-width:340px; text-align:left;
+    animation: fade 1s ease 1s forwards; opacity:0;
+  }
+  @keyframes fade{ to{opacity:1;}}
+  .hero-corner .anchor{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:18px;
+    font-family:var(--display); font-weight:600;
+    font-size:18px; letter-spacing:0.02em;
+  }
+  .hero-corner .anchor .a-mark{ color:var(--accent); }
+  .hero-corner .anchor .pages{
+    font-family:var(--mono); font-size:11px; font-weight:400;
+    letter-spacing:0.1em; color:var(--ink-soft);
+  }
+  .hero-corner .anchor .pages .br{color:var(--accent); margin: 0 4px;}
+  .hero-corner p{
+    font-size:14px; line-height:1.55;
+    color:var(--ink-soft); margin-bottom:24px;
+  }
+  .hero-corner .pill{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:14px 30px;
+    font-family:var(--display); font-size:11px; font-weight:600;
+    letter-spacing:0.22em; text-transform:uppercase;
+    border:1px solid var(--ink); color:var(--ink);
+    border-radius:100px;
+    transition: all .3s;
+  }
+  .hero-corner .pill:hover{ background:var(--ink); color:var(--paper);}
+  .hero-corner .pill.pill-filled{
+    background:var(--ink); color:var(--paper); border-color:var(--ink);
+  }
+  .hero-corner .pill.pill-filled:hover{
+    background:var(--accent); color:var(--paper); border-color:var(--accent);
+  }
+  .hero-corner .pill-row{
+    display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+  }
+
+  .scroll-cue{
+    position:absolute; bottom:96px; left:50%; transform:translateX(-50%); z-index:10;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    color:var(--ink-soft);
+    font-family:var(--mono); font-size:10px; letter-spacing:0.15em; text-transform:uppercase;
+  }
+  .scroll-cue .arrow{
+    width:1px; height:36px;
+    background: linear-gradient(180deg, transparent, var(--ink) 60%, var(--ink));
+    position:relative;
+    animation: scrollPulse 2.4s ease-in-out infinite;
+  }
+  .scroll-cue .arrow::after{
+    content:""; position:absolute; bottom:0; left:50%; transform:translateX(-50%) rotate(45deg);
+    width:6px; height:6px; border-right:1px solid var(--ink); border-bottom:1px solid var(--ink);
+  }
+  @keyframes scrollPulse{0%,100%{opacity:0.4;}50%{opacity:1;}}
+
+  .share-mark{
+    position:absolute; bottom:32px; left:72px; z-index:10;
+    color:var(--ink-soft);
+  }
+  .share-mark svg{ width:16px; height:16px;}
+
+  @media (max-width:980px){
+    .brand-mark, .nav{ top:40px;}
+    .brand-mark{ left:32px; font-size:18px; gap:18px;}
+    .nav{ right:32px;}
+    .nav a{ font-size:13px;}
+    .hero::before{ inset:12px; border-radius:14px;}
+    .hero-headline{ left:32px; bottom:auto; top:42%; font-size:42px; max-width:80%;}
+    .hero-corner{ right:32px; bottom:40px; max-width:48%;}
+    .scroll-cue{ display:none;}
+    .share-mark{ left:32px; bottom:20px;}
+  }
+  @media (max-width:640px){
+    .hero-corner{ position:static; margin: 0 32px 40px; max-width:none;}
+    .hero{ height:auto; min-height: 680px;}
+    .hero-headline{ position:static; padding: 280px 32px 40px; top:auto;}
+  }
+
+  .marquee{
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    padding:18px 0; overflow:hidden;
+    background:var(--bg-2);
+    position:relative; z-index:3;
+  }
+  .marquee-track{
+    display:flex; gap:48px; white-space:nowrap;
+    animation: marquee 50s linear infinite;
+    font-family:var(--display); font-size:13px; font-weight:500;
+    letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .marquee-track span{display:flex; align-items:center; gap:48px;}
+  .marquee-track .dot{ width:5px; height:5px; background:var(--accent); border-radius:50%;}
+  @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+  section{position:relative;}
+  .container{max-width:1500px; margin:0 auto; padding:0 72px;}
+  @media (max-width:700px){.container{padding:0 32px;}}
+  .section-label{
+    display:flex; align-items:center; gap:14px;
+    font-family:var(--mono); font-size:11px; letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:24px;
+  }
+  .section-label .num{ color:var(--accent); font-weight:500;}
+  .section-label .br{ color:var(--accent);}
+  .section-label .bar{ width:32px; height:1px; background:var(--ink);}
+
+  .heading-xl{
+    font-family:var(--display); font-weight:700;
+    font-size: clamp(32px, 4vw, 56px);
+    line-height:1.02; letter-spacing:-0.01em;
+    text-transform:uppercase; color:var(--ink);
+  }
+  .heading-xl em{
+    font-style:italic; font-weight:500;
+    text-transform:lowercase; letter-spacing:0;
+    padding: 0 4px;
+  }
+  .heading-md{
+    font-family:var(--display); font-weight:600;
+    font-size: clamp(22px, 2.4vw, 32px);
+    line-height:1.1; text-transform:uppercase;
+  }
+
+  /* ============ FRAMING — "Education needs relationship managers too" ============ */
+  .framing{
+    padding: 120px 0 100px;
+    border-top: 1px solid var(--line);
+  }
+  .framing-grid{
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 80px;
+    align-items: start;
+  }
+  @media (max-width:900px){.framing-grid{ grid-template-columns: 1fr; gap: 32px;}}
+
+  .framing-grid h2{
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(28px, 3.4vw, 46px);
+    line-height: 1.04; letter-spacing: -0.012em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .framing-grid h2 em{
+    font-style: italic; font-weight: 500;
+    text-transform: lowercase; letter-spacing: 0;
+    color: var(--accent);
+    padding: 0 4px;
+  }
+
+  .framing-body p{
+    font-size: 17px; line-height: 1.65;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+  .framing-body p:first-child{
+    font-size: 19px; color: var(--ink); margin-bottom: 22px;
+  }
+  .framing-body p strong{ color: var(--ink); font-weight: 600;}
+  .framing-body p em{
+    font-family: var(--display); font-style: italic; font-weight: 500;
+    color: var(--accent);
+  }
+
+  /* Comparison row — three asset categories that get RMs, with Education as the missing fourth */
+  .rm-row{
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    align-items: stretch;
+  }
+  @media (max-width:900px){.rm-row{ grid-template-columns: repeat(2, 1fr);}}
+  @media (max-width:520px){.rm-row{ grid-template-columns: 1fr;}}
+
+  .rm-cell{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px 22px 24px;
+    display: flex; flex-direction: column; gap: 10px;
+    position: relative;
+    transition: all .3s;
+  }
+  .rm-cell:hover{
+    transform: translateY(-2px);
+    border-color: rgba(26,22,18,0.22);
+  }
+  .rm-cell .rm-asset{
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .rm-cell .rm-name{
+    font-family: var(--display); font-weight: 700;
+    font-size: 18px; letter-spacing: -0.005em;
+    text-transform: uppercase;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .rm-cell .rm-role{
+    font-family: var(--display); font-style: italic; font-weight: 500;
+    font-size: 13.5px; line-height: 1.4;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+  .rm-cell .rm-check{
+    margin-top: auto; padding-top: 14px;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em;
+    color: var(--leaf);
+    font-weight: 500;
+  }
+  .rm-cell .rm-check::before{
+    content: "✓"; display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: rgba(122,148,114,0.15); color: var(--leaf);
+    font-size: 10px; font-weight: 700;
+  }
+
+  /* The fourth cell — Education — is the inverse: the "missing" RM */
+  .rm-cell.rm-cell-edu{
+    background: var(--ink); color: var(--paper);
+    border-color: var(--ink);
+  }
+  .rm-cell.rm-cell-edu .rm-asset{ color: var(--accent-bright);}
+  .rm-cell.rm-cell-edu .rm-name{ color: var(--paper);}
+  .rm-cell.rm-cell-edu .rm-name em{
+    font-style: italic; font-weight: 500;
+    text-transform: lowercase; color: var(--accent-bright);
+  }
+  .rm-cell.rm-cell-edu .rm-role{ color: rgba(255,255,255,0.78);}
+  .rm-cell.rm-cell-edu .rm-check{
+    color: var(--accent-bright);
+  }
+  .rm-cell.rm-cell-edu .rm-check::before{
+    content: "→";
+    background: rgba(232,144,102,0.18); color: var(--accent-bright);
+  }
+
+  /* ============ THE PROBLEM ============ */
+  .problem{ padding:140px 0; border-top:1px solid var(--line);}
+  .problem-grid{ display:grid; grid-template-columns: 1fr 1.6fr; gap:80px;}
+  @media (max-width:900px){.problem-grid{grid-template-columns:1fr; gap:32px;}}
+  .problem-body p{ font-size:17px; line-height:1.65; margin-bottom:20px; color:var(--ink-soft);}
+  .problem-cards{
+    margin-top:64px;
+    display:grid; grid-template-columns: repeat(4,1fr); gap:16px;
+  }
+  @media (max-width:900px){.problem-cards{grid-template-columns: repeat(2,1fr);}}
+  .pcard{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:28px 24px;
+    transition: all .3s;
+  }
+  .pcard:hover{ transform: translateY(-3px); border-color:rgba(26,22,18,0.25); box-shadow:0 18px 40px -16px rgba(26,22,18,0.15);}
+  .pcard .pcard-num{
+    font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:0.12em;
+    margin-bottom:14px;
+  }
+  .pcard .pcard-icon{
+    width:32px; height:32px; margin-bottom:18px;
+    color:var(--ink);
+  }
+  .pcard h3{
+    font-family:var(--display); font-weight:600; font-size:16px;
+    text-transform:uppercase; line-height:1.2; letter-spacing:-0.005em;
+    margin-bottom:8px;
+  }
+  .pcard p{ font-size:13.5px; line-height:1.55; color:var(--ink-soft);}
+
+  /* Data callout — used for the loans-for-education weight statement */
+  .data-callout{
+    margin-top: 48px;
+    padding: 32px 36px;
+    background: var(--ink); color: var(--paper);
+    border-radius: 16px;
+    display: grid; grid-template-columns: auto 1fr;
+    gap: 32px; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .data-callout::before{
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(circle at 100% 0%, rgba(199,123,79,0.20) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  @media (max-width:700px){.data-callout{ grid-template-columns: 1fr; gap: 16px; padding: 26px 24px;}}
+  .data-callout .stat{
+    position: relative; z-index: 2;
+    flex-shrink: 0;
+  }
+  .data-callout .stat .stat-num{
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(40px, 5vw, 64px);
+    letter-spacing: -0.025em; line-height: 0.95;
+    color: var(--accent-bright);
+    display: block;
+  }
+  .data-callout .stat .stat-label{
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-top: 8px; display: block;
+  }
+  .data-callout .body{
+    position: relative; z-index: 2;
+  }
+  .data-callout .body .heading{
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(18px, 2vw, 22px); letter-spacing: -0.005em;
+    line-height: 1.25; color: var(--paper);
+    margin-bottom: 8px;
+  }
+  .data-callout .body .heading em{
+    font-style: italic; font-weight: 500;
+    color: var(--accent-bright);
+  }
+  .data-callout .body p{
+    font-size: 14px; line-height: 1.6;
+    color: rgba(255,255,255,0.78);
+    margin: 0;
+  }
+  .data-callout .body p strong{ color: var(--paper); font-weight: 600;}
+  .data-callout .body .source{
+    margin-top: 12px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* ============ COSTS ============ */
+  .costs{ padding:140px 0; background:var(--bg-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .costs-header{ margin-bottom:50px; max-width:800px;}
+  .costs-header .costs-lead{
+    margin-top: 24px;
+    font-size: 16px; line-height: 1.65;
+    color: var(--ink-soft);
+    max-width: 640px;
+  }
+  .costs-header .costs-lead strong{
+    color: var(--accent); font-weight: 600;
+  }
+
+  /* Multi-country comparison table */
+  .costs-table{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  /* Country header row */
+  .costs-table .ct-head{
+    display: grid;
+    grid-template-columns: 1.3fr repeat(3, 1fr);
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .costs-table .ct-head .ct-cell{
+    padding: 22px 22px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .costs-table .ct-head .ct-cell:last-child{ border-right: none;}
+  .costs-table .ct-head .ct-corner{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+  }
+  .costs-table .ct-head .ct-flag{
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .costs-table .ct-head .ct-flag.f-uae{ background: #00732F;}
+  .costs-table .ct-head .ct-flag.f-ksa{ background: #006C35;}
+  .costs-table .ct-head .ct-flag.f-qa{ background: #8A1538;}
+  .costs-table .ct-head .ct-name{
+    font-family: var(--display); font-weight: 700;
+    font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--paper);
+  }
+  .costs-table .ct-head .ct-name .ct-iso{
+    font-family: var(--mono); font-size: 9.5px;
+    color: rgba(255,255,255,0.5);
+    margin-left: 6px; letter-spacing: 0.12em;
+  }
+
+  /* Rows */
+  .costs-table .ct-row{
+    display: grid;
+    grid-template-columns: 1.3fr repeat(3, 1fr);
+    border-top: 1px solid var(--line);
+  }
+  .costs-table .ct-row.ct-row-total{
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .costs-table .ct-row .ct-stage{
+    padding: 24px 22px;
+    border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; gap: 4px;
+    background: var(--bg);
+  }
+  .costs-table .ct-row.ct-row-total .ct-stage{
+    background: var(--ink); border-right-color: rgba(255,255,255,0.08);
+  }
+  .costs-table .ct-row .ct-stage .stage-label{
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500;
+  }
+  .costs-table .ct-row.ct-row-total .ct-stage .stage-label{ color: var(--accent-bright);}
+  .costs-table .ct-row .ct-stage .stage-name{
+    font-family: var(--display); font-weight: 700;
+    font-size: 18px; letter-spacing: -0.005em;
+    color: var(--ink);
+  }
+  .costs-table .ct-row.ct-row-total .ct-stage .stage-name{ color: var(--paper);}
+  .costs-table .ct-row .ct-stage .stage-detail{
+    font-family: var(--mono); font-size: 10.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .costs-table .ct-row.ct-row-total .ct-stage .stage-detail{ color: rgba(255,255,255,0.55);}
+
+  .costs-table .ct-row .ct-amt{
+    padding: 24px 22px;
+    border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; gap: 4px;
+    transition: background .25s;
+  }
+  .costs-table .ct-row .ct-amt:last-child{ border-right: none;}
+  .costs-table .ct-row .ct-amt:hover{ background: #F8F4E9;}
+  .costs-table .ct-row.ct-row-total .ct-amt{
+    border-right-color: rgba(255,255,255,0.08);
+  }
+  .costs-table .ct-row.ct-row-total .ct-amt:hover{ background: rgba(255,255,255,0.04);}
+  .costs-table .ct-row .ct-amt .amount{
+    font-family: var(--display); font-weight: 700;
+    font-size: 22px; letter-spacing: -0.01em;
+    line-height: 1.1; color: var(--ink);
+  }
+  .costs-table .ct-row.ct-row-total .ct-amt .amount{ color: var(--paper);}
+  .costs-table .ct-row .ct-amt .amount .ccy{
+    font-size: 12px; vertical-align: top; line-height: 2;
+    color: var(--muted); font-weight: 500;
+    margin-right: 4px; opacity: 0.75;
+  }
+  .costs-table .ct-row.ct-row-total .ct-amt .amount .ccy{ color: rgba(255,255,255,0.55);}
+  .costs-table .ct-row .ct-amt .aed-equiv{
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+  .costs-table .ct-row.ct-row-total .ct-amt .aed-equiv{ color: rgba(255,255,255,0.55);}
+
+  /* Mobile: stack into per-country cards instead of one wide table */
+  @media (max-width:900px){
+    .costs-table .ct-head{ display: none;}
+    .costs-table .ct-row{
+      display: block; padding: 0;
+    }
+    .costs-table .ct-row .ct-stage{
+      border-right: none; border-bottom: 1px solid var(--line);
+      padding: 18px 22px;
+    }
+    .costs-table .ct-row.ct-row-total .ct-stage{ border-bottom-color: rgba(255,255,255,0.08);}
+    .costs-table .ct-row .ct-amt{
+      border-right: none; border-bottom: 1px solid var(--line);
+      display: grid; grid-template-columns: auto 1fr; gap: 16px;
+      padding: 14px 22px; align-items: baseline;
+    }
+    .costs-table .ct-row.ct-row-total .ct-amt{ border-bottom-color: rgba(255,255,255,0.08);}
+    .costs-table .ct-row .ct-amt:last-child{ border-bottom: none;}
+    .costs-table .ct-row .ct-amt::before{
+      content: attr(data-country);
+      font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--muted); font-weight: 500;
+      min-width: 50px;
+    }
+    .costs-table .ct-row.ct-row-total .ct-amt::before{ color: rgba(255,255,255,0.55);}
+    .costs-table .ct-row .ct-amt .amount{ font-size: 18px;}
+  }
+
+  .costs-disclaimer{
+    margin-top: 24px;
+    padding: 18px 24px;
+    background: var(--paper);
+    border: 1px solid var(--line); border-radius: 12px;
+    border-left: 3px solid var(--accent);
+    display: grid; grid-template-columns: auto 1fr;
+    gap: 16px; align-items: start;
+  }
+  @media (max-width:700px){.costs-disclaimer{ grid-template-columns: 1fr; gap: 8px;}}
+  .costs-disclaimer .label{
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600;
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+  .costs-disclaimer p{
+    font-size: 13px; line-height: 1.6;
+    color: var(--ink-soft);
+    font-family: var(--display);
+  }
+
+  .costs-note{
+    margin-top:24px;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px;
+    font-family:var(--mono); font-size:11px; letter-spacing:0.1em;
+    color:var(--ink-soft);
+  }
+  .costs-note .total{ color:var(--ink); font-weight:500; font-size:12px; letter-spacing:0.12em;}
+  .costs-note .total .v{ color:var(--accent); font-family:var(--display); font-weight:700; font-size:15px; margin-right:6px; letter-spacing:0;}
+
+  /* ============ PROMISE QUOTE ============ */
+  .promise-strip{
+    padding:120px 0; text-align:center;
+  }
+  .promise-strip .quote{
+    font-family:var(--display); font-weight:600;
+    font-size: clamp(24px, 2.8vw, 38px);
+    line-height:1.25; text-transform:uppercase;
+    max-width:1100px; margin:0 auto;
+    color:var(--ink);
+  }
+  .promise-strip .quote em{
+    font-style:italic; font-weight:500; text-transform:lowercase;
+    color:var(--ink); position:relative;
+  }
+  .promise-strip .quote em::after{
+    content:""; position:absolute; left:0; right:0; bottom:-2px; height:2px; background:var(--accent);
+    box-shadow: 0 0 8px rgba(199,123,79,0.5);
+  }
+  .promise-strip .attr{
+    margin-top:36px; font-family:var(--mono); font-size:11px;
+    letter-spacing:0.15em; text-transform:uppercase; color:var(--muted);
+  }
+
+  /* ============ EDUCATION MANAGER ============ */
+  .em-section{ padding:140px 0; background:var(--bg-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .em-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:80px; align-items:center;}
+  @media (max-width:900px){.em-grid{grid-template-columns:1fr; gap:48px;}}
+  .em-text .heading-xl{ margin-bottom:32px;}
+  .em-text p{ font-size:16px; line-height:1.65; color:var(--ink-soft); margin-bottom:18px;}
+  .em-text .quote-block{
+    margin: 32px 0;
+    padding: 28px 32px 28px 28px;
+    background:var(--paper);
+    border-left:3px solid var(--accent);
+    border-radius:6px 14px 14px 6px;
+    font-family:var(--display); font-style:italic; font-weight:500;
+    font-size:18px; line-height:1.5; color:var(--ink);
+  }
+  .em-text .quote-block::before{
+    content:"❝"; display:block;
+    font-family:var(--display); font-size:32px; color:var(--accent);
+    line-height:1; margin-bottom:10px;
+  }
+  .em-features{ list-style:none;}
+  .em-features li{
+    padding:14px 0; border-bottom:1px solid var(--line);
+    display:flex; align-items:flex-start; gap:14px;
+    font-size:14.5px; color:var(--ink-soft);
+  }
+  .em-features li:last-child{ border-bottom:none;}
+  .em-features li::before{ content:"+"; color:var(--accent); font-family:var(--mono); font-weight:600; font-size:16px;}
+
+  /* manager visual — portrait card stacked above orbital diagram */
+  .em-visual{
+    max-width:480px; margin:0 auto;
+    position:relative;
+    display:flex; flex-direction:column; gap:24px;
+  }
+
+  /* Portrait card — editorial treatment of the EM image */
+  .em-portrait{
+    position:relative;
+    border-radius:18px;
+    overflow:hidden;
+    background: var(--ink);
+    box-shadow: 0 30px 80px -30px rgba(26,22,18,0.35);
+    aspect-ratio: 1.05;
+  }
+  .em-portrait .portrait-img{
+    width:100%; height:100%;
+    object-fit:cover;
+    object-position: center 18%;
+    /* Treat the AI stock image: warm duotone, lower saturation, pull into page palette */
+    filter:
+      saturate(0.55)
+      contrast(1.08)
+      sepia(0.18)
+      brightness(0.95);
+    transition: filter .5s;
+  }
+  /* Warm tint overlay — masks AI-stock cleanliness, ties to page accent */
+  .em-portrait::before{
+    content:""; position:absolute; inset:0;
+    background:
+      linear-gradient(180deg, rgba(199,123,79,0.0) 0%, rgba(26,22,18,0.55) 100%),
+      linear-gradient(135deg, rgba(199,123,79,0.10) 0%, rgba(91,58,92,0.08) 100%);
+    pointer-events:none;
+    z-index:2;
+  }
+  /* Subtle grain to push it further from "stock photo" */
+  .em-portrait::after{
+    content:""; position:absolute; inset:0;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity: 0.10;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  /* Caption ribbon laid over the bottom — EM name plate */
+  .em-portrait .portrait-caption{
+    position:absolute; left:20px; right:20px; bottom:20px;
+    z-index:4;
+    display:flex; align-items:center; gap:12px;
+    padding: 12px 16px;
+    background: rgba(26,22,18,0.78);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 12px;
+    color: var(--paper);
+  }
+  .em-portrait .portrait-caption .role-tag{
+    flex-shrink: 0;
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent-bright); font-weight: 500;
+    padding: 4px 10px;
+    border: 1px solid rgba(232,144,102,0.35);
+    border-radius: 100px;
+    background: rgba(199,123,79,0.12);
+  }
+  .em-portrait .portrait-caption .caption-text{
+    font-family: var(--display); font-size: 13px; font-weight: 500;
+    line-height: 1.3;
+    color: var(--paper);
+  }
+  .em-portrait .portrait-caption .caption-text em{
+    font-style: italic; font-weight: 500;
+    color: var(--accent-bright);
+  }
+
+  /* Floating bracketed accent in the corner — ties to page's typographic identity */
+  .em-portrait .portrait-corner{
+    position: absolute; top: 18px; right: 18px;
+    z-index: 4;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em;
+    color: var(--accent-bright);
+    padding: 5px 11px;
+    background: rgba(26,22,18,0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 100px;
+  }
+
+  /* Orbital diagram — now lives below the portrait, smaller */
+  .em-orbital{
+    position: relative;
+    aspect-ratio: 1;
+    max-width: 380px; margin: 0 auto;
+  }
+  .em-orbital svg{ width:100%; height:100%;}
+
+  /* ============ EXPERIENCE FLOW ============ */
+  .experience{ padding:140px 0;}
+  .experience .heading-xl{ max-width:900px; margin-bottom:64px;}
+  .exp-flow{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:18px;
+    overflow:hidden;
+  }
+  .exp-stage{
+    padding:28px 32px;
+    border-bottom:1px solid var(--line);
+    display:grid; grid-template-columns: 80px 1fr 200px;
+    gap:24px; align-items:start;
+    transition:background .25s;
+  }
+  .exp-stage:last-child{ border-bottom:none;}
+  .exp-stage:hover{ background:rgba(199,123,79,0.04);}
+  .exp-stage .stage-num{
+    font-family:var(--mono); font-size:11px; color:var(--muted);
+    letter-spacing:0.12em; padding-top:4px;
+  }
+  .exp-stage .stage-num .br{ color:var(--accent);}
+  .exp-stage .stage-info h4{
+    font-family:var(--display); font-weight:600;
+    font-size:18px; letter-spacing:-0.005em;
+    text-transform:uppercase; margin-bottom:6px;
+  }
+  .exp-stage .stage-info p{
+    font-size:14px; line-height:1.6; color:var(--ink-soft);
+  }
+  .exp-stage .stage-tag{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase;
+    text-align:right; color:var(--ink-soft);
+  }
+  .exp-stage .stage-tag .who{
+    display:inline-block;
+    padding:5px 12px; border:1px solid var(--line); border-radius:100px;
+    font-size:10px;
+    margin-top:6px;
+  }
+  .exp-stage .stage-tag .who.parent{ background:var(--paper); color:var(--plum); border-color:rgba(91,58,92,0.25);}
+  .exp-stage .stage-tag .who.student{ background:var(--paper); color:var(--accent); border-color:rgba(199,123,79,0.3);}
+  .exp-stage .stage-tag .who.both{ background:var(--ink); color:var(--paper); border-color:var(--ink);}
+  @media (max-width:700px){
+    .exp-stage{ grid-template-columns: 1fr; gap:8px;}
+    .exp-stage .stage-tag{ text-align:left;}
+  }
+
+  /* ============ TRUST & ENGAGEMENT ============ */
+  .trust-engage{ padding:140px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .te-header{
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; align-items: end;
+    margin-bottom: 60px;
+  }
+  @media (max-width:900px){.te-header{ grid-template-columns: 1fr; gap: 32px;}}
+  .te-header .lead{
+    font-size: 16px; line-height: 1.65;
+    color: var(--ink-soft);
+    max-width: 460px;
+  }
+  .te-header .lead strong{ color: var(--ink); font-weight: 600;}
+
+  .te-columns{
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  }
+  @media (max-width:900px){.te-columns{ grid-template-columns: 1fr;}}
+
+  .te-card{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 36px 32px;
+    position: relative;
+  }
+
+  .te-card .te-tag{
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    margin-bottom: 14px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .te-card .te-tag::before{
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .te-card h3{
+    font-family: var(--display); font-weight: 700;
+    font-size: 26px; letter-spacing: -0.005em;
+    text-transform: uppercase; line-height: 1.05;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+  .te-card h3 em{
+    font-style: italic; font-weight: 500;
+    text-transform: lowercase;
+    color: var(--accent);
+    padding: 0 3px;
+  }
+  .te-card .te-intro{
+    font-size: 14.5px; line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .te-card .te-intro strong{ color: var(--ink); font-weight: 600;}
+
+  /* protocols list — numbered, mono small caps style */
+  .protocols-list{ list-style: none;}
+  .protocols-list li{
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line-soft);
+    display: grid; grid-template-columns: 36px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .protocols-list li:last-child{ border-bottom: none; padding-bottom: 0;}
+  .protocols-list li .num{
+    font-family: var(--mono); font-size: 10.5px;
+    color: var(--accent); letter-spacing: 0.12em;
+    padding-top: 3px;
+  }
+  .protocols-list li .body{
+    font-size: 14px; line-height: 1.5;
+  }
+  .protocols-list li .body .name{
+    display: block;
+    font-family: var(--display); font-weight: 600;
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .protocols-list li .body .desc{
+    font-size: 13.5px; line-height: 1.55;
+    color: var(--ink-soft);
+  }
+
+  /* engagement touchpoints — softer, more relational */
+  .engage-touch{
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .engage-row{
+    display: grid; grid-template-columns: 32px 1fr auto;
+    gap: 14px; align-items: center;
+    padding: 14px 16px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    transition: background .25s, transform .25s;
+  }
+  .engage-row:hover{
+    background: var(--bg-2);
+    transform: translateX(2px);
+  }
+  .engage-row .icon-circle{
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .engage-row .icon-circle svg{ width: 14px; height: 14px;}
+  .engage-row .body{ font-size: 13.5px; line-height: 1.4;}
+  .engage-row .body .label{
+    font-family: var(--display); font-weight: 600;
+    font-size: 13px; color: var(--ink);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .engage-row .body .desc{
+    color: var(--ink-soft);
+    font-size: 12.5px;
+  }
+  .engage-row .cadence{
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  /* "talk to us" pull-quote at the bottom of engagement card */
+  .talk-pull{
+    margin-top: 22px;
+    padding: 20px 22px;
+    background: var(--ink); color: var(--paper);
+    border-radius: 12px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .talk-pull svg{
+    width: 22px; height: 22px;
+    color: var(--accent-bright);
+    flex-shrink: 0;
+  }
+  .talk-pull .text{
+    font-family: var(--display); font-size: 13.5px; font-weight: 500;
+    line-height: 1.45;
+    color: var(--paper);
+  }
+  .talk-pull .text em{
+    font-style: italic; font-weight: 500;
+    color: var(--accent-bright);
+  }
+
+  /* ============ PRICING ============ */
+  .pricing{ padding:140px 0; background:var(--bg-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .pricing-header{
+    display:grid; grid-template-columns: 1.2fr 1fr; gap:60px; align-items:end;
+    margin-bottom:64px;
+  }
+  @media (max-width:900px){.pricing-header{grid-template-columns:1fr;}}
+  .pricing-header .desc{ font-size:16px; line-height:1.6; color:var(--ink-soft); max-width:480px;}
+  .pricing-grid{
+    display:grid; grid-template-columns: repeat(4,1fr); gap:16px;
+  }
+  @media (max-width:1200px){.pricing-grid{grid-template-columns:repeat(2,1fr); gap:20px;}}
+  @media (max-width:680px){.pricing-grid{grid-template-columns:1fr;}}
+  .plan{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:36px 32px;
+    display:flex; flex-direction:column;
+    position:relative;
+    transition:all .4s;
+  }
+  .plan:hover{ transform:translateY(-3px); box-shadow:0 24px 60px -20px rgba(26,22,18,0.15);}
+  .plan.plan-featured{
+    background:var(--ink); color:var(--paper);
+    border-color:var(--ink);
+  }
+  .plan.plan-featured .plan-name,
+  .plan.plan-featured .plan-price,
+  .plan.plan-featured .plan-feat{ color:var(--paper);}
+  .plan.plan-featured .plan-feat-tag{ color:var(--paper); border-color:rgba(255,255,255,0.2);}
+  .plan.plan-featured .plan-cta{ background:var(--paper); color:var(--ink);}
+  .plan.plan-featured .plan-cta:hover{ background:var(--accent); color:var(--paper);}
+
+  .plan-tag{
+    position:absolute; top:-12px; left:24px;
+    font-family:var(--mono); font-size:10px; letter-spacing:0.12em; text-transform:uppercase;
+    background:var(--accent); color:var(--paper);
+    padding:5px 12px; border-radius:100px;
+    font-weight:500;
+  }
+  .plan-name{
+    font-family:var(--display); font-weight:700; font-size:13px;
+    letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:18px;
+  }
+  .plan.plan-featured .plan-name{ color:var(--accent-bright);}
+  .plan-price{
+    font-family:var(--display); font-weight:700;
+    font-size:48px; letter-spacing:-0.02em; line-height:1;
+    margin-bottom:6px;
+  }
+  .plan-price .currency{ font-size:18px; vertical-align:top; line-height:1.4; margin-right:4px; opacity:0.7;}
+  .plan-price .period{
+    font-family:var(--display); font-weight:500; font-size:14px;
+    letter-spacing:0.04em; opacity:0.7; margin-left:4px;
+  }
+  /* Pricing scope clarifier — sits between price and tagline, mono-styled so it reads as price metadata */
+  .plan-scope{
+    margin-top: 4px; margin-bottom: 14px;
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .plan.plan-featured .plan-scope{ color: var(--accent-bright);}
+  .plan-scope strong{
+    color: var(--ink); font-weight: 600;
+  }
+  .plan.plan-featured .plan-scope strong{ color: var(--paper);}
+  .plan-tagline{
+    font-family:var(--display); font-size:14px;
+    color:var(--muted); margin-bottom:28px;
+    padding-bottom:24px; border-bottom:1px solid var(--line);
+  }
+  .plan.plan-featured .plan-tagline{ color:rgba(255,255,255,0.6); border-bottom-color:rgba(255,255,255,0.15);}
+
+  .plan-features{ list-style:none; flex:1; margin-bottom:28px;}
+  .plan-feat{
+    padding:11px 0; border-bottom:1px solid var(--line);
+    display:flex; align-items:flex-start; gap:12px;
+    font-size:14px; line-height:1.5; color:var(--ink-soft);
+  }
+  .plan.plan-featured .plan-feat{ color:rgba(255,255,255,0.85); border-bottom-color:rgba(255,255,255,0.1);}
+  .plan-feat:last-child{ border-bottom:none;}
+  .plan-feat::before{
+    content:"+"; color:var(--accent); font-family:var(--mono); font-weight:600;
+    flex-shrink:0; margin-top:1px;
+  }
+  .plan-feat .feat-strong{ color:var(--ink); font-weight:600;}
+  .plan.plan-featured .plan-feat .feat-strong{ color:var(--paper);}
+
+  /* Limited suffix — quiet, parenthetical-feeling */
+  .plan-feat .feat-muted{
+    color: var(--muted); font-size: 12.5px;
+    font-family: var(--mono); letter-spacing: 0.04em;
+    margin-left: 2px;
+  }
+  .plan.plan-featured .plan-feat .feat-muted{ color: rgba(255,255,255,0.5);}
+
+  /* Unlimited tag — small accent pill that catches the eye */
+  .plan-feat .feat-tag-strong{
+    display: inline-flex; align-items: center;
+    margin-left: auto;
+    padding: 2px 9px; border-radius: 100px;
+    background: var(--accent); color: var(--paper);
+    font-family: var(--mono); font-size: 9.5px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .plan.plan-featured .plan-feat .feat-tag-strong{
+    background: var(--accent-bright); color: var(--ink);
+  }
+
+  .plan-cta{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:14px 24px; border-radius:100px;
+    font-family:var(--display); font-size:11px; font-weight:600;
+    letter-spacing:0.22em; text-transform:uppercase;
+    background:var(--ink); color:var(--paper);
+    transition: all .3s;
+    border:1px solid var(--ink);
+  }
+  .plan-cta:hover{ background:var(--accent); border-color:var(--accent);}
+
+  .pricing-note{
+    margin-top:32px;
+    font-family:var(--mono); font-size:11px; color:var(--muted);
+    letter-spacing:0.1em; text-align:center;
+  }
+
+  /* Subject Support explainer — sits below the pricing grid */
+  .foundation-explainer{
+    margin-top: 48px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: stretch;
+  }
+  @media (max-width:900px){.foundation-explainer{ grid-template-columns: 1fr;}}
+  .foundation-explainer .side-tag{
+    padding: 32px 24px;
+    background: var(--ink); color: var(--paper);
+    display: flex; flex-direction: column; justify-content: center; gap: 6px;
+    min-width: 180px;
+    position: relative;
+  }
+  .foundation-explainer .side-tag .tag-num{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.15em;
+    color: var(--accent-bright);
+  }
+  .foundation-explainer .side-tag .tag-name{
+    font-family: var(--display); font-weight: 700;
+    font-size: 22px; letter-spacing: 0.02em; text-transform: uppercase;
+    line-height: 1.05;
+  }
+  .foundation-explainer .side-tag .tag-name em{
+    font-style: italic; font-weight: 500;
+    text-transform: lowercase; color: var(--accent-bright);
+    padding: 0 3px;
+  }
+  .foundation-explainer .body{
+    padding: 32px 36px;
+    display: flex; flex-direction: column; justify-content: center; gap: 12px;
+  }
+  .foundation-explainer .body p{
+    font-size: 15px; line-height: 1.65; color: var(--ink-soft);
+    margin: 0;
+  }
+  .foundation-explainer .body p strong{ color: var(--ink); font-weight: 600;}
+  .foundation-explainer .body p em{
+    font-family: var(--display); font-style: italic; font-weight: 500;
+    color: var(--accent);
+  }
+  .foundation-explainer .body .replace-line{
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-top: 4px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+    color: var(--ink);
+  }
+  .foundation-explainer .body .replace-line .strike{
+    text-decoration: line-through; color: var(--muted);
+  }
+  .foundation-explainer .body .replace-line .arrow{ color: var(--accent); }
+  .foundation-explainer .body .replace-line .gain{ color: var(--ink); font-weight: 500;}
+
+  .foundation-explainer .visual{
+    padding: 28px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--paper-2, #F1ECE0);
+    border-left: 1px solid var(--line);
+    min-width: 200px;
+  }
+  @media (max-width:900px){
+    .foundation-explainer .visual{ border-left:none; border-top: 1px solid var(--line);}
+  }
+  .foundation-explainer .visual svg{ width: 140px; height: 140px;}
+
+  /* Journal explainer — sits below the Subject Support explainer */
+  .foundation-explainer.journal-explainer{
+    margin-top: 24px;
+  }
+  @media (max-width:900px){.foundation-explainer.journal-explainer{margin-top: 18px;}}
+
+  /* ============ THE EC TEAM ============ */
+  .ec-team{ padding:140px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .ec-team-header{
+    display:grid; grid-template-columns: 1fr 1fr; gap:60px; align-items:end;
+    margin-bottom:60px;
+  }
+  @media (max-width:900px){.ec-team-header{ grid-template-columns:1fr;}}
+  .ec-team-header .lead{
+    font-size:17px; line-height:1.65; color:var(--ink-soft);
+    max-width: 480px;
+  }
+  .ec-team-header .lead strong{ color:var(--ink); font-weight:600;}
+
+  .ec-structure{
+    display:grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    margin-bottom: 32px;
+  }
+  @media (max-width:900px){.ec-structure{ grid-template-columns:1fr;}}
+  .ec-card{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 36px 32px 32px;
+    position: relative;
+    transition: all .3s;
+  }
+  .ec-card:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 24px 60px -20px rgba(26,22,18,0.14);
+    border-color: rgba(26,22,18,0.22);
+  }
+  .ec-card.ec-card-mgr{ background: var(--ink); color: var(--paper); border-color: var(--ink);}
+
+  .ec-card .ec-role-tag{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:10px; letter-spacing:0.18em; text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .ec-card .ec-role-tag .badge{
+    padding: 3px 8px;
+    background: var(--accent); color: var(--paper);
+    border-radius: 100px; font-weight: 500;
+    font-size: 9.5px;
+  }
+  .ec-card.ec-card-mgr .ec-role-tag .badge{ background: var(--accent-bright); color: var(--ink);}
+  .ec-card .ec-role-tag .reports{ color: var(--muted);}
+  .ec-card.ec-card-mgr .ec-role-tag .reports{ color: rgba(255,255,255,0.5);}
+
+  .ec-card h3{
+    font-family: var(--display); font-weight: 700;
+    font-size: 28px; letter-spacing: -0.005em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    line-height: 1.05;
+  }
+  .ec-card h3 em{
+    font-style: italic; font-weight: 500;
+    text-transform: lowercase;
+    color: var(--accent);
+    padding: 0 3px;
+  }
+  .ec-card.ec-card-mgr h3 em{ color: var(--accent-bright);}
+  .ec-card .ec-acronym{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em;
+    color: var(--muted); margin-bottom: 22px;
+  }
+  .ec-card.ec-card-mgr .ec-acronym{ color: rgba(255,255,255,0.55);}
+
+  .ec-card p{
+    font-size: 14.5px; line-height: 1.65; color: var(--ink-soft);
+    margin-bottom: 14px;
+  }
+  .ec-card.ec-card-mgr p{ color: rgba(255,255,255,0.8);}
+  .ec-card p strong{ color: var(--ink); font-weight: 600;}
+  .ec-card.ec-card-mgr p strong{ color: var(--paper);}
+
+  .ec-card .ec-list{ list-style:none; margin-top: 6px;}
+  .ec-card .ec-list li{
+    padding: 9px 0; border-bottom: 1px solid var(--line);
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 13.5px; color: var(--ink-soft); line-height: 1.5;
+  }
+  .ec-card.ec-card-mgr .ec-list li{
+    color: rgba(255,255,255,0.78);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .ec-card .ec-list li:last-child{ border-bottom: none;}
+  .ec-card .ec-list li::before{
+    content:"+"; color: var(--accent); font-family: var(--mono); font-weight: 600;
+    flex-shrink: 0;
+  }
+  .ec-card.ec-card-mgr .ec-list li::before{ color: var(--accent-bright);}
+
+  .ec-monitor-strip{
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px 28px;
+    display: grid; grid-template-columns: auto 1fr auto;
+    gap: 24px; align-items: center;
+  }
+  @media (max-width:900px){.ec-monitor-strip{ grid-template-columns: 1fr; text-align:center;}}
+  .ec-monitor-strip .strip-tag{
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500;
+  }
+  .ec-monitor-strip .strip-text{
+    font-family: var(--display); font-size: 15px; line-height: 1.5;
+    color: var(--ink); font-weight: 500;
+  }
+  .ec-monitor-strip .strip-text em{
+    font-style: italic; font-weight: 500; color: var(--accent);
+  }
+  .ec-monitor-strip .strip-cta{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 10px 18px; border: 1px solid var(--ink); border-radius: 100px;
+    color: var(--ink); transition: all .25s;
+    display: inline-flex; align-items: center; gap: 8px;
+    flex-shrink: 0;
+  }
+  .ec-monitor-strip .strip-cta:hover{ background: var(--ink); color: var(--paper);}
+
+  /* mini badge cluster — first of its kind etc */
+  .ec-team .first-badge{
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 100px;
+    background: rgba(199,123,79,0.12);
+    color: var(--accent);
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 22px;
+  }
+  .ec-team .first-badge::before{
+    content:""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); animation: blink 2s ease-in-out infinite;
+  }
+
+  /* "What comes with your EC" — team-stack cluster sitting between cards and monitor strip */
+  .with-ec{
+    margin: 32px 0 24px;
+    padding: 28px 32px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .with-ec::before{
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(circle at 90% 0%, rgba(245,216,138,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .with-ec .with-ec-head{
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 20px;
+    position: relative; z-index: 2;
+  }
+  .with-ec .with-ec-head .label{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500;
+    flex-shrink: 0;
+  }
+  .with-ec .with-ec-head h4{
+    font-family: var(--display); font-weight: 600;
+    font-size: 17px; letter-spacing: -0.005em;
+    color: var(--ink); line-height: 1.3;
+  }
+  .with-ec .with-ec-head h4 em{
+    font-style: italic; font-weight: 500;
+    color: var(--accent);
+    padding: 0 2px;
+  }
+  .with-ec-grid{
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    position: relative; z-index: 2;
+  }
+  @media (max-width:900px){.with-ec-grid{ grid-template-columns: repeat(2, 1fr);}}
+  @media (max-width:540px){.with-ec-grid{ grid-template-columns: 1fr;}}
+  .with-ec-cell{
+    padding: 16px 18px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    display: flex; flex-direction: column; gap: 6px;
+    transition: background .25s, transform .25s;
+  }
+  .with-ec-cell:hover{
+    background: var(--bg-2);
+    transform: translateY(-2px);
+  }
+  .with-ec-cell .role-tag{
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .with-ec-cell .role-name{
+    font-family: var(--display); font-weight: 600;
+    font-size: 14px; letter-spacing: 0.005em;
+    color: var(--ink); line-height: 1.25;
+  }
+  .with-ec-cell .role-desc{
+    font-size: 12px; line-height: 1.45;
+    color: var(--ink-soft);
+  }
+
+  /* "What an EC actually tracks" — watchlist block inside the EC section */
+  .ec-watch{
+    margin: 32px 0;
+    display: grid; grid-template-columns: 1fr 1.2fr;
+    gap: 24px;
+    align-items: stretch;
+  }
+  @media (max-width:900px){.ec-watch{ grid-template-columns: 1fr; gap: 16px;}}
+
+  .watch-narrative{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 36px 34px;
+    display: flex; flex-direction: column; gap: 18px;
+    position: relative;
+  }
+  .watch-narrative .narrative-tag{
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500;
+  }
+  .watch-narrative .narrative-tag::before{
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .watch-narrative h4{
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(20px, 2.2vw, 26px);
+    line-height: 1.1; letter-spacing: -0.005em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .watch-narrative h4 em{
+    font-style: italic; font-weight: 500;
+    text-transform: lowercase;
+    color: var(--accent);
+    padding: 0 3px;
+  }
+  .watch-narrative p{
+    font-size: 14.5px; line-height: 1.65;
+    color: var(--ink-soft);
+  }
+  .watch-narrative p strong{ color: var(--ink); font-weight: 600;}
+  .watch-narrative p em{
+    font-style: italic; font-weight: 500; color: var(--accent);
+  }
+  .watch-narrative .study-quote{
+    margin-top: auto;
+    padding: 14px 18px;
+    background: var(--bg);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px 12px 12px 4px;
+    font-family: var(--mono); font-size: 11.5px; line-height: 1.55;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+  }
+  .watch-narrative .study-quote strong{
+    color: var(--ink); font-weight: 600;
+    display: block; margin-bottom: 4px;
+    font-family: var(--display); font-size: 11px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  /* The "watchlist" — looks like an operational dashboard */
+  .watchlist{
+    background: var(--ink); color: var(--paper);
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .watchlist .wl-bar{
+    padding: 16px 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px;
+  }
+  .watchlist .wl-bar .wl-title{
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--paper); font-weight: 500;
+  }
+  .watchlist .wl-bar .wl-title::before{
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent-bright);
+    box-shadow: 0 0 8px var(--accent-bright);
+    animation: blink 2s ease-in-out infinite;
+  }
+  .watchlist .wl-bar .wl-stamp{
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+  }
+
+  .watchlist .wl-rows{
+    flex: 1;
+    display: flex; flex-direction: column;
+  }
+  .wl-row{
+    padding: 16px 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: grid; grid-template-columns: 28px 1fr auto;
+    gap: 16px; align-items: center;
+    transition: background .25s;
+  }
+  .wl-row:last-child{ border-bottom: none;}
+  .wl-row:hover{ background: rgba(255,255,255,0.03);}
+  .wl-row .wl-icon{
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent-bright);
+    flex-shrink: 0;
+  }
+  .wl-row .wl-icon svg{ width: 13px; height: 13px;}
+  .wl-row .wl-body{ display: flex; flex-direction: column; gap: 3px;}
+  .wl-row .wl-name{
+    font-family: var(--display); font-weight: 600;
+    font-size: 13.5px; letter-spacing: 0.005em;
+    color: var(--paper); line-height: 1.25;
+  }
+  .wl-row .wl-name em{
+    font-style: italic; font-weight: 500;
+    color: var(--accent-bright);
+  }
+  .wl-row .wl-detail{
+    font-family: var(--mono); font-size: 10.5px;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.02em;
+  }
+  .wl-row .wl-status{
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 100px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .wl-status.s-track{
+    color: var(--leaf-glow);
+    background: rgba(157,186,148,0.10);
+    border: 1px solid rgba(157,186,148,0.25);
+  }
+  .wl-status.s-watch{
+    color: var(--butter); background: rgba(245,216,138,0.10);
+    border: 1px solid rgba(245,216,138,0.25);
+  }
+  .wl-status.s-flag{
+    color: var(--accent-bright); background: rgba(232,144,102,0.10);
+    border: 1px solid rgba(232,144,102,0.30);
+  }
+  .wl-status.s-due{
+    color: var(--paper); background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  /* Curriculum band above the pricing grid */
+  .curriculum-band{
+    margin-top: 8px; margin-bottom: 36px;
+    padding: 22px 28px;
+    background: var(--ink); color: var(--paper);
+    border-radius: 14px;
+    display: grid; grid-template-columns: auto 1fr auto;
+    gap: 24px; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .curriculum-band::before{
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(circle at 100% 50%, rgba(199,123,79,0.18) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  @media (max-width:900px){
+    .curriculum-band{ grid-template-columns: 1fr; gap: 14px; padding: 22px;}
+  }
+  .curriculum-band .label{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent-bright); font-weight: 500;
+    position: relative; z-index: 2;
+    flex-shrink: 0;
+  }
+  .curriculum-band .systems{
+    display: flex; flex-wrap: wrap; gap: 8px;
+    position: relative; z-index: 2;
+  }
+  .curriculum-band .sys-pill{
+    padding: 6px 14px; border-radius: 100px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    font-family: var(--display); font-size: 12.5px; font-weight: 500;
+    color: var(--paper);
+    letter-spacing: 0.01em;
+  }
+  .curriculum-band .more-link{
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: color .25s;
+    position: relative; z-index: 2;
+    flex-shrink: 0;
+  }
+  .curriculum-band .more-link:hover{ color: var(--accent-bright);}
+  .curriculum-band .more-link svg{ width: 11px; height: 11px;}
+
+  /* ============ TECHNOLOGY ============ */
+  .technology{
+    padding: 140px 0;
+    background: var(--ink); color: var(--paper);
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    position: relative; overflow: hidden;
+  }
+  .technology::before{
+    content:""; position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 85% 15%, rgba(199,123,79,0.14) 0%, transparent 50%),
+      radial-gradient(circle at 15% 85%, rgba(122,148,114,0.10) 0%, transparent 50%);
+    pointer-events:none;
+  }
+  .technology .container{ position:relative; z-index:2;}
+  .technology .section-label{ color: rgba(255,255,255,0.55);}
+  .technology .section-label .num,
+  .technology .section-label .br{ color: var(--accent-bright);}
+  .technology .section-label .bar{ background: var(--paper);}
+  .technology .heading-xl{ color: var(--paper);}
+  .technology .heading-xl em{ color: var(--accent-bright);}
+
+  .tech-header{
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; align-items: end;
+    margin-bottom: 64px;
+  }
+  @media (max-width:900px){.tech-header{ grid-template-columns:1fr; gap:32px;}}
+  .tech-header .lead{
+    font-size: 17px; line-height: 1.65;
+    color: rgba(255,255,255,0.72);
+    max-width: 480px;
+  }
+  .tech-header .lead strong{ color: var(--paper); font-weight: 600;}
+  .tech-header .lead em{
+    font-style: italic; font-weight: 500; color: var(--accent-bright);
+  }
+
+  .tech-pillars{
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 60px;
+  }
+  @media (max-width:900px){.tech-pillars{ grid-template-columns: 1fr 1fr;}}
+  @media (max-width:560px){.tech-pillars{ grid-template-columns: 1fr;}}
+  .tech-pillar{
+    background: var(--ink);
+    padding: 32px 28px;
+    transition: background .3s;
+  }
+  .tech-pillar:hover{ background: rgba(255,255,255,0.04);}
+  .tech-pillar .pillar-num{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.15em;
+    color: var(--accent-bright);
+    margin-bottom: 18px;
+  }
+  .tech-pillar .pillar-icon{
+    width: 36px; height: 36px;
+    margin-bottom: 22px;
+    color: var(--paper);
+  }
+  .tech-pillar .pillar-icon svg{ width: 100%; height: 100%;}
+  .tech-pillar h3{
+    font-family: var(--display); font-weight: 600;
+    font-size: 16px; letter-spacing: 0.01em; text-transform: uppercase;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .tech-pillar h3 em{
+    font-style: italic; font-weight: 500;
+    text-transform: lowercase;
+    color: var(--accent-bright);
+    padding: 0 2px;
+  }
+  .tech-pillar p{
+    font-size: 13.5px; line-height: 1.6;
+    color: rgba(255,255,255,0.72);
+  }
+
+  /* Portals visual — three stacked window mocks */
+  .tech-portals{
+    display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center;
+    padding-top: 28px;
+    border-top: 1px solid rgba(255,255,255,0.10);
+  }
+  @media (max-width:900px){.tech-portals{ grid-template-columns: 1fr; gap: 40px;}}
+  .tech-portals .text h3{
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(22px, 2.4vw, 32px);
+    line-height: 1.1; letter-spacing: -0.005em;
+    text-transform: uppercase;
+    color: var(--paper);
+    margin-bottom: 18px;
+  }
+  .tech-portals .text h3 em{
+    font-style: italic; font-weight: 500;
+    text-transform: lowercase;
+    color: var(--accent-bright);
+    padding: 0 3px;
+  }
+  .tech-portals .text p{
+    font-size: 15px; line-height: 1.65;
+    color: rgba(255,255,255,0.78);
+    margin-bottom: 14px;
+  }
+  .tech-portals .text p strong{ color: var(--paper); font-weight: 600;}
+  .tech-portals .signal-line{
+    margin-top: 18px;
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 8px 14px; border-radius: 100px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.85);
+  }
+  .tech-portals .signal-line::before{
+    content:""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-bright);
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  .portals-stack{
+    position: relative;
+    aspect-ratio: 1.15;
+  }
+  .portal-window{
+    position: absolute;
+    background: var(--paper); color: var(--ink);
+    border-radius: 12px;
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.6);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .portal-window .pw-bar{
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .portal-window .pw-bar .dot{
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--line);
+  }
+  .portal-window .pw-bar .dot.r{ background: #E07358;}
+  .portal-window .pw-bar .dot.y{ background: #F5D88A;}
+  .portal-window .pw-bar .dot.g{ background: #7A9472;}
+  .portal-window .pw-bar .label{ margin-left: 8px;}
+  .portal-window .pw-body{
+    padding: 16px 18px;
+  }
+
+  /* Window 1 — EC portal (back, top-right) */
+  .portal-window.w-ec{
+    top: 0; right: 0;
+    width: 70%;
+    z-index: 1;
+    transform: rotate(2deg);
+  }
+  .portal-window.w-ec .pw-body{
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .pw-row{
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--display); font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .pw-row .pw-dot{
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .pw-row .pw-bar-fill{
+    flex: 1; height: 4px; background: var(--paper-2, #F1ECE0); border-radius: 4px; overflow:hidden;
+  }
+  .pw-row .pw-bar-fill .fill{
+    height: 100%; background: var(--accent);
+  }
+  .pw-row .pw-num{
+    font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.05em;
+  }
+
+  /* Window 2 — Student portal (middle, centre) */
+  .portal-window.w-student{
+    top: 18%; left: 8%;
+    width: 65%;
+    z-index: 2;
+    transform: rotate(-3deg);
+  }
+  .portal-window.w-student .pw-body{
+    display: flex; flex-direction: column; gap: 8px;
+    align-items: flex-start;
+  }
+  .pw-bubble{
+    padding: 8px 12px; border-radius: 12px;
+    font-family: var(--mono); font-size: 11px;
+    max-width: 80%;
+  }
+  .pw-bubble.user{
+    background: rgba(91,58,92,0.10);
+    color: var(--plum);
+    align-self: flex-end;
+  }
+  .pw-bubble.bot{
+    background: rgba(26,22,18,0.05);
+    color: var(--ink-soft);
+  }
+  .pw-bubble.bot::before{
+    content: "AI ";
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  /* Window 3 — Teacher portal (front, bottom-right) */
+  .portal-window.w-teacher{
+    bottom: 0; right: 6%;
+    width: 62%;
+    z-index: 3;
+    transform: rotate(1.5deg);
+  }
+  .portal-window.w-teacher .pw-body{
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .pw-tile{
+    aspect-ratio: 1.4;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 9px;
+    color: var(--muted); letter-spacing: 0.06em;
+    text-transform: uppercase;
+    position: relative; overflow: hidden;
+  }
+  .pw-tile.t-active{
+    background: var(--accent); color: var(--paper); border-color: var(--accent);
+  }
+  .pw-tile.t-active::after{
+    content:""; position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 60%);
+  }
+  .pw-tile.t-warn{
+    background: rgba(245,216,138,0.4); color: var(--ink); border-color: var(--butter);
+  }
+
+  /* upgrade tag — sits floating */
+  .tech-upgrade{
+    position: absolute; top: -16px; right: -10px;
+    z-index: 10;
+    padding: 6px 12px;
+    background: var(--accent-bright); color: var(--ink);
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    border-radius: 100px;
+    transform: rotate(8deg);
+    box-shadow: 0 8px 24px -6px rgba(0,0,0,0.4);
+  }
+
+  /* ============ VALUE (Tangible + Intangible) ============ */
+  .value{
+    padding: 140px 0;
+    background: var(--bg-2);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    position: relative; overflow: hidden;
+  }
+  .value::before{
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 95% 5%, rgba(199,123,79,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 5% 95%, rgba(122,148,114,0.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .value .container{ position: relative; z-index: 2;}
+
+  .value-header{
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; align-items: end;
+    margin-bottom: 70px;
+  }
+  @media (max-width:900px){.value-header{ grid-template-columns: 1fr; gap: 32px;}}
+  .value-header .lead{
+    font-size: 16px; line-height: 1.65;
+    color: var(--ink-soft);
+    max-width: 480px;
+  }
+  .value-header .lead strong{ color: var(--ink); font-weight: 600;}
+  .value-header .lead em{ font-style: italic; font-weight: 500; color: var(--accent);}
+
+  /* Half-section container — used twice, once for tangible, once for intangible */
+  .value-half{ margin-bottom: 80px;}
+  .value-half:last-child{ margin-bottom: 0;}
+
+  .half-head{
+    display: grid; grid-template-columns: auto 1fr;
+    gap: 24px; align-items: end;
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (max-width:700px){.half-head{ grid-template-columns: 1fr; gap: 12px;}}
+
+  .half-tag{
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 8px 18px; border-radius: 100px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .half-tag.tag-tangible{
+    background: var(--ink); color: var(--accent-bright);
+  }
+  .half-tag.tag-tangible::before{
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent-bright);
+  }
+  .half-tag.tag-intangible{
+    background: rgba(199,123,79,0.10); color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  .half-tag.tag-intangible::before{
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .half-head h3{
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(24px, 2.8vw, 36px);
+    line-height: 1.05; letter-spacing: -0.012em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .half-head h3 em{
+    font-style: italic; font-weight: 500;
+    text-transform: lowercase;
+    color: var(--accent);
+    padding: 0 3px;
+  }
+
+  /* Tier toggle for tangible half */
+  .tier-toggle{
+    display: inline-flex; gap: 4px;
+    margin-bottom: 24px;
+    padding: 4px; border: 1px solid var(--line); border-radius: 100px;
+    background: var(--paper);
+  }
+  .tier-toggle button{
+    border: none; background: transparent;
+    padding: 9px 20px; border-radius: 100px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); font-weight: 500;
+    cursor: pointer;
+    transition: all .25s;
+  }
+  .tier-toggle button.active{ background: var(--ink); color: var(--paper);}
+  .tier-toggle button:not(.active):hover{ color: var(--ink);}
+
+  /* Tangible: simple two-card foundation-hours comparison */
+  .tangible-pair{
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width:900px){.tangible-pair{ grid-template-columns: 1fr;}}
+
+  .tangible-card{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 32px 30px;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .tangible-card.card-edc{
+    background: var(--ink); color: var(--paper); border-color: var(--ink);
+  }
+
+  .tangible-card .t-label{
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); font-weight: 500;
+    margin-bottom: 14px;
+  }
+  .tangible-card.card-edc .t-label{ color: var(--accent-bright);}
+  .tangible-card .t-headline{
+    font-family: var(--display); font-weight: 700;
+    font-size: 22px; letter-spacing: -0.005em; line-height: 1.15;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 28px;
+    padding-bottom: 22px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .tangible-card.card-edc .t-headline{
+    color: var(--paper);
+    border-bottom-color: rgba(255,255,255,0.18);
+  }
+  .tangible-card .t-headline em{
+    font-style: italic; font-weight: 500;
+    text-transform: lowercase;
+    color: var(--accent);
+    padding: 0 3px;
+  }
+  .tangible-card.card-edc .t-headline em{ color: var(--accent-bright);}
+
+  .t-math{
+    display: flex; flex-direction: column; gap: 18px;
+    margin-bottom: 28px;
+    flex: 1;
+  }
+  .t-math .math-row{
+    display: grid; grid-template-columns: auto 1fr;
+    gap: 20px; align-items: baseline;
+  }
+  .t-math .math-row .label{
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); font-weight: 500;
+    min-width: 100px;
+  }
+  .tangible-card.card-edc .t-math .math-row .label{ color: rgba(255,255,255,0.55);}
+  .t-math .math-row .value-line{
+    font-family: var(--display); font-weight: 600;
+    font-size: 17px; letter-spacing: -0.005em;
+    color: var(--ink); line-height: 1.3;
+  }
+  .tangible-card.card-edc .t-math .math-row .value-line{ color: var(--paper);}
+  .t-math .math-row .value-line em{
+    font-style: italic; font-weight: 500;
+    color: var(--accent);
+    padding: 0 2px;
+  }
+  .tangible-card.card-edc .t-math .math-row .value-line em{ color: var(--accent-bright);}
+
+  .t-math .calc-line{
+    grid-column: 1 / -1;
+    font-family: var(--mono); font-size: 12px;
+    color: var(--ink-soft); letter-spacing: 0.02em;
+    padding: 12px 0;
+    border-top: 1px dashed var(--line-soft);
+    border-bottom: 1px dashed var(--line-soft);
+    margin-top: 4px;
+  }
+  .tangible-card.card-edc .t-math .calc-line{
+    color: rgba(255,255,255,0.7);
+    border-color: rgba(255,255,255,0.10);
+  }
+  .t-math .calc-line .equals{
+    color: var(--accent);
+    margin: 0 6px;
+  }
+  .tangible-card.card-edc .t-math .calc-line .equals{ color: var(--accent-bright);}
+
+  /* Tangible totals */
+  .t-total{
+    margin-top: auto;
+    padding: 18px 22px;
+    background: var(--bg);
+    border-radius: 12px;
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+  .tangible-card.card-edc .t-total{ background: rgba(255,255,255,0.06);}
+  .t-total .total-label{
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .tangible-card.card-edc .t-total .total-label{ color: rgba(255,255,255,0.55);}
+  .t-total .amount{
+    font-family: var(--display); font-weight: 700;
+    font-size: 32px; letter-spacing: -0.02em; line-height: 1;
+    color: var(--ink);
+    text-align: right;
+  }
+  .tangible-card.card-edc .t-total .amount{ color: var(--paper);}
+  .t-total .amount .currency{
+    font-size: 14px; vertical-align: top; line-height: 1.6; margin-right: 3px;
+    font-weight: 500; opacity: 0.7;
+  }
+  .t-total .amount .period{
+    display: block;
+    font-family: var(--display); font-weight: 500;
+    font-size: 11px; letter-spacing: 0.04em;
+    color: var(--muted); margin-top: 4px;
+  }
+  .tangible-card.card-edc .t-total .amount .period{ color: rgba(255,255,255,0.5);}
+
+  /* Tangible savings line */
+  .tangible-savings{
+    margin-top: 20px;
+    padding: 18px 24px;
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    background: var(--paper);
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 24px; align-items: center;
+    box-shadow: 0 0 0 4px rgba(199,123,79,0.06);
+  }
+  @media (max-width:700px){.tangible-savings{ grid-template-columns: 1fr;}}
+  .tangible-savings .text{
+    font-family: var(--display); font-size: 14.5px; line-height: 1.45;
+    color: var(--ink); font-weight: 500;
+  }
+  .tangible-savings .text strong{ color: var(--accent); font-weight: 700;}
+  .tangible-savings .text em{
+    font-style: italic; font-weight: 500; color: var(--accent);
+  }
+  .tangible-savings .stamp{
+    font-family: var(--display); font-weight: 700;
+    font-size: 26px; letter-spacing: -0.018em; line-height: 1;
+    color: var(--accent);
+    text-align: right; white-space: nowrap;
+  }
+  .tangible-savings .stamp .currency{
+    font-size: 13px; vertical-align: top; line-height: 1.6; margin-right: 3px;
+    opacity: 0.7;
+  }
+
+  /* INTANGIBLE: grid of cards (no prices) */
+  .intangible-grid{
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width:900px){.intangible-grid{ grid-template-columns: 1fr 1fr;}}
+  @media (max-width:540px){.intangible-grid{ grid-template-columns: 1fr;}}
+
+  .intangible-card{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 28px 26px;
+    transition: all .3s;
+    position: relative;
+  }
+  .intangible-card:hover{
+    transform: translateY(-2px);
+    border-color: rgba(26,22,18,0.22);
+    box-shadow: 0 18px 44px -16px rgba(26,22,18,0.12);
+  }
+  .intangible-card .ic-num{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .intangible-card .ic-icon{
+    width: 30px; height: 30px;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  .intangible-card h4{
+    font-family: var(--display); font-weight: 600;
+    font-size: 16px; letter-spacing: 0.005em; line-height: 1.2;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .intangible-card h4 em{
+    font-style: italic; font-weight: 500;
+    text-transform: lowercase;
+    color: var(--accent);
+    padding: 0 2px;
+  }
+  .intangible-card p{
+    font-size: 13.5px; line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .intangible-card .ic-tag{
+    margin-top: 16px; padding-top: 14px;
+    border-top: 1px solid var(--line-soft);
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Closing line for the value section */
+  .value-close{
+    margin-top: 60px;
+    padding: 36px 40px;
+    background: var(--ink); color: var(--paper);
+    border-radius: 16px;
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 32px; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .value-close::before{
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(circle at 100% 0%, rgba(199,123,79,0.18) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  @media (max-width:700px){.value-close{ grid-template-columns: 1fr; padding: 28px;}}
+  .value-close .close-text{
+    font-family: var(--display); font-weight: 500;
+    font-size: 17px; line-height: 1.45;
+    color: var(--paper);
+    position: relative; z-index: 2;
+  }
+  .value-close .close-text em{
+    font-style: italic; font-weight: 500;
+    color: var(--accent-bright);
+  }
+  .value-close .close-cta{
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 14px 28px; border-radius: 100px;
+    background: var(--accent-bright); color: var(--ink);
+    font-family: var(--display); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    transition: all .3s;
+    flex-shrink: 0;
+    position: relative; z-index: 2;
+  }
+  .value-close .close-cta:hover{ background: var(--paper);}
+
+  /* ============ SPECIALITIES ============ */
+  .specialities{ padding:140px 0;}
+  .specialities .heading-xl{ max-width:900px; margin-bottom:50px;}
+  .spec-grid{
+    display:grid; grid-template-columns: repeat(5,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:14px;
+    overflow:hidden;
+  }
+  @media (max-width:900px){.spec-grid{grid-template-columns: repeat(2,1fr);}}
+  .spec{
+    background:var(--paper); padding:24px 18px;
+    text-align:center;
+    transition: background .25s;
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    min-height:120px;
+    justify-content:center;
+  }
+  .spec:hover{ background:#F8F4E9;}
+  .spec .spec-name{
+    font-family:var(--display); font-weight:600; font-size:14px;
+    letter-spacing:0.02em;
+    color:var(--ink);
+  }
+  .spec .spec-tag{
+    font-family:var(--mono); font-size:9.5px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  /* ============ TEAM ============ */
+  .team{ padding:140px 0; background:var(--bg-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .team-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:80px; align-items:center;}
+  @media (max-width:900px){.team-grid{ grid-template-columns:1fr; gap:48px;}}
+  .team-text .heading-xl{ margin-bottom:24px;}
+  .team-text p{ font-size:17px; line-height:1.6; color:var(--ink-soft); margin-bottom:18px; max-width:520px;}
+  .team-stat{
+    margin-top:32px; padding-top:28px; border-top:1px solid var(--line);
+    display:flex; align-items:baseline; gap:14px;
+  }
+  .team-stat .v{
+    font-family:var(--display); font-weight:700;
+    font-size:64px; letter-spacing:-0.02em; line-height:1;
+    color:var(--ink);
+  }
+  .team-stat .v em{
+    font-style:italic; font-weight:500;
+    color:var(--accent);
+  }
+  .team-stat .l{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--muted); max-width:200px;
+  }
+
+  .team-grid-vis{
+    display:grid; grid-template-columns: repeat(6, 1fr); gap:6px;
+  }
+  .team-dot{
+    aspect-ratio:1;
+    border-radius:50%;
+    background: linear-gradient(135deg, var(--accent), var(--plum));
+    opacity:0.6;
+  }
+  .team-dot:nth-child(odd){ background: linear-gradient(135deg, var(--leaf), var(--plum));}
+  .team-dot:nth-child(3n){ background: linear-gradient(135deg, var(--butter), var(--accent));}
+  .team-dot:nth-child(5n){ background: linear-gradient(135deg, var(--plum), #6BA3C7);}
+  .team-dot:nth-child(7n){ background: linear-gradient(135deg, var(--accent), var(--butter));}
+
+  /* ============ FAQ ============ */
+  .faq{ padding:140px 0;}
+  .faq .heading-xl{ max-width:900px; margin-bottom:50px;}
+  .faq-list{
+    display:grid; grid-template-columns: 1fr 1fr; gap:0;
+    background:var(--paper);
+    border:1px solid var(--line); border-radius:14px;
+    overflow:hidden;
+  }
+  @media (max-width:900px){.faq-list{grid-template-columns:1fr;}}
+  .faq-item{
+    padding:32px 32px;
+    border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .faq-item:nth-child(even){ border-right:none;}
+  /* If there's an odd number of items, span the last one across both columns so it doesn't orphan */
+  .faq-item:nth-child(odd):last-child{
+    grid-column: 1 / -1;
+    border-right: none;
+  }
+  @media (max-width:900px){.faq-item{ border-right:none;}}
+  .faq-q{
+    display:flex; align-items:flex-start; gap:12px;
+    font-family:var(--display); font-weight:600;
+    font-size:17px; letter-spacing:-0.005em;
+    margin-bottom:14px;
+    color:var(--ink);
+  }
+  .faq-q .qmark{
+    flex-shrink:0;
+    width:22px; height:22px; border-radius:50%;
+    border:1.5px solid var(--accent);
+    color:var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:12px; font-weight:600;
+    margin-top:1px;
+  }
+  .faq-a{
+    font-size:14.5px; line-height:1.6;
+    color:var(--ink-soft);
+    padding-left:34px;
+  }
+  .faq-foot{
+    margin-top:32px; padding:24px 32px;
+    background:var(--paper); border:1px solid var(--line); border-radius:14px;
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:18px;
+    font-size:14px;
+  }
+  .faq-foot strong{ color:var(--ink); font-weight:600;}
+
+  /* ============ CTA / FOOTER ============ */
+  .cta{ padding:140px 0 60px; background:var(--ink); color:var(--paper); border-top:1px solid var(--line);}
+  .cta .heading-xl{ color:var(--paper); max-width:900px;}
+  .cta .heading-xl em{ color:var(--paper);}
+  .cta-grid{ display:grid; grid-template-columns:1.5fr 1fr; gap:80px; align-items:end; padding-bottom:80px; border-bottom:1px solid rgba(255,255,255,0.1);}
+  @media (max-width:900px){.cta-grid{grid-template-columns:1fr;}}
+  .cta-side p{ font-size:15px; line-height:1.6; color:rgba(244,241,234,0.7); margin-bottom:24px;}
+  .cta .pill-light{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:14px 30px;
+    font-family:var(--display); font-size:11px; font-weight:600;
+    letter-spacing:0.22em; text-transform:uppercase;
+    background:var(--paper); color:var(--ink);
+    border:1px solid var(--paper); border-radius:100px;
+    transition: all .3s;
+  }
+  .cta .pill-ghost{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:14px 30px;
+    font-family:var(--display); font-size:11px; font-weight:600;
+    letter-spacing:0.22em; text-transform:uppercase;
+    border:1px solid rgba(255,255,255,0.3); color:var(--paper);
+    border-radius:100px;
+    transition: all .3s;
+  }
+  .cta .pill-ghost:hover{ background:var(--paper); color:var(--ink); border-color:var(--paper);}
+  .cta .section-label{ color:rgba(244,241,234,0.5);}
+  .cta .section-label .num, .cta .section-label .br{ color:var(--accent);}
+  .cta .section-label .bar{ background:var(--paper);}
+
+  .footer{ padding-top:80px; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:60px;}
+  @media (max-width:900px){.footer{grid-template-columns:1fr 1fr; gap:40px;}}
+  .footer-brand .nav-logo{
+    font-family:var(--display); font-weight:700; font-size:20px;
+    color:var(--paper); margin-bottom:18px; display:flex; align-items:center; gap:2px;
+  }
+  .footer-brand .nav-logo .br{ color:var(--accent); font-weight:500;}
+  .footer-brand p{ font-size:13px; color:rgba(244,241,234,0.65); max-width:300px; line-height:1.6;}
+  .footer-brand .powerby{
+    margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.1);
+    font-family:var(--mono); font-size:10px; letter-spacing:0.15em; text-transform:uppercase;
+    color:rgba(244,241,234,0.55);
+  }
+  .footer-brand .powerby strong{ color:var(--accent); font-weight:500;}
+  .footer-col h4{ font-family:var(--mono); font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin-bottom:18px; font-weight:500;}
+  .footer-col ul{ list-style:none; display:flex; flex-direction:column; gap:10px;}
+  .footer-col a{ font-size:13px; color:rgba(244,241,234,0.75); transition:color .25s;}
+  .footer-col a:hover{ color:var(--paper);}
+  .footer-bottom{
+    margin-top:60px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.1);
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:var(--mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+    color:rgba(244,241,234,0.5);
+    flex-wrap:wrap; gap:16px;
+  }
+
+  /* Scroll-to-top button — appears once user has scrolled past the hero */
+  .scroll-top{
+    position: fixed;
+    bottom: 28px; right: 28px;
+    z-index: 100;
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: var(--ink); color: var(--paper);
+    border: 1px solid var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    opacity: 0; pointer-events: none;
+    transform: translateY(12px) scale(0.92);
+    transition: opacity .35s ease, transform .35s cubic-bezier(.2,.8,.2,1), background .25s, color .25s;
+    box-shadow: 0 12px 32px -10px rgba(26,22,18,0.45);
+  }
+  .scroll-top.visible{
+    opacity: 1; pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+  .scroll-top:hover{
+    background: var(--accent); border-color: var(--accent);
+  }
+  .scroll-top svg{
+    width: 18px; height: 18px;
+    transition: transform .25s;
+  }
+  .scroll-top:hover svg{ transform: translateY(-2px); }
+  .scroll-top .st-label{
+    position: absolute;
+    right: 62px; top: 50%; transform: translateY(-50%) translateX(6px);
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink);
+    background: var(--paper);
+    padding: 6px 12px; border-radius: 100px;
+    border: 1px solid var(--line);
+    white-space: nowrap;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s, transform .25s;
+  }
+  .scroll-top:hover .st-label{
+    opacity: 1; transform: translateY(-50%) translateX(0);
+  }
+  @media (max-width:700px){
+    .scroll-top{ bottom: 20px; right: 20px; width: 46px; height: 46px;}
+    .scroll-top .st-label{ display: none;}
+  }
+
+  .reveal{ opacity:0; transform:translateY(30px); transition: opacity .9s ease, transform .9s cubic-bezier(.2,.8,.2,1);}
+  .reveal.in{ opacity:1; transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+
+  <a href="index.html" class="brand-mark">
+    <div class="logo-row">
+      <div class="logo-img"><img src="edu-concierge-logo.png" alt="EDU Concierge"></div>
+      <div class="name">
+        <span class="br">(</span><span>EDU_CONCIERGE</span><span class="br">)</span>
+      </div>
+    </div>
+    <div class="version">
+      <span class="br">[</span> Education Delivered <span class="br">·</span> v.2026 <span class="br">]</span>
+    </div>
+  </a>
+
+  <nav class="nav">
+
+    <!-- the problem (dropdown) -->
+    <div class="nav-item">
+      <button class="nav-trigger" type="button" aria-haspopup="true" aria-expanded="false">the problem
+        <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+      </button>
+      <div class="nav-sub" role="menu">
+        <a href="#problem"><span class="sub-num">02</span>The Problem</a>
+        <a href="#costs"><span class="sub-num">03</span>Schooling Costs</a>
+      </div>
+    </div>
+
+    <!-- our approach (dropdown) -->
+    <div class="nav-item">
+      <button class="nav-trigger" type="button" aria-haspopup="true" aria-expanded="false">our approach
+        <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+      </button>
+      <div class="nav-sub" role="menu">
+        <a href="#manager"><span class="sub-num">04</span>Education Manager</a>
+        <a href="#ec-team"><span class="sub-num">05</span>Who are the ECs</a>
+        <a href="#how"><span class="sub-num">06</span>How It Works</a>
+        <a href="#trust"><span class="sub-num">08</span>Trust &amp; Engagement</a>
+      </div>
+    </div>
+
+    <!-- technology (flat) -->
+    <a href="#technology">technology
+      <svg class="arr" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 11 L11 3 M5 3 L11 3 L11 9"/></svg>
+    </a>
+
+    <!-- plans (dropdown) -->
+    <div class="nav-item">
+      <button class="nav-trigger" type="button" aria-haspopup="true" aria-expanded="false">plans
+        <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+      </button>
+      <div class="nav-sub" role="menu">
+        <a href="#value"><span class="sub-num">09</span>The Value</a>
+        <a href="#pricing"><span class="sub-num">10</span>Pricing Plans</a>
+        <a href="#systems"><span class="sub-num">11</span>Education Systems</a>
+      </div>
+    </div>
+
+    <!-- faq (flat) -->
+    <a href="#faq">faq
+      <svg class="arr" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 11 L11 3 M5 3 L11 3 L11 9"/></svg>
+    </a>
+
+    <!-- contact (flat) -->
+    <a href="#contact">contact
+      <svg class="arr" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 11 L11 3 M5 3 L11 3 L11 9"/></svg>
+    </a>
+
+  </nav>
+
+  <!-- Center visual -->
+  <div class="hero-viz">
+    <svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#E89066" stop-opacity="1"/>
+          <stop offset="60%" stop-color="#C77B4F" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#C77B4F" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="leafGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#9DBA94" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="#9DBA94" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="bigBlur" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="20"/>
+        </filter>
+      </defs>
+
+      <!-- soft warm halo -->
+      <ellipse cx="500" cy="380" rx="280" ry="220" fill="url(#glow)" filter="url(#bigBlur)" opacity="0.45"/>
+
+      <!-- A central "manager" hub with rays connecting to learning touchpoints -->
+      <g opacity="0.9">
+        <!-- outer rings -->
+        <circle cx="500" cy="380" r="240" fill="none" stroke="rgba(26,22,18,0.10)" stroke-width="1"/>
+        <circle cx="500" cy="380" r="170" fill="none" stroke="rgba(26,22,18,0.13)" stroke-width="1"/>
+        <circle cx="500" cy="380" r="100" fill="none" stroke="rgba(26,22,18,0.17)" stroke-width="1"/>
+
+        <!-- radial connections -->
+        <line x1="500" y1="380" x2="320" y2="240" stroke="rgba(91,58,92,0.4)" stroke-width="1.4"/>
+        <line x1="500" y1="380" x2="680" y2="220" stroke="rgba(199,123,79,0.55)" stroke-width="1.4"/>
+        <line x1="500" y1="380" x2="700" y2="500" stroke="rgba(122,148,114,0.55)" stroke-width="1.4"/>
+        <line x1="500" y1="380" x2="320" y2="520" stroke="rgba(107,163,199,0.5)" stroke-width="1.4"/>
+        <line x1="500" y1="380" x2="500" y2="180" stroke="rgba(199,123,79,0.4)" stroke-width="1.2"/>
+        <line x1="500" y1="380" x2="500" y2="580" stroke="rgba(91,58,92,0.4)" stroke-width="1.2"/>
+
+        <!-- node labels (dots only at outer ends) -->
+        <circle cx="320" cy="240" r="14" fill="rgba(91,58,92,0.18)"/>
+        <circle cx="320" cy="240" r="6" fill="#5B3A5C"/>
+        <circle cx="680" cy="220" r="16" fill="url(#glow)"/>
+        <circle cx="680" cy="220" r="7" fill="#C77B4F"/>
+        <circle cx="700" cy="500" r="13" fill="url(#leafGlow)"/>
+        <circle cx="700" cy="500" r="6" fill="#7A9472"/>
+        <circle cx="320" cy="520" r="6" fill="#6BA3C7"/>
+        <circle cx="500" cy="180" r="5" fill="#C77B4F"/>
+        <circle cx="500" cy="580" r="5" fill="#5B3A5C"/>
+
+        <!-- center: education manager -->
+        <circle cx="500" cy="380" r="40" fill="none" stroke="rgba(26,22,18,0.25)" stroke-width="1" stroke-dasharray="3 4"/>
+        <circle cx="500" cy="380" r="22" fill="#1A1612"/>
+        <circle cx="500" cy="380" r="8" fill="#F5D88A"/>
+      </g>
+    </svg>
+  </div>
+
+  <span class="particle" style="top:54%; left:62%; width:6px; height:6px; --dx:8px; --dy:-30px; animation-delay:0s;"></span>
+  <span class="particle" style="top:48%; left:67%; width:4px; height:4px; --dx:-12px; --dy:-40px; animation-delay:1s;"></span>
+  <span class="particle" style="top:60%; left:58%; width:5px; height:5px; --dx:14px; --dy:-50px; animation-delay:2s;"></span>
+  <span class="particle" style="top:52%; left:72%; width:7px; height:7px; --dx:-6px; --dy:-60px; animation-delay:3s;"></span>
+  <span class="particle" style="top:65%; left:65%; width:4px; height:4px; --dx:18px; --dy:-35px; animation-delay:4s;"></span>
+  <span class="particle" style="top:58%; left:70%; width:5px; height:5px; --dx:-20px; --dy:-50px; animation-delay:5s;"></span>
+
+  <h1 class="hero-headline">
+    <div class="row"><span>one <em>manager.</em></span></div>
+    <div class="row"><span>one plan.</span></div>
+    <div class="row"><span>every step</span></div>
+    <div class="row"><span><span class="slash">//</span>of the way</span></div>
+  </h1>
+
+  <div class="share-mark" title="Share">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+      <circle cx="6" cy="12" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="18" cy="18" r="2"/>
+      <path d="M8 11 L16 7 M8 13 L16 17"/>
+    </svg>
+  </div>
+
+  <div class="scroll-cue">
+    <span>scroll</span>
+    <span class="arrow"></span>
+  </div>
+
+  <div class="hero-corner">
+    <div class="anchor">
+      <span class="a-mark">( EDC )</span>
+      <span class="pages"><span class="br">[</span> 001 <span class="br">/</span> 014 <span class="br">]</span></span>
+    </div>
+    <p>Meet your dedicated Education Manager. We track your child's progress, arrange lessons when needed, connect with specialists, and keep you fully updated — so there's still plenty of time for everything else.</p>
+    <div class="pill-row">
+      <a href="#contact" class="pill pill-filled">Try for Free</a>
+      <a href="#pricing" class="pill">View plans</a>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>Dedicated Education Manager <span class="dot"></span> Live Tutoring <span class="dot"></span> Assessments &amp; Exam Prep <span class="dot"></span> All Core Subjects <span class="dot"></span> Parent Progress Reporting <span class="dot"></span> Mobile App Included <span class="dot"></span></span>
+    <span>Dedicated Education Manager <span class="dot"></span> Live Tutoring <span class="dot"></span> Assessments &amp; Exam Prep <span class="dot"></span> All Core Subjects <span class="dot"></span> Parent Progress Reporting <span class="dot"></span> Mobile App Included <span class="dot"></span></span>
+  </div>
+</div>
+
+<!-- ============ FRAMING ============ -->
+<section class="framing reveal" id="framing">
+  <div class="container">
+    <div class="framing-grid">
+      <div>
+        <div class="section-label"><span class="br">[</span><span class="num">01</span><span class="br">]</span><span class="bar"></span><span>Why this exists</span></div>
+        <h2>Every vital asset gets a relationship <em>manager</em>. Education shouldn't be the exception.</h2>
+      </div>
+      <div class="framing-body">
+        <p>Buy a property, get a property manager. Open a meaningful bank account, get a relationship banker. Manage real wealth, get a private banker. Even your health gets a primary doctor whose job is to know you.</p>
+        <p>Yet middle-class families pay <strong>considerable amounts</strong> across thirteen years of schooling and then again for university — sums that, added up, rival a property — and they're expected to <em>just figure it out</em>. While holding down jobs, raising the rest of the family, and somehow keeping abreast of curriculum changes, exam reforms, and the right next move at every transition.</p>
+        <p>It isn't realistic, and it isn't fair. Education is too important — and too expensive — to leave to chance and goodwill alone. <strong>It deserves the same dedicated relationship layer that every other vital asset class already has.</strong></p>
+
+        <div class="rm-row">
+          <div class="rm-cell">
+            <span class="rm-asset">/ Real Estate</span>
+            <span class="rm-name">Property</span>
+            <span class="rm-role">Has a property manager</span>
+            <span class="rm-check">Standard</span>
+          </div>
+          <div class="rm-cell">
+            <span class="rm-asset">/ Capital</span>
+            <span class="rm-name">Wealth</span>
+            <span class="rm-role">Has a private banker</span>
+            <span class="rm-check">Standard</span>
+          </div>
+          <div class="rm-cell">
+            <span class="rm-asset">/ Wellbeing</span>
+            <span class="rm-name">Health</span>
+            <span class="rm-role">Has a primary doctor</span>
+            <span class="rm-check">Standard</span>
+          </div>
+          <div class="rm-cell rm-cell-edu">
+            <span class="rm-asset">/ The Missing One</span>
+            <span class="rm-name"><em>Education</em></span>
+            <span class="rm-role">Now has an Education Manager</span>
+            <span class="rm-check">EDU Concierge</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE PROBLEM ============ -->
+<section class="problem reveal" id="problem">
+  <div class="container">
+    <div class="problem-grid">
+      <div>
+        <div class="section-label"><span class="br">[</span><span class="num">02</span><span class="br">]</span><span class="bar"></span><span>The Problem</span></div>
+        <h2 class="heading-xl">Rising costs, distracted children, and <em>fragmented</em> study systems.</h2>
+      </div>
+      <div class="problem-body">
+        <p>Modern parenting around education has become an exhausting full-time job that overlaps with your actual full-time job. School fees keep rising. Children are digitally distracted. Working parents struggle to keep up with what's being taught, what's being assessed, and which extra classes are actually worth the time and money.</p>
+        <p>Meanwhile, learning has become fragmented — school plus tutor plus app plus exam prep plus enrichment programs, each pulling in a different direction, each charging separately, none of them talking to each other.</p>
+      </div>
+    </div>
+
+    <div class="problem-cards">
+      <div class="pcard">
+        <div class="pcard-num">/ 01</div>
+        <svg class="pcard-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M5 28 L5 14 L16 6 L27 14 L27 28 Z M5 28 L27 28"/>
+          <path d="M16 28 L16 18 M12 18 L20 18"/>
+        </svg>
+        <h3>High Cost of Schooling</h3>
+        <p>Fees that compound year after year, with no clear value justification or comparison.</p>
+      </div>
+      <div class="pcard">
+        <div class="pcard-num">/ 02</div>
+        <svg class="pcard-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6">
+          <rect x="6" y="6" width="20" height="14" rx="1.5"/>
+          <path d="M6 10 H26 M11 24 H21 M16 20 V24"/>
+        </svg>
+        <h3>Digitally Distracted Children</h3>
+        <p>Phones, games, and endless content fighting for your child's attention every hour of the day.</p>
+      </div>
+      <div class="pcard">
+        <div class="pcard-num">/ 03</div>
+        <svg class="pcard-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="16" cy="16" r="11"/>
+          <path d="M16 9 V16 L21 19"/>
+        </svg>
+        <h3>Working Parents, Short on Time</h3>
+        <p>You can't be on every parent-teacher call, track every assignment, or vet every tutor on your own.</p>
+      </div>
+      <div class="pcard">
+        <div class="pcard-num">/ 04</div>
+        <svg class="pcard-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M6 8 H14 V14 H6 Z M18 8 H26 V14 H18 Z M6 18 H14 V24 H6 Z M18 18 H26 V24 H18 Z"/>
+        </svg>
+        <h3>Fragmented Learning</h3>
+        <p>School, tutor, app, exam prep — none of it coordinated, all of it adding up financially.</p>
+      </div>
+    </div>
+
+    <!-- Loans-for-education weight statement -->
+    <div class="data-callout">
+      <div class="stat">
+        <span class="stat-num">Loans</span>
+        <span class="stat-label">/ Funding the next generation</span>
+      </div>
+      <div class="body">
+        <div class="heading">Parents are now <em>borrowing</em> to pay for their children's schooling.</div>
+        <p>Across the GCC and beyond, families are increasingly taking out <strong>personal loans, school-fee finance, and education loans</strong> just to keep their children in the schools they chose. What used to be a straight cost of living has become, for many, <strong>a financed liability</strong> — and the trend is climbing.</p>
+        <div class="source">// Reflected in regional banking and consumer-finance reporting, 2023–2025</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ COSTS ============ -->
+<section class="costs reveal" id="costs">
+  <div class="container">
+    <div class="costs-header">
+      <div class="section-label"><span class="br">[</span><span class="num">03</span><span class="br">]</span><span class="bar"></span><span>Typical Schooling Costs</span></div>
+      <h2 class="heading-xl">The bill parents are not<br>told about <em>up front</em>.</h2>
+      <p class="costs-lead">Across the GCC, the fee structure keeps <strong>rising periodically</strong> — year on year, often well above inflation, with little notice or explanation.</p>
+    </div>
+
+    <div class="costs-table">
+
+      <!-- Country header row -->
+      <div class="ct-head">
+        <div class="ct-cell">
+          <span class="ct-corner">/ Education stage</span>
+        </div>
+        <div class="ct-cell">
+          <span class="ct-flag f-uae"></span>
+          <span class="ct-name">UAE <span class="ct-iso">AED</span></span>
+        </div>
+        <div class="ct-cell">
+          <span class="ct-flag f-ksa"></span>
+          <span class="ct-name">Saudi Arabia <span class="ct-iso">SAR</span></span>
+        </div>
+        <div class="ct-cell">
+          <span class="ct-flag f-qa"></span>
+          <span class="ct-name">Qatar <span class="ct-iso">QAR</span></span>
+        </div>
+      </div>
+
+      <!-- Primary -->
+      <div class="ct-row">
+        <div class="ct-stage">
+          <span class="stage-label">/ 01</span>
+          <span class="stage-name">Primary</span>
+          <span class="stage-detail">p.a. per child · plus extras</span>
+        </div>
+        <div class="ct-amt" data-country="UAE">
+          <span class="amount"><span class="ccy">AED</span>30K–65K</span>
+          <span class="aed-equiv">+ 1.5K–3K extras</span>
+        </div>
+        <div class="ct-amt" data-country="KSA">
+          <span class="amount"><span class="ccy">SAR</span>25K–55K</span>
+          <span class="aed-equiv">+ 1.5K–3K extras</span>
+        </div>
+        <div class="ct-amt" data-country="Qatar">
+          <span class="amount"><span class="ccy">QAR</span>32K–70K</span>
+          <span class="aed-equiv">+ 1.5K–3.5K extras</span>
+        </div>
+      </div>
+
+      <!-- Secondary -->
+      <div class="ct-row">
+        <div class="ct-stage">
+          <span class="stage-label">/ 02</span>
+          <span class="stage-name">Secondary</span>
+          <span class="stage-detail">p.a. per child · plus extras</span>
+        </div>
+        <div class="ct-amt" data-country="UAE">
+          <span class="amount"><span class="ccy">AED</span>45K–100K</span>
+          <span class="aed-equiv">+ 3K–12K extras</span>
+        </div>
+        <div class="ct-amt" data-country="KSA">
+          <span class="amount"><span class="ccy">SAR</span>40K–90K</span>
+          <span class="aed-equiv">+ 3K–10K extras</span>
+        </div>
+        <div class="ct-amt" data-country="Qatar">
+          <span class="amount"><span class="ccy">QAR</span>50K–110K</span>
+          <span class="aed-equiv">+ 3K–12K extras</span>
+        </div>
+      </div>
+
+      <!-- University -->
+      <div class="ct-row">
+        <div class="ct-stage">
+          <span class="stage-label">/ 03</span>
+          <span class="stage-name">University</span>
+          <span class="stage-detail">total degree · programme fee</span>
+        </div>
+        <div class="ct-amt" data-country="UAE">
+          <span class="amount"><span class="ccy">AED</span>240K–600K</span>
+          <span class="aed-equiv">programme fee</span>
+        </div>
+        <div class="ct-amt" data-country="KSA">
+          <span class="amount"><span class="ccy">SAR</span>200K–500K</span>
+          <span class="aed-equiv">programme fee</span>
+        </div>
+        <div class="ct-amt" data-country="Qatar">
+          <span class="amount"><span class="ccy">QAR</span>260K–600K</span>
+          <span class="aed-equiv">programme fee</span>
+        </div>
+      </div>
+
+      <!-- Total -->
+      <div class="ct-row ct-row-total">
+        <div class="ct-stage">
+          <span class="stage-label">/ Lifetime</span>
+          <span class="stage-name">Total Schooling</span>
+          <span class="stage-detail">per child · K–12 + university</span>
+        </div>
+        <div class="ct-amt" data-country="UAE">
+          <span class="amount"><span class="ccy">AED</span>~980K</span>
+          <span class="aed-equiv">lifetime · approximate</span>
+        </div>
+        <div class="ct-amt" data-country="KSA">
+          <span class="amount"><span class="ccy">SAR</span>~850K</span>
+          <span class="aed-equiv">lifetime · approximate</span>
+        </div>
+        <div class="ct-amt" data-country="Qatar">
+          <span class="amount"><span class="ccy">QAR</span>~1.05M</span>
+          <span class="aed-equiv">lifetime · approximate</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Disclaimer — frames what the data is here for -->
+    <div class="costs-disclaimer">
+      <span class="label">/ Note</span>
+      <p>These are <strong>indicative ranges</strong> compiled from public schooling-fee surveys across the GCC (2024–2025). They cover private and international schools, which is the cohort EDU Concierge typically supports. Numbers vary widely by city, board, and tier — they are shown here only to make the case for why the bulk of a family's investment in a child deserves <em>active management</em>.</p>
+    </div>
+
+    <div class="costs-note">
+      <span>// Sources: regional schooling surveys, 2024–2025</span>
+      <span class="total"><span class="v">~AED 1.5M+</span> typical full lifetime educational spend per child, with university (UAE indicative)</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROMISE QUOTE ============ -->
+<section class="promise-strip reveal">
+  <div class="container">
+    <p class="quote">Your child's education, <em>handled</em> — quietly, properly, by a team that knows them.</p>
+    <div class="attr">— The EDU Concierge promise</div>
+  </div>
+</section>
+
+<!-- ============ EDUCATION MANAGER ============ -->
+<section class="em-section reveal" id="manager">
+  <div class="container">
+    <div class="em-grid">
+      <div class="em-text">
+        <div class="section-label"><span class="br">[</span><span class="num">04</span><span class="br">]</span><span class="bar"></span><span>Your Education Manager</span></div>
+        <h2 class="heading-xl">Meet your dedicated <em>Education Manager</em>.</h2>
+        <p>Every member of EDU Concierge is paired with an experienced Education Manager — a single point of contact who knows your child, knows your goals, and runs the operational side of education on your behalf.</p>
+        <div class="quote-block">
+          I'll track your child's progress, arrange lessons when needed, connect with specialists if required, and keep you fully updated — all while ensuring there's still plenty of time for regular activities.
+        </div>
+        <ul class="em-features">
+          <li>Manage and monitor your child's educational progress</li>
+          <li>Address any academic or school-related concerns</li>
+          <li>Find suitable options for further education or career pathways</li>
+          <li>Guide you through admissions, assessments, and transitions between schools or systems</li>
+        </ul>
+      </div>
+      <div class="em-visual">
+
+        <!-- Portrait card — humanises the section -->
+        <div class="em-portrait">
+          <img src="em-portrait.jpg" alt="An EDU Concierge Education Manager" class="portrait-img">
+          <span class="portrait-corner">[ EM · 2026 ]</span>
+          <div class="portrait-caption">
+            <span class="role-tag">EM</span>
+            <span class="caption-text">"I'll know your child by name, before <em>their first session</em>."</span>
+          </div>
+        </div>
+
+        <!-- Orbital diagram — what the EM does -->
+        <div class="em-orbital">
+          <svg viewBox="0 0 480 480" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="emGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#F5D88A" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="#F5D88A" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <!-- soft warm bg halo -->
+            <circle cx="240" cy="240" r="200" fill="url(#emGlow)"/>
+            <!-- orbital rings -->
+            <circle cx="240" cy="240" r="180" fill="none" stroke="rgba(26,22,18,0.15)" stroke-width="1" stroke-dasharray="3 6"/>
+            <circle cx="240" cy="240" r="130" fill="none" stroke="rgba(26,22,18,0.18)" stroke-width="1"/>
+            <circle cx="240" cy="240" r="80" fill="none" stroke="rgba(26,22,18,0.22)" stroke-width="1"/>
+
+            <!-- orbiting touchpoints -->
+            <g>
+              <circle cx="240" cy="60" r="10" fill="#5B3A5C"/>
+              <text x="240" y="38" font-family="JetBrains Mono" font-size="9" fill="#3A332C" text-anchor="middle" letter-spacing="0.05em">PROGRESS</text>
+            </g>
+            <g>
+              <circle cx="420" cy="240" r="10" fill="#C77B4F"/>
+              <text x="420" y="218" font-family="JetBrains Mono" font-size="9" fill="#3A332C" text-anchor="middle" letter-spacing="0.05em">LESSONS</text>
+            </g>
+            <g>
+              <circle cx="240" cy="420" r="10" fill="#7A9472"/>
+              <text x="240" y="445" font-family="JetBrains Mono" font-size="9" fill="#3A332C" text-anchor="middle" letter-spacing="0.05em">ASSESSMENTS</text>
+            </g>
+            <g>
+              <circle cx="60" cy="240" r="10" fill="#6BA3C7"/>
+              <text x="60" y="218" font-family="JetBrains Mono" font-size="9" fill="#3A332C" text-anchor="middle" letter-spacing="0.05em">SPECIALISTS</text>
+            </g>
+            <g>
+              <circle cx="370" cy="110" r="7" fill="#5B3A5C" opacity="0.7"/>
+            </g>
+            <g>
+              <circle cx="110" cy="370" r="7" fill="#C77B4F" opacity="0.7"/>
+            </g>
+            <g>
+              <circle cx="370" cy="370" r="7" fill="#7A9472" opacity="0.7"/>
+            </g>
+            <g>
+              <circle cx="110" cy="110" r="7" fill="#6BA3C7" opacity="0.7"/>
+            </g>
+
+            <!-- center node — Education Manager -->
+            <circle cx="240" cy="240" r="44" fill="#1A1612"/>
+            <circle cx="240" cy="240" r="14" fill="#F5D88A"/>
+            <text x="240" y="312" font-family="Archivo" font-size="12" font-weight="600" fill="#1A1612" text-anchor="middle" letter-spacing="0.12em">EDU. MANAGER</text>
+          </svg>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE EC TEAM ============ -->
+<section class="ec-team reveal" id="ec-team">
+  <div class="container">
+    <div class="ec-team-header">
+      <div>
+        <span class="first-badge">First of its kind · Live monitoring layer</span>
+        <div class="section-label"><span class="br">[</span><span class="num">05</span><span class="br">]</span><span class="bar"></span><span>Who are the ECs</span></div>
+        <h2 class="heading-xl">A <em>mentor layer</em> built around the student.</h2>
+      </div>
+      <p class="lead">Traditionally, the work of tracking a child's learning, spotting stress before it tips into burnout, and adjusting the schedule accordingly was <strong>done by parents</strong> — who simply don't have the time. Studies consistently show what a dedicated mentor adds. EDU Concierge is the first programme to build that role into the operating model.</p>
+    </div>
+
+    <div class="ec-structure">
+
+      <div class="ec-card">
+        <div class="ec-role-tag">
+          <span class="badge">EC</span>
+          <span>Education Concierge</span>
+          <span class="reports">· reports to ECM</span>
+        </div>
+        <h3>Your child's <em>mentor</em>, in practice.</h3>
+        <div class="ec-acronym">// Exceptionally trained &amp; experienced support staff</div>
+        <p>ECs are the practitioners — they understand each student at an individual level, track learning patterns, and watch the human factors that academic systems usually ignore.</p>
+        <ul class="ec-list">
+          <li>Track learning patterns over time, not just grades</li>
+          <li>Monitor stress, rest, and burnout signals as part of the schedule</li>
+          <li>Build a balanced support plan, weekly and termly</li>
+          <li>Step in proactively when something needs adjusting</li>
+        </ul>
+      </div>
+
+      <div class="ec-card ec-card-mgr">
+        <div class="ec-role-tag">
+          <span class="badge">ECM</span>
+          <span>Education Concierge Manager</span>
+        </div>
+        <h3>The <em>oversight</em> layer above every EC.</h3>
+        <div class="ec-acronym">// Each EC reports to an ECM</div>
+        <p>ECMs bring years of experience in <strong>high-demand customer service and student care.</strong> They supervise EC teams, hold service standards, and step in on complex family situations.</p>
+        <ul class="ec-list">
+          <li>Supervise multiple ECs across age groups and curriculums</li>
+          <li>Quality-control every learning track and intervention</li>
+          <li>Escalation point for complex academic or pastoral cases</li>
+          <li>Long-tenure team members — not rotating contractors</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- What an EC actually tracks — watchlist + narrative -->
+    <div class="ec-watch">
+
+      <!-- LEFT: framing narrative -->
+      <div class="watch-narrative">
+        <span class="narrative-tag">/ The Quiet Work</span>
+        <h4>Holding the <em>whole picture</em> — academic and otherwise.</h4>
+        <p>An EC is not just managing studies. They're tracking the <strong>deadlines a parent shouldn't have to memorise</strong> — exam windows, coursework due dates, university milestones — and watching the parts of your child that academic systems don't measure: how much rest they're getting, where stress is building, what they care about beyond school, whether their interests and chosen path are still aligned.</p>
+        <p>Education takes the bulk of a young person's waking hours for over a decade. Without active management, the cost of that — academically, emotionally, on the family — quietly compounds.</p>
+        <div class="study-quote">
+          <strong>// On burnout in students</strong>
+          Studies consistently link unmanaged academic load to chronic stress, sleep disruption, and a measurable drop in long-term performance. The signals are there well before the breakdown — they just need someone watching for them.
+        </div>
+      </div>
+
+      <!-- RIGHT: the watchlist itself -->
+      <div class="watchlist">
+        <div class="wl-bar">
+          <span class="wl-title">EC Watchlist · Live</span>
+          <span class="wl-stamp">[ updates · weekly ]</span>
+        </div>
+        <div class="wl-rows">
+
+          <div class="wl-row">
+            <div class="wl-icon">
+              <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 H11 V11 H2 Z M2 4 V2 M11 4 V2 M5 7 H8"/></svg>
+            </div>
+            <div class="wl-body">
+              <span class="wl-name">Exam &amp; coursework <em>deadlines</em></span>
+              <span class="wl-detail">IGCSE mocks · A-Level UCAS predictions · paper submissions</span>
+            </div>
+            <span class="wl-status s-due">Tracked</span>
+          </div>
+
+          <div class="wl-row">
+            <div class="wl-icon">
+              <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 11 Q5 6 7 8 T11 3"/><circle cx="11" cy="3" r="1"/></svg>
+            </div>
+            <div class="wl-body">
+              <span class="wl-name">Subject-by-subject <em>progress</em></span>
+              <span class="wl-detail">Pace, comprehension, recurring stuck-points</span>
+            </div>
+            <span class="wl-status s-track">On Track</span>
+          </div>
+
+          <div class="wl-row">
+            <div class="wl-icon">
+              <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6.5" cy="4.5" r="2.5"/><path d="M2 12 C2 9.5 4 8 6.5 8 C9 8 11 9.5 11 12"/></svg>
+            </div>
+            <div class="wl-body">
+              <span class="wl-name">Career interests &amp; <em>aspirations</em></span>
+              <span class="wl-detail">Subject choices that keep doors open · university trajectory</span>
+            </div>
+            <span class="wl-status s-track">Aligned</span>
+          </div>
+
+          <div class="wl-row">
+            <div class="wl-icon">
+              <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6 Q5 4 6.5 5 T10 3"/><path d="M3 9 Q5 7 6.5 8 T10 6"/></svg>
+            </div>
+            <div class="wl-body">
+              <span class="wl-name">Other <em>interests</em></span>
+              <span class="wl-detail">Music, sport, time off — held in view alongside studies</span>
+            </div>
+            <span class="wl-status s-track">Held</span>
+          </div>
+
+          <div class="wl-row">
+            <div class="wl-icon">
+              <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6.5" cy="6.5" r="4"/><path d="M6.5 4 V6.5 L8 8"/></svg>
+            </div>
+            <div class="wl-body">
+              <span class="wl-name">Rest, sleep &amp; <em>recovery</em></span>
+              <span class="wl-detail">Schedule density · downtime · reported energy</span>
+            </div>
+            <span class="wl-status s-watch">Watch</span>
+          </div>
+
+          <div class="wl-row">
+            <div class="wl-icon">
+              <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6.5 2 L11 5 V8.5 Q11 11 6.5 12 Q2 11 2 8.5 V5 Z"/><path d="M5 7 L6 8 L8.5 5.5"/></svg>
+            </div>
+            <div class="wl-body">
+              <span class="wl-name">Stress &amp; burnout <em>signals</em></span>
+              <span class="wl-detail">Engagement drop · withdrawal · workload pressure</span>
+            </div>
+            <span class="wl-status s-flag">Flag &amp; act</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="with-ec">
+      <div class="with-ec-head">
+        <span class="label">/ Stack behind every EC</span>
+        <h4>With one EC, you get a <em>full team</em>.</h4>
+      </div>
+      <div class="with-ec-grid">
+        <div class="with-ec-cell">
+          <span class="role-tag">/ Teaching</span>
+          <span class="role-name">Subject-expert teachers</span>
+          <span class="role-desc">Live class support across the core curriculum, taught by full-time specialists.</span>
+        </div>
+        <div class="with-ec-cell">
+          <span class="role-tag">/ Pedagogy</span>
+          <span class="role-name">Learning specialists</span>
+          <span class="role-desc">Assess how your child learns and shape the support around it — not the other way round.</span>
+        </div>
+        <div class="with-ec-cell">
+          <span class="role-tag">/ Platform</span>
+          <span class="role-name">A smart system</span>
+          <span class="role-desc">An AI-supported platform that surfaces what matters before anyone has to ask.</span>
+        </div>
+        <div class="with-ec-cell">
+          <span class="role-tag">/ Oversight</span>
+          <span class="role-name">Senior management layer</span>
+          <span class="role-desc">Highly experienced ECMs supervising every plan, every escalation, every term.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ec-monitor-strip">
+      <span class="strip-tag">/ Monitoring System</span>
+      <span class="strip-text">Built with input from <em>learning specialists, psychologists, and tech experts</em> — to surface what matters across thousands of student interactions, swiftly.</span>
+      <a href="#contact" class="strip-cta">See how it works
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" style="width:12px;height:12px;"><path d="M3 11 L11 3 M5 3 L11 3 L11 9"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EXPERIENCE FLOW ============ -->
+<section class="experience reveal" id="how">
+  <div class="container">
+    <div class="section-label"><span class="br">[</span><span class="num">06</span><span class="br">]</span><span class="bar"></span><span>The EDC Experience</span></div>
+    <h2 class="heading-xl">From registration to ongoing <em>oversight</em> — every stage in one flow.</h2>
+
+    <div class="exp-flow">
+      <div class="exp-stage">
+        <div class="stage-num"><span class="br">[</span> 01 <span class="br">]</span></div>
+        <div class="stage-info">
+          <h4>Registration</h4>
+          <p>You sign up online. Your child is matched to an Education Manager based on age, year group, school system, and learning needs.</p>
+        </div>
+        <div class="stage-tag">
+          / first contact
+          <span class="who parent">Parent</span>
+        </div>
+      </div>
+
+      <div class="exp-stage">
+        <div class="stage-num"><span class="br">[</span> 02 <span class="br">]</span></div>
+        <div class="stage-info">
+          <h4>1:1 Welcome Call with Parents</h4>
+          <p>Your Education Manager runs a structured intake call to understand your situation, your child, your school, and what success looks like for your family.</p>
+        </div>
+        <div class="stage-tag">
+          / 30 minutes
+          <span class="who parent">Parent</span>
+        </div>
+      </div>
+
+      <div class="exp-stage">
+        <div class="stage-num"><span class="br">[</span> 03 <span class="br">]</span></div>
+        <div class="stage-info">
+          <h4>Learning Style Assessment</h4>
+          <p>A short structured assessment for your child to identify how they learn best, where they're confident, and where targeted support will move the needle most.</p>
+        </div>
+        <div class="stage-tag">
+          / structured
+          <span class="who student">Student</span>
+        </div>
+      </div>
+
+      <div class="exp-stage">
+        <div class="stage-num"><span class="br">[</span> 04 <span class="br">]</span></div>
+        <div class="stage-info">
+          <h4>Welcome Session for Students</h4>
+          <p>Your child is onboarded onto the platform, meets their Education Manager, and is shown how to use the mobile app and live learning tools.</p>
+        </div>
+        <div class="stage-tag">
+          / 1:1 onboarding
+          <span class="who student">Student</span>
+        </div>
+      </div>
+
+      <div class="exp-stage">
+        <div class="stage-num"><span class="br">[</span> 05 <span class="br">]</span></div>
+        <div class="stage-info">
+          <h4>Learning Track &amp; Milestones</h4>
+          <p>Your Education Manager builds a personalised learning track with milestones and checkpoints, agreed with you and adjusted termly.</p>
+        </div>
+        <div class="stage-tag">
+          / personalised
+          <span class="who both">EM + Family</span>
+        </div>
+      </div>
+
+      <div class="exp-stage">
+        <div class="stage-num"><span class="br">[</span> 06 <span class="br">]</span></div>
+        <div class="stage-info">
+          <h4>Ongoing Programme Management</h4>
+          <p>Live lessons when needed, regular progress reporting, exam prep cycles, school-liaison support, and proactive alerts when something needs your attention.</p>
+        </div>
+        <div class="stage-tag">
+          / continuous
+          <span class="who both">EM + Family</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TECHNOLOGY ============ -->
+<section class="technology reveal" id="technology">
+  <div class="container">
+    <div class="tech-header">
+      <div>
+        <div class="section-label"><span class="br">[</span><span class="num">07</span><span class="br">]</span><span class="bar"></span><span>Technology</span></div>
+        <h2 class="heading-xl">A platform built for <em>insight</em>, not just admin.</h2>
+      </div>
+      <p class="lead">Most education platforms are glorified spreadsheets — places where homework gets logged and reports get generated. Ours is built to do something <strong>fundamentally different</strong>: surface what matters about a student <em>before</em> a parent or teacher would have noticed it.</p>
+    </div>
+
+    <!-- Four pillars -->
+    <div class="tech-pillars">
+
+      <div class="tech-pillar">
+        <div class="pillar-num">/ 01</div>
+        <svg class="pillar-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="18" cy="18" r="14"/>
+          <circle cx="18" cy="18" r="6"/>
+          <path d="M18 4 V11 M32 18 H25 M18 32 V25 M4 18 H11"/>
+        </svg>
+        <h3>Smart, not <em>just</em> managed</h3>
+        <p>The system tracks far beyond grades — engagement, pace, missed sessions, recurring stuck-points. Every signal feeds a continuously updated picture of your child.</p>
+      </div>
+
+      <div class="tech-pillar">
+        <div class="pillar-num">/ 02</div>
+        <svg class="pillar-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.6">
+          <rect x="6" y="6" width="24" height="24" rx="3"/>
+          <circle cx="13" cy="13" r="2"/><circle cx="23" cy="13" r="2"/>
+          <path d="M11 22 Q18 26 25 22"/>
+          <path d="M18 6 V3 M14 3 H22"/>
+        </svg>
+        <h3>AI <em>copilot</em> for ECs</h3>
+        <p>An AI assistant that flags where each EC's attention will pay off most this week — students at risk of stress, learners ready to be stretched, families to check in on.</p>
+      </div>
+
+      <div class="tech-pillar">
+        <div class="pillar-num">/ 03</div>
+        <svg class="pillar-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M6 30 Q12 22 18 26 T30 18"/>
+          <path d="M6 22 Q14 16 20 20 T30 12"/>
+          <circle cx="30" cy="12" r="2.5"/>
+          <circle cx="30" cy="18" r="2.5"/>
+        </svg>
+        <h3>Deep <em>insights</em></h3>
+        <p>Long-arc views your school report card never gives you — multi-month learning patterns, subject correlations, wellbeing trends, intervention outcomes.</p>
+      </div>
+
+      <div class="tech-pillar">
+        <div class="pillar-num">/ 04</div>
+        <svg class="pillar-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M6 12 H30 V28 H6 Z"/>
+          <path d="M6 12 L18 4 L30 12"/>
+          <circle cx="18" cy="20" r="3"/>
+          <path d="M18 23 V26"/>
+        </svg>
+        <h3>Dynamic, <em>interactive</em> content</h3>
+        <p>Lessons that respond — adaptive practice, branching examples, instant feedback. Less lecture, more conversation between the student and the material.</p>
+      </div>
+
+    </div>
+
+    <!-- Three portals visual -->
+    <div class="tech-portals">
+
+      <div class="text">
+        <h3>Three portals.<br>One <em>state-of-the-art</em> stack.</h3>
+        <p>The EC, Student, and Teacher portals are <strong>designed by collecting feedback from real users</strong> — learning specialists, classroom teachers, and the families themselves — then refined through ongoing release cycles.</p>
+        <p>Nothing ships and goes stale. The platform updates continuously, with every release shaped by the people actually using it on the ground.</p>
+        <span class="signal-line">Live · shipped weekly · feedback-driven</span>
+      </div>
+
+      <div class="portals-stack">
+        <span class="tech-upgrade">v.2026 → Continuous</span>
+
+        <!-- EC portal — back layer -->
+        <div class="portal-window w-ec">
+          <div class="pw-bar">
+            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <span class="label">EC Portal · Caseload</span>
+          </div>
+          <div class="pw-body">
+            <div class="pw-row">
+              <span class="pw-dot" style="background:#7A9472;"></span>
+              <span style="font-weight:500;">A. Khan</span>
+              <span class="pw-bar-fill"><span class="fill" style="width:84%;"></span></span>
+              <span class="pw-num">on track</span>
+            </div>
+            <div class="pw-row">
+              <span class="pw-dot" style="background:#F5D88A;"></span>
+              <span style="font-weight:500;">M. Singh</span>
+              <span class="pw-bar-fill"><span class="fill" style="width:62%; background:#F5D88A;"></span></span>
+              <span class="pw-num">watch</span>
+            </div>
+            <div class="pw-row">
+              <span class="pw-dot" style="background:#C77B4F;"></span>
+              <span style="font-weight:500;">L. Hassan</span>
+              <span class="pw-bar-fill"><span class="fill" style="width:42%;"></span></span>
+              <span class="pw-num">flag</span>
+            </div>
+            <div class="pw-row">
+              <span class="pw-dot" style="background:#7A9472;"></span>
+              <span style="font-weight:500;">R. Rao</span>
+              <span class="pw-bar-fill"><span class="fill" style="width:91%;"></span></span>
+              <span class="pw-num">on track</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student portal — middle layer -->
+        <div class="portal-window w-student">
+          <div class="pw-bar">
+            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <span class="label">Student · Today</span>
+          </div>
+          <div class="pw-body">
+            <div class="pw-bubble user">// algebra Q4 — i'm stuck</div>
+            <div class="pw-bubble bot">try this — what's x in 3x+2=14?</div>
+            <div class="pw-bubble user">x = 4</div>
+          </div>
+        </div>
+
+        <!-- Teacher portal — front layer -->
+        <div class="portal-window w-teacher">
+          <div class="pw-bar">
+            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <span class="label">Teacher · Class 9B</span>
+          </div>
+          <div class="pw-body">
+            <div class="pw-tile t-active">Live</div>
+            <div class="pw-tile">Lesson</div>
+            <div class="pw-tile t-warn">3 ⚑</div>
+            <div class="pw-tile">Practice</div>
+            <div class="pw-tile">Quiz</div>
+            <div class="pw-tile">Notes</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ TRUST & ENGAGEMENT ============ -->
+<section class="trust-engage reveal" id="trust">
+  <div class="container">
+    <div class="te-header">
+      <div>
+        <div class="section-label"><span class="br">[</span><span class="num">08</span><span class="br">]</span><span class="bar"></span><span>Trust &amp; Parent Engagement</span></div>
+        <h2 class="heading-xl">How we <em>actually</em> show up.</h2>
+      </div>
+      <p class="lead">Two things every family is right to ask before they hand over their child's education to anyone: <strong>"How do you operate?"</strong> and <strong>"How will you keep me in the loop?"</strong> Here are direct answers to both.</p>
+    </div>
+
+    <div class="te-columns">
+
+      <!-- Protocols -->
+      <div class="te-card">
+        <div class="te-tag">/ The Trust Layer</div>
+        <h3>Protocols we <em>follow</em>.</h3>
+        <p class="te-intro">A short, deliberate list — not legal copy, not a pile of ISO numbers. The actual operating rules every EC, ECM, and team member abides by, every day, no exceptions.</p>
+
+        <ol class="protocols-list">
+          <li>
+            <span class="num">/ 01</span>
+            <div class="body">
+              <span class="name">Strict Confidentiality</span>
+              <span class="desc">Everything you share — your child's grades, situation, family context — stays inside the engagement. We do not share, sell, or repurpose it. Ever.</span>
+            </div>
+          </li>
+          <li>
+            <span class="num">/ 02</span>
+            <div class="body">
+              <span class="name">Encrypted, Owned by You</span>
+              <span class="desc">All data — assessments, progress notes, session recordings — is encrypted in transit and at rest. You can request a full export, or full deletion, at any time.</span>
+            </div>
+          </li>
+          <li>
+            <span class="num">/ 03</span>
+            <div class="body">
+              <span class="name">Vetted Staff Only</span>
+              <span class="desc">Background checks, qualification verification, ongoing professional review. No freelancer hand-offs. Every adult interacting with your child is on our team.</span>
+            </div>
+          </li>
+          <li>
+            <span class="num">/ 04</span>
+            <div class="body">
+              <span class="name">Layered Oversight</span>
+              <span class="desc">Every EC reports to an ECM. Every interaction is logged. Every plan is peer-reviewed. No single person is the only safeguard around your child.</span>
+            </div>
+          </li>
+          <li>
+            <span class="num">/ 05</span>
+            <div class="body">
+              <span class="name">Safeguarding First</span>
+              <span class="desc">Wellbeing concerns — stress, withdrawal, signals of harm — are escalated through a documented, expert-led safeguarding pathway. Always, immediately, without exception.</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <!-- Parent Engagement -->
+      <div class="te-card">
+        <div class="te-tag">/ The Relationship Layer</div>
+        <h3>You stay <em>in the loop</em>.</h3>
+        <p class="te-intro">A real cadence of contact — not just a quarterly portal login. You hear from us before you have to ask. And when something is on your mind, we want to know.</p>
+
+        <div class="engage-touch">
+
+          <div class="engage-row">
+            <div class="icon-circle">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M2 6 H14 M5 9 H8 M5 11 H10"/></svg>
+            </div>
+            <div class="body">
+              <span class="label">Monthly Progress Report</span>
+              <span class="desc">A clear written summary of your child's month — academic, engagement, wellbeing.</span>
+            </div>
+            <span class="cadence">Monthly</span>
+          </div>
+
+          <div class="engage-row">
+            <div class="icon-circle">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6"/><path d="M8 4 V8 L11 10"/></svg>
+            </div>
+            <div class="body">
+              <span class="label">Termly 1:1 Review Call</span>
+              <span class="desc">A scheduled call with your EC to review the term, adjust the plan, and look ahead.</span>
+            </div>
+            <span class="cadence">Termly</span>
+          </div>
+
+          <div class="engage-row">
+            <div class="icon-circle">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 4 L13 4 L13 12 L9 12 L7 14 L7 12 L3 12 Z"/><circle cx="6" cy="8" r="0.6" fill="currentColor"/><circle cx="8" cy="8" r="0.6" fill="currentColor"/><circle cx="10" cy="8" r="0.6" fill="currentColor"/></svg>
+            </div>
+            <div class="body">
+              <span class="label">Direct Line, Always Open</span>
+              <span class="desc">Message your EC anytime through the app — questions, worries, anything.</span>
+            </div>
+            <span class="cadence">Anytime</span>
+          </div>
+
+          <div class="engage-row">
+            <div class="icon-circle">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 13 L8 8 L13 13"/><path d="M3 8 L8 3 L13 8"/></svg>
+            </div>
+            <div class="body">
+              <span class="label">Proactive Alerts</span>
+              <span class="desc">If a pattern shifts — grades, mood, attendance — we tell you before you'd have noticed.</span>
+            </div>
+            <span class="cadence">As Needed</span>
+          </div>
+
+        </div>
+
+        <div class="talk-pull">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M4 6 H20 V16 H13 L9 20 L9 16 L4 16 Z"/>
+            <circle cx="9" cy="11" r="0.8" fill="currentColor"/><circle cx="12" cy="11" r="0.8" fill="currentColor"/><circle cx="15" cy="11" r="0.8" fill="currentColor"/>
+          </svg>
+          <span class="text">Worried about <em>rising school fees</em>, a tough term, or something you're not sure how to handle? Your EC is here to listen and help — not just on academics, but on the wider weight of educating a child in 2026.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ VALUE (Tangible + Intangible) ============ -->
+<section class="value reveal" id="value">
+  <div class="container">
+
+    <div class="value-header">
+      <div>
+        <div class="section-label"><span class="br">[</span><span class="num">09</span><span class="br">]</span><span class="bar"></span><span>The Value</span></div>
+        <h2 class="heading-xl">Two halves of <em>worth</em>.</h2>
+      </div>
+      <p class="lead">The value of EDU Concierge splits cleanly in two. The <strong>tangible</strong> part — the hours of learning support — has a market price, and ours is roughly <em>a tenth</em> of buying it through a tuition centre. The <strong>intangible</strong> part — the people, the system, the follow-up — has no sticker price, but it's where the programme really earns its keep.</p>
+    </div>
+
+    <!-- ============ TANGIBLE ============ -->
+    <div class="value-half">
+      <div class="half-head">
+        <span class="half-tag tag-tangible">/ 01 Tangible</span>
+        <h3>Subject hours.<br>Same maths, <em>different</em> price.</h3>
+      </div>
+
+      <div class="tier-toggle" role="tablist" aria-label="Compare plan">
+        <button class="active" data-tier="basic" role="tab" aria-selected="true">Base Tier</button>
+        <button data-tier="plus" role="tab" aria-selected="false">Plus Tier</button>
+      </div>
+
+      <!-- BASIC pane -->
+      <div class="tangible-pair" data-tier-pane="basic">
+
+        <!-- LEFT: Tuition centre route -->
+        <div class="tangible-card">
+          <span class="t-label">/ Tuition Centre Route</span>
+          <h4 class="t-headline">Same hours, paid <em>by the hour</em>.</h4>
+
+          <div class="t-math">
+            <div class="math-row">
+              <span class="label">/ Hours</span>
+              <span class="value-line">1 hr/week × 4 weeks = <em>4 hrs</em></span>
+            </div>
+            <div class="math-row">
+              <span class="label">/ Rate</span>
+              <span class="value-line">AED 80–150 / hour</span>
+            </div>
+            <div class="calc-line">4 hrs <span class="equals">×</span> AED 80–150/hr <span class="equals">=</span> AED 320–600</div>
+          </div>
+
+          <div class="t-total">
+            <span class="total-label">Tuition centre · monthly</span>
+            <div class="amount">
+              <span class="currency">AED</span>320–600
+              <span class="period">per month, per student</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: EDC Base -->
+        <div class="tangible-card card-edc">
+          <span class="t-label">/ EDC Base</span>
+          <h4 class="t-headline">Same hours. <em>Bundled.</em></h4>
+
+          <div class="t-math">
+            <div class="math-row">
+              <span class="label">/ Hours</span>
+              <span class="value-line">1 hr/week × 4 weeks = <em>4 hrs</em></span>
+            </div>
+            <div class="math-row">
+              <span class="label">/ Rate</span>
+              <span class="value-line">All-in subscription</span>
+            </div>
+            <div class="calc-line">Live class support · subject-expert teachers <span class="equals">·</span> Limited exam help included</div>
+          </div>
+
+          <div class="t-total">
+            <span class="total-label">EDC Base · monthly</span>
+            <div class="amount">
+              <span class="currency">AED</span>50
+              <span class="period">per month, per student</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PLUS pane (hidden by default) -->
+      <div class="tangible-pair" data-tier-pane="plus" style="display:none;">
+
+        <!-- LEFT: Tuition centre route for Plus equivalent -->
+        <div class="tangible-card">
+          <span class="t-label">/ Tuition Centre Route</span>
+          <h4 class="t-headline">Same hours, paid <em>by the hour</em>.</h4>
+
+          <div class="t-math">
+            <div class="math-row">
+              <span class="label">/ Hours</span>
+              <span class="value-line">2.5 hrs/week × 4 weeks = <em>10 hrs</em></span>
+            </div>
+            <div class="math-row">
+              <span class="label">/ Rate</span>
+              <span class="value-line">AED 80–150 / hour</span>
+            </div>
+            <div class="calc-line">10 hrs <span class="equals">×</span> AED 80–150/hr <span class="equals">=</span> AED 800–1,500</div>
+          </div>
+
+          <div class="t-total">
+            <span class="total-label">Tuition centre · monthly</span>
+            <div class="amount">
+              <span class="currency">AED</span>800–1,500
+              <span class="period">per month, per student</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: EDC Plus -->
+        <div class="tangible-card card-edc">
+          <span class="t-label">/ EDC Plus</span>
+          <h4 class="t-headline">Same hours. <em>Bundled.</em></h4>
+
+          <div class="t-math">
+            <div class="math-row">
+              <span class="label">/ Hours</span>
+              <span class="value-line">2.5 hrs/week × 4 weeks = <em>10 hrs</em></span>
+            </div>
+            <div class="math-row">
+              <span class="label">/ Rate</span>
+              <span class="value-line">All-in subscription</span>
+            </div>
+            <div class="calc-line">Subject classes <span class="equals">+</span> dedicated manager <span class="equals">+</span> unlimited exam help</div>
+          </div>
+
+          <div class="t-total">
+            <span class="total-label">EDC Plus · monthly</span>
+            <div class="amount">
+              <span class="currency">AED</span>200
+              <span class="period">per month, per student</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="tangible-savings">
+        <div class="text" data-tangible-text>
+          On <strong>subject hours alone</strong>, EDC Base costs roughly <em>a ninth</em> of paying for the same teaching at a tuition centre.
+        </div>
+        <div class="stamp" data-tangible-stamp>
+          <span class="currency">~</span>9×
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ INTANGIBLE ============ -->
+    <div class="value-half">
+      <div class="half-head">
+        <span class="half-tag tag-intangible">/ 02 Intangible</span>
+        <h3>What you can't <em>price by the hour</em>.</h3>
+      </div>
+
+      <div class="intangible-grid">
+
+        <div class="intangible-card">
+          <div class="ic-num">/ 01</div>
+          <svg class="ic-icon" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="15" cy="11" r="4"/>
+            <path d="M5 26 C5 20 10 17 15 17 C20 17 25 20 25 26"/>
+          </svg>
+          <h4>A dedicated <em>Education Manager</em></h4>
+          <p>Someone who knows your child by name. Tracks the long arc, not just this week. Picks up the phone when you need them.</p>
+          <div class="ic-tag">// Plus &amp; Family tiers</div>
+        </div>
+
+        <div class="intangible-card">
+          <div class="ic-num">/ 02</div>
+          <svg class="ic-icon" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="9" cy="11" r="3"/>
+            <circle cx="21" cy="11" r="3"/>
+            <path d="M3 24 C3 19 6 17 9 17 C12 17 15 19 15 24"/>
+            <path d="M15 24 C15 19 18 17 21 17 C24 17 27 19 27 24"/>
+          </svg>
+          <h4>Learning specialists, <em>on call</em></h4>
+          <p>Pedagogy experts, psychologists, subject specialists — pulled in when your child needs a layer beyond the regular session.</p>
+          <div class="ic-tag">// As needed</div>
+        </div>
+
+        <div class="intangible-card">
+          <div class="ic-num">/ 03</div>
+          <svg class="ic-icon" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M5 24 Q11 16 15 18 T25 6"/>
+            <circle cx="25" cy="6" r="2"/>
+            <circle cx="15" cy="18" r="1.5"/>
+          </svg>
+          <h4>Active <em>follow-up</em></h4>
+          <p>Patterns spotted before they become problems. Nudges to your child when momentum dips. Adjustments to the plan, term by term.</p>
+          <div class="ic-tag">// Continuous</div>
+        </div>
+
+        <div class="intangible-card">
+          <div class="ic-num">/ 04</div>
+          <svg class="ic-icon" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="5" y="6" width="20" height="18" rx="2"/>
+            <path d="M5 11 H25 M9 16 H15 M9 20 H19"/>
+          </svg>
+          <h4>Regular parent <em>reporting</em></h4>
+          <p>Monthly written summaries. Termly 1:1 review calls. Proactive alerts when something shifts. You hear from us before you have to ask.</p>
+          <div class="ic-tag">// Monthly + termly</div>
+        </div>
+
+        <div class="intangible-card">
+          <div class="ic-num">/ 05</div>
+          <svg class="ic-icon" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="15" cy="15" r="11"/>
+            <circle cx="15" cy="15" r="5"/>
+            <path d="M15 4 V8 M26 15 H22 M15 26 V22 M4 15 H8"/>
+          </svg>
+          <h4>The <em>system</em>, watching</h4>
+          <p>An AI-supported platform tracking learning patterns, engagement, wellbeing — surfacing what matters to the team before anyone has to ask.</p>
+          <div class="ic-tag">// All tiers</div>
+        </div>
+
+        <div class="intangible-card">
+          <div class="ic-num">/ 06</div>
+          <svg class="ic-icon" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M15 4 L24 8 V16 Q24 22 15 26 Q6 22 6 16 V8 Z"/>
+            <path d="M11 15 L14 18 L20 12"/>
+          </svg>
+          <h4>An <em>oversight</em> layer</h4>
+          <p>ECMs supervising every plan. Documented safeguarding pathway. Strict confidentiality, vetted staff, layered review. Your child is never one person's responsibility alone.</p>
+          <div class="ic-tag">// Always</div>
+        </div>
+
+        <div class="intangible-card">
+          <div class="ic-num">/ 07</div>
+          <svg class="ic-icon" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="15" cy="15" r="11"/>
+            <path d="M15 8 V15 L20 18"/>
+          </svg>
+          <h4>The <em>time</em> you get back</h4>
+          <p>The hours you'd have spent chasing tutors, vetting tutors, comparing tutors, and patching their feedback into something that makes sense. That's a real cost. We absorb it.</p>
+          <div class="ic-tag">// Hard to quantify · easy to feel</div>
+        </div>
+
+        <div class="intangible-card">
+          <div class="ic-num">/ 08</div>
+          <svg class="ic-icon" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M6 18 L14 22 L24 8"/>
+            <circle cx="6" cy="18" r="1.5"/>
+          </svg>
+          <h4>Long-arc <em>continuity</em></h4>
+          <p>Subject choices at IGCSE that don't close doors at A-Level. Career conversations at Year 12. Transitions handled without losing momentum. The same team, year on year.</p>
+          <div class="ic-tag">// Multi-year</div>
+        </div>
+
+        <div class="intangible-card">
+          <div class="ic-num">/ 09</div>
+          <svg class="ic-icon" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M5 13 H25 M5 13 L8 8 H22 L25 13 M7 13 V22 H23 V13"/>
+            <circle cx="11" cy="17" r="1.2"/><circle cx="19" cy="17" r="1.2"/>
+          </svg>
+          <h4>A <em>place</em> to bring concerns</h4>
+          <p>Worried about rising fees, a tough term, something you're not sure how to handle? Your EC listens — academic or otherwise. That's part of the deal.</p>
+          <div class="ic-tag">// Anytime</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Closing line -->
+    <div class="value-close">
+      <div class="close-text">
+        Add the tangible savings to the intangible support, and the <em>real value</em> of EDU Concierge is several multiples of what you pay for it. Try it for a month.
+      </div>
+      <a href="#contact" class="close-cta">Try for Free</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section class="pricing reveal" id="pricing">
+  <div class="container">
+    <div class="pricing-header">
+      <div>
+        <div class="section-label"><span class="br">[</span><span class="num">10</span><span class="br">]</span><span class="bar"></span><span>Plans</span></div>
+        <h2 class="heading-xl">One pricing for everyone.<br>No hidden <em>extras</em>.</h2>
+      </div>
+      <p class="desc">A transparent, economical model built on simplicity, efficiency, and uncompromising quality. Same pricing across all regions. Local language support included. All-in pricing — what you see is what you pay.</p>
+    </div>
+
+    <div class="curriculum-band">
+      <span class="label">/ Curriculums covered</span>
+      <div class="systems">
+        <span class="sys-pill">British · IGCSE / A-Level</span>
+        <span class="sys-pill">Cambridge · Edexcel · Oxford AQA</span>
+        <span class="sys-pill">CBSE / ICSE</span>
+        <span class="sys-pill">American · AP</span>
+        <span class="sys-pill">IB Diploma</span>
+        <span class="sys-pill">+ more on request</span>
+      </div>
+      <a href="#systems" class="more-link">See full list
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 11 L11 3 M5 3 L11 3 L11 9"/></svg>
+      </a>
+    </div>
+
+    <div class="pricing-grid">
+
+      <!-- FREEDOM — free tier -->
+      <div class="plan">
+        <div class="plan-name">Freedom</div>
+        <div class="plan-price"><span class="currency">AED</span>0<span class="period">/mo</span></div>
+        <div class="plan-scope">// free for any registered student</div>
+        <div class="plan-tagline">Try EDU Concierge — no card, no commitment.</div>
+        <ul class="plan-features">
+          <li class="plan-feat"><span><span class="feat-strong">2 hours/month</span> in live classes</span></li>
+          <li class="plan-feat">Run by subject teachers · join any class with available seats</li>
+          <li class="plan-feat">Ask doubts directly to teachers</li>
+          <li class="plan-feat"><span class="feat-strong">Student Journal</span> <span class="feat-muted">(2-entry preview)</span></li>
+          <li class="plan-feat">Mobile app included</li>
+          <li class="plan-feat">Upgrade anytime</li>
+        </ul>
+        <a href="#contact" class="plan-cta">Start free</a>
+      </div>
+
+      <!-- BASE -->
+      <div class="plan">
+        <div class="plan-name">Base</div>
+        <div class="plan-price"><span class="currency">AED</span>50<span class="period">/mo</span></div>
+        <div class="plan-scope">// per month, <strong>per student</strong></div>
+        <div class="plan-tagline">Weekly subject support to keep pace.</div>
+        <ul class="plan-features">
+          <li class="plan-feat"><span><span class="feat-strong">1 hour/week</span> subject support</span></li>
+          <li class="plan-feat"><span class="feat-strong">Learning style assessment</span> by an expert</li>
+          <li class="plan-feat"><span class="feat-strong">Student Journal</span> · unlimited &amp; private</li>
+          <li class="plan-feat">Live support included</li>
+          <li class="plan-feat">Mobile app included</li>
+          <li class="plan-feat">All core subjects (excluding Quran Clinic)</li>
+          <li class="plan-feat">Exam Help &amp; Revision Support <span class="feat-muted">(Limited)</span></li>
+        </ul>
+        <a href="#contact" class="plan-cta">Start Base</a>
+      </div>
+
+      <!-- PLUS — featured -->
+      <div class="plan plan-featured">
+        <div class="plan-tag">Most popular</div>
+        <div class="plan-name">Plus</div>
+        <div class="plan-price"><span class="currency">AED</span>200<span class="period">/mo</span></div>
+        <div class="plan-scope">// per month, <strong>per student</strong></div>
+        <div class="plan-tagline">Dedicated manager, full programme, deeper support.</div>
+        <ul class="plan-features">
+          <li class="plan-feat"><span><span class="feat-strong">2.5 hours/week</span> subject support</span></li>
+          <li class="plan-feat"><span class="feat-strong">Learning style assessment</span> by an expert</li>
+          <li class="plan-feat"><span class="feat-strong">Student Journal</span> · unlimited &amp; private</li>
+          <li class="plan-feat"><span class="feat-strong">Dedicated Education Manager</span></li>
+          <li class="plan-feat">Live learning specialists, as needed</li>
+          <li class="plan-feat">All core subjects (incl. Quran Clinic)</li>
+          <li class="plan-feat">Assessments &amp; exam preparation</li>
+          <li class="plan-feat"><span class="feat-strong">Exam Help &amp; Revision Support</span> <span class="feat-tag-strong">Unlimited</span></li>
+          <li class="plan-feat">Mobile app + parent progress reporting</li>
+        </ul>
+        <a href="#contact" class="plan-cta">Start Plus</a>
+      </div>
+
+      <!-- FAMILY -->
+      <div class="plan">
+        <div class="plan-name">Family</div>
+        <div class="plan-price"><span class="currency">AED</span>375<span class="period">/mo</span></div>
+        <div class="plan-scope">// per month, <strong>for up to 3 siblings</strong></div>
+        <div class="plan-tagline">Everything in Plus — for the whole household.</div>
+        <ul class="plan-features">
+          <li class="plan-feat"><span class="feat-strong">All features of Plus</span></li>
+          <li class="plan-feat">Covers up to <span class="feat-strong">3 students</span></li>
+          <li class="plan-feat"><span class="feat-strong">Learning style assessment</span> by an expert · per child</li>
+          <li class="plan-feat"><span class="feat-strong">Student Journal</span> · unlimited &amp; private · per child</li>
+          <li class="plan-feat">Dedicated Education Manager per family</li>
+          <li class="plan-feat">Coordinated cross-child planning</li>
+          <li class="plan-feat"><span class="feat-strong">Exam Help &amp; Revision Support</span> <span class="feat-tag-strong">Unlimited</span></li>
+          <li class="plan-feat">Single billing, single point of contact</li>
+        </ul>
+        <a href="#contact" class="plan-cta">Start Family</a>
+      </div>
+
+    </div>
+
+    <div class="pricing-note">// One pricing model for all regions · Local language support · No hidden costs</div>
+
+    <!-- Subject Support explainer -->
+    <div class="foundation-explainer">
+      <div class="side-tag">
+        <span class="tag-num">/ Included with every plan</span>
+        <span class="tag-name">Subject <em>Support</em></span>
+      </div>
+      <div class="body">
+        <p><strong>Subject Support</strong> is direct, scheduled access to <strong>subject-expert teachers</strong> who run live class sessions to refresh, reinforce, and stretch students across the core curriculum.</p>
+        <p>A <strong>regular weekly refresher</strong> is more useful for higher grades than <em>peak preparations close to exams</em>. Steady reinforcement through the term keeps concepts compounding — exam-week cramming only papers over gaps that were already there.</p>
+        <p>It's the layer that quietly <em>replaces the need for extra tuitions</em> — same teaching quality, same individual attention, all inside the same plan you're already paying for.</p>
+        <span class="replace-line">
+          <span class="strike">Exam-week cramming</span>
+          <span class="arrow">→</span>
+          <span class="gain">Regular weekly Subject Support, included</span>
+        </span>
+      </div>
+      <div class="visual">
+        <svg viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="fsGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#F5D88A" stop-opacity="0.6"/>
+              <stop offset="100%" stop-color="#F5D88A" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="70" cy="70" r="60" fill="url(#fsGlow)"/>
+          <circle cx="70" cy="70" r="52" fill="none" stroke="rgba(26,22,18,0.15)" stroke-width="1" stroke-dasharray="3 4"/>
+          <circle cx="70" cy="70" r="34" fill="none" stroke="rgba(26,22,18,0.20)" stroke-width="1"/>
+
+          <!-- subject icons positioned around -->
+          <g font-family="Archivo" font-size="11" font-weight="700" fill="#1A1612" text-anchor="middle">
+            <text x="70" y="20">MATHS</text>
+            <text x="120" y="74">SCI</text>
+            <text x="70" y="128">ENG</text>
+            <text x="20" y="74">LANG</text>
+          </g>
+
+          <!-- center: live class indicator -->
+          <circle cx="70" cy="70" r="14" fill="#1A1612"/>
+          <circle cx="70" cy="70" r="5" fill="#C77B4F">
+            <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <text x="70" y="92" font-family="JetBrains Mono" font-size="7" font-weight="500" fill="#1A1612" text-anchor="middle" letter-spacing="0.1em">LIVE</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Student Journal explainer -->
+    <div class="foundation-explainer journal-explainer">
+      <div class="side-tag">
+        <span class="tag-num">/ Included with every plan</span>
+        <span class="tag-name">Student <em>Journal</em></span>
+      </div>
+      <div class="body">
+        <p><strong>A private space for the student to think.</strong> The Student Journal is a reflection log only the student can see — not parents, not teachers, not the Education Manager. They write what they're learning, what's clicking, what isn't, and what they want to work on next.</p>
+        <p>Why we built it this way: students who <strong>regularly reflect on their own learning</strong> consistently <em>outperform peers</em> who only receive external feedback. This is one of the most replicated findings in learning science — known as the <em>metacognitive advantage</em>. The act of writing about your own thinking is itself the learning event.</p>
+        <p>The privacy is the whole point. <strong>Children need a space to be honest about what they don't yet understand</strong> — including the parts they'd be embarrassed to say out loud. That's the only way reflection works. Progress reports, grades, and Education Manager updates remain fully visible to parents. The journal is theirs alone, and that's what makes it useful.</p>
+        <span class="replace-line">
+          <span class="strike">Passive feedback</span>
+          <span class="arrow">→</span>
+          <span class="gain">Active reflection, owned by the student</span>
+        </span>
+      </div>
+      <div class="visual">
+        <svg viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="jrGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#A8C9A0" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#A8C9A0" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="70" cy="70" r="60" fill="url(#jrGlow)"/>
+
+          <!-- journal/book illustration -->
+          <g transform="translate(70 70)">
+            <!-- book body -->
+            <rect x="-32" y="-38" width="64" height="76" rx="4" fill="#FAF7F2" stroke="#1A1612" stroke-width="1.5"/>
+            <!-- spine -->
+            <line x1="0" y1="-38" x2="0" y2="38" stroke="#1A1612" stroke-width="1"/>
+            <!-- lines on pages -->
+            <line x1="-26" y1="-24" x2="-6" y2="-24" stroke="#1A1612" stroke-width="0.6" opacity="0.45"/>
+            <line x1="-26" y1="-16" x2="-8" y2="-16" stroke="#1A1612" stroke-width="0.6" opacity="0.45"/>
+            <line x1="-26" y1="-8" x2="-10" y2="-8" stroke="#1A1612" stroke-width="0.6" opacity="0.45"/>
+            <line x1="-26" y1="0" x2="-6" y2="0" stroke="#1A1612" stroke-width="0.6" opacity="0.45"/>
+            <line x1="-26" y1="8" x2="-12" y2="8" stroke="#1A1612" stroke-width="0.6" opacity="0.45"/>
+            <line x1="-26" y1="16" x2="-8" y2="16" stroke="#1A1612" stroke-width="0.6" opacity="0.45"/>
+            <line x1="-26" y1="24" x2="-14" y2="24" stroke="#1A1612" stroke-width="0.6" opacity="0.45"/>
+
+            <line x1="6" y1="-24" x2="26" y2="-24" stroke="#1A1612" stroke-width="0.6" opacity="0.45"/>
+            <line x1="6" y1="-16" x2="22" y2="-16" stroke="#1A1612" stroke-width="0.6" opacity="0.45"/>
+            <line x1="6" y1="-8" x2="26" y2="-8" stroke="#1A1612" stroke-width="0.6" opacity="0.45"/>
+            <line x1="6" y1="0" x2="20" y2="0" stroke="#1A1612" stroke-width="0.6" opacity="0.45"/>
+            <line x1="6" y1="8" x2="26" y2="8" stroke="#1A1612" stroke-width="0.6" opacity="0.45"/>
+            <line x1="6" y1="16" x2="18" y2="16" stroke="#1A1612" stroke-width="0.6" opacity="0.45"/>
+
+            <!-- lock icon -->
+            <g transform="translate(0 -48)">
+              <rect x="-7" y="-3" width="14" height="11" rx="1.5" fill="#1A1612"/>
+              <path d="M -4 -3 L -4 -7 Q -4 -10 0 -10 Q 4 -10 4 -7 L 4 -3" stroke="#1A1612" stroke-width="1.4" fill="none"/>
+              <circle cx="0" cy="3" r="1.5" fill="#A8C9A0"/>
+            </g>
+          </g>
+
+          <text x="70" y="128" font-family="JetBrains Mono" font-size="7" font-weight="500" fill="#1A1612" text-anchor="middle" letter-spacing="0.1em">PRIVATE · STUDENT-ONLY</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============ SPECIALITIES ============ -->
+<section class="specialities reveal" id="systems">
+  <div class="container">
+    <div class="section-label"><span class="br">[</span><span class="num">11</span><span class="br">]</span><span class="bar"></span><span>Education Systems</span></div>
+    <h2 class="heading-xl">We specialise in leading<br>global <em>education systems</em>.</h2>
+
+    <div class="spec-grid">
+      <div class="spec">
+        <div class="spec-name">Edexcel</div>
+        <div class="spec-tag">UK · Pearson</div>
+      </div>
+      <div class="spec">
+        <div class="spec-name">Cambridge</div>
+        <div class="spec-tag">CIE · IGCSE / A-Level</div>
+      </div>
+      <div class="spec">
+        <div class="spec-name">Oxford AQA</div>
+        <div class="spec-tag">Intl. examinations</div>
+      </div>
+      <div class="spec">
+        <div class="spec-name">CBSE / ICSE</div>
+        <div class="spec-tag">India boards</div>
+      </div>
+      <div class="spec">
+        <div class="spec-name">American · AP</div>
+        <div class="spec-tag">College Board</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TEAM ============ -->
+<section class="team reveal">
+  <div class="container">
+    <div class="team-grid">
+      <div class="team-text">
+        <div class="section-label"><span class="br">[</span><span class="num">12</span><span class="br">]</span><span class="bar"></span><span>The Team</span></div>
+        <h2 class="heading-xl">A global team of <em>educators</em>.</h2>
+        <p>Our Education Managers and learning specialists span continents and curriculums. They are not freelancers. They are full-time members of our team, many of whom have been with us for years and share a long-term commitment to our students' success.</p>
+        <div class="team-stat">
+          <div class="v"><em>300+</em></div>
+          <div class="l">Years of combined educational experience across our team</div>
+        </div>
+      </div>
+      <div class="team-grid-vis">
+        <span class="team-dot"></span><span class="team-dot"></span><span class="team-dot"></span>
+        <span class="team-dot"></span><span class="team-dot"></span><span class="team-dot"></span>
+        <span class="team-dot"></span><span class="team-dot"></span><span class="team-dot"></span>
+        <span class="team-dot"></span><span class="team-dot"></span><span class="team-dot"></span>
+        <span class="team-dot"></span><span class="team-dot"></span><span class="team-dot"></span>
+        <span class="team-dot"></span><span class="team-dot"></span><span class="team-dot"></span>
+        <span class="team-dot"></span><span class="team-dot"></span><span class="team-dot"></span>
+        <span class="team-dot"></span><span class="team-dot"></span><span class="team-dot"></span>
+        <span class="team-dot"></span><span class="team-dot"></span><span class="team-dot"></span>
+        <span class="team-dot"></span><span class="team-dot"></span><span class="team-dot"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="faq reveal" id="faq">
+  <div class="container">
+    <div class="section-label"><span class="br">[</span><span class="num">13</span><span class="br">]</span><span class="bar"></span><span>Common Questions</span></div>
+    <h2 class="heading-xl">What families <em>ask</em>.</h2>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q"><span class="qmark">?</span><span>How is the programme delivered?</span></div>
+        <div class="faq-a">EDU Concierge is delivered fully online. Live lessons, your Education Manager, the mobile app, parent progress reporting — all of it accessible from wherever you and your child are.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="qmark">?</span><span>What countries and curriculums do you support?</span></div>
+        <div class="faq-a">EDU Concierge is available to <em>any student, anywhere in the world, on any curriculum</em>. Because the programme runs fully online, location isn't a constraint. We work across British (IGCSE / A-Level), Cambridge, Edexcel, Oxford AQA, CBSE, ICSE, American, AP, IB, and more. If your child is on a curriculum you don't see listed, ask us — we almost certainly cover it or can pair the right teacher.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="qmark">?</span><span>Why are your prices so affordable?</span></div>
+        <div class="faq-a">We believe quality education should be within everyone's reach. By keeping operations efficient, we pass the savings directly to our members — not to middlemen, not to advertising, not to anyone else.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="qmark">?</span><span>Is Subject Support just extra tuition?</span></div>
+        <div class="faq-a">No. Our teachers do not provide extra tuition in the traditional sense. The purpose of Subject Support is to keep students <em>steady at curriculum level throughout the term</em> — a regular weekly refresher is more useful for higher grades than peak preparations close to exams, because steady reinforcement keeps concepts compounding rather than papering over gaps. Each teacher is paired to a student using their learning profile, given the right tools, and chosen for experience that goes beyond delivering subject knowledge — they're there to understand a child's learning challenges and keep them genuinely interested. That's a different proposition from a typical tuition session, which has its own value and which we respect.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="qmark">?</span><span>Do you have an app?</span></div>
+        <div class="faq-a">Yes. The mobile app is included with every plan. Parents see progress in one place; students access lessons, materials, and their Education Manager. Both iOS and Android.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="qmark">?</span><span>Are your teachers freelancers?</span></div>
+        <div class="faq-a">No. All our teachers and Education Managers are full-time members of our team. Many have been with us for years and share a long-term commitment to our students' success — not a gig-by-gig relationship.</div>
+      </div>
+    </div>
+
+    <div class="faq-foot">
+      <div><strong>More questions?</strong> We're happy to answer them directly.</div>
+      <a href="mailto:hello@powercourses.org" class="plan-cta" style="font-size:10.5px; padding:11px 22px;">hello@powercourses.org →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA / FOOTER ============ -->
+<section class="cta" id="contact">
+  <div class="container">
+    <div class="cta-grid">
+      <div>
+        <div class="section-label"><span class="br">[</span><span class="num">14</span><span class="br">]</span><span class="bar"></span><span>Get In Touch</span></div>
+        <h2 class="heading-xl">Education delivered.<br>Start <em>this term</em>.</h2>
+      </div>
+      <div class="cta-side">
+        <p>Sign up takes minutes. Your Education Manager will reach out within 48 hours to schedule your welcome call. No long contracts — pick a plan that fits and start when you're ready.</p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a class="pill-light" href="#pricing">View plans</a>
+          <a class="pill-ghost" href="mailto:hello@powercourses.org">hello@powercourses.org</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <span class="br">(</span><span>EDU_CONCIERGE</span><span class="br">)</span>
+        </div>
+        <p>An online education concierge service. A dedicated Education Manager, live lessons when needed, transparent pricing — all built around your child. Education delivered.</p>
+        <div class="powerby">A <strong>PowerCourses</strong> innovation · powercourses.org/edc</div>
+      </div>
+      <div class="footer-col">
+        <h4>The Programme</h4>
+        <ul>
+          <li><a href="#problem">The Problem</a></li>
+          <li><a href="#manager">Education Manager</a></li>
+          <li><a href="#ec-team">The EC Team</a></li>
+          <li><a href="#how">How It Works</a></li>
+          <li><a href="#technology">Technology</a></li>
+          <li><a href="#trust">Trust &amp; Engagement</a></li>
+          <li><a href="#value">The Value</a></li>
+          <li><a href="#pricing">Plans &amp; Pricing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Chrysalis</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="school.html">Online School</a></li>
+          <li><a href="dexter/solutions.html">Dexter</a>
+          <a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>More</h4>
+        <ul>
+          <li><a href="#">Terms &amp; conditions</a></li>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="mailto:hello@powercourses.org">Contact us</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© 2026 PowerCourses · EDU Concierge</div>
+      <div>Education Delivered · Online · Worldwide</div>
+    </div>
+  </div>
+</section>
+
+<!-- Scroll-to-top button -->
+<button class="scroll-top" aria-label="Back to top" type="button">
+  <span class="st-label">Back to top</span>
+  <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8">
+    <path d="M9 14 V4 M4 8 L9 3 L14 8"/>
+  </svg>
+</button>
+
+<script>
+  // Reveal-on-scroll
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  }, {threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // Tangible-value tier toggle
+  (function(){
+    const buttons = document.querySelectorAll('.tier-toggle button[data-tier]');
+    const panes = document.querySelectorAll('[data-tier-pane]');
+    const tangibleText = document.querySelector('[data-tangible-text]');
+    const tangibleStamp = document.querySelector('[data-tangible-stamp]');
+    if(!buttons.length || !panes.length) return;
+
+    const messages = {
+      basic: {
+        text: 'On <strong>subject hours alone</strong>, EDC Base costs roughly <em>a ninth</em> of paying for the same teaching at a tuition centre.',
+        stamp: '<span class="currency">~</span>9×'
+      },
+      plus: {
+        text: 'On <strong>subject hours alone</strong>, EDC Plus costs roughly <em>a quarter to a seventh</em> of paying for the same teaching at a tuition centre — before counting the dedicated manager or unlimited exam help.',
+        stamp: '<span class="currency">~</span>4–7×'
+      }
+    };
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tier = btn.dataset.tier;
+        buttons.forEach(b => {
+          b.classList.toggle('active', b === btn);
+          b.setAttribute('aria-selected', b === btn);
+        });
+        panes.forEach(p => {
+          p.style.display = p.dataset.tierPane === tier ? '' : 'none';
+        });
+        if(messages[tier]){
+          tangibleText.innerHTML = messages[tier].text;
+          tangibleStamp.innerHTML = messages[tier].stamp;
+        }
+      });
+    });
+  })();
+
+  // Nav dropdown menus
+  (function(){
+    const items = document.querySelectorAll('.nav-item');
+    if(!items.length) return;
+
+    function closeAll(except){
+      items.forEach(item => {
+        if(item !== except){
+          item.classList.remove('open');
+          const trigger = item.querySelector('.nav-trigger');
+          if(trigger) trigger.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    items.forEach(item => {
+      const trigger = item.querySelector('.nav-trigger');
+      if(!trigger) return;
+
+      let closeTimer = null;
+      const cancelClose = () => { if(closeTimer){ clearTimeout(closeTimer); closeTimer = null; } };
+      const scheduleClose = () => {
+        cancelClose();
+        closeTimer = setTimeout(() => {
+          item.classList.remove('open');
+          trigger.setAttribute('aria-expanded', 'false');
+        }, 150);
+      };
+
+      // Click toggle
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        cancelClose();
+        const isOpen = item.classList.contains('open');
+        closeAll(item);
+        item.classList.toggle('open', !isOpen);
+        trigger.setAttribute('aria-expanded', !isOpen);
+      });
+
+      // Hover open on desktop (matchMedia for non-touch)
+      if(window.matchMedia('(hover: hover)').matches){
+        item.addEventListener('mouseenter', () => {
+          cancelClose();
+          closeAll(item);
+          item.classList.add('open');
+          trigger.setAttribute('aria-expanded', 'true');
+        });
+        item.addEventListener('mouseleave', scheduleClose);
+
+        // The panel itself also keeps the menu open when hovered
+        const sub = item.querySelector('.nav-sub');
+        if(sub){
+          sub.addEventListener('mouseenter', cancelClose);
+          sub.addEventListener('mouseleave', scheduleClose);
+        }
+      }
+
+      // Sub-link click closes the menu
+      item.querySelectorAll('.nav-sub a').forEach(link => {
+        link.addEventListener('click', () => {
+          cancelClose();
+          item.classList.remove('open');
+          trigger.setAttribute('aria-expanded', 'false');
+        });
+      });
+    });
+
+    // Click outside closes
+    document.addEventListener('click', () => closeAll(null));
+    // Escape closes
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') closeAll(null);
+    });
+  })();
+
+  // Scroll-to-top button — appears past hero
+  (function(){
+    const btn = document.querySelector('.scroll-top');
+    if(!btn) return;
+
+    const threshold = window.innerHeight * 0.8;
+    let ticking = false;
+
+    function update(){
+      btn.classList.toggle('visible', window.scrollY > threshold);
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if(!ticking){
+        window.requestAnimationFrame(update);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+</script>
+
+</body>
+</html>

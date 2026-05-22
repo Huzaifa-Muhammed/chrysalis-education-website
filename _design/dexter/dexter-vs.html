@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>10 reasons you can't avoid Dexter — Dexter by Chrysalis Education</title>
+<meta name="description" content="The ten reasons every GCC school should look at Dexter before signing another LMS contract. Cost comparison, teacher induction, security, content, integrations." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;450;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet" />
+
+<style>
+:root{
+  --bg:#FAFAF7;
+  --ink:#0F1419;
+  --ink-2:#2A3138;
+  --ink-3:#5A636C;
+  --ink-4:#8A929A;
+  --line:#E8E4DA;
+  --line-2:#F0EDE3;
+  --accent:#D4FF3D;
+  --accent-deep:#B8E625;
+  --sage:#D7DED1;
+  --warn:#E8A87C;
+
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  font-size:15.5px;line-height:1.55;font-weight:400;
+  color:var(--ink);background:var(--bg);
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+/* ============== NAV ============== */
+.topnav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 36px;
+  background:rgba(250,250,247,.85);
+  backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid transparent;
+  transition:border-color .2s ease;
+}
+.topnav.scrolled{border-bottom-color:var(--line)}
+
+.brand{
+  display:inline-flex;align-items:baseline;
+  font-family:var(--sans);font-weight:700;font-size:19px;
+  color:var(--ink);letter-spacing:.22em;line-height:1;
+}
+.brand .x{
+  position:relative;display:inline-block;
+  margin:0 1.5px;
+}
+.brand .x::after{
+  content:'';position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);
+  width:12px;height:2.5px;background:var(--accent-deep);border-radius:2px;
+}
+
+.back-link{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:13.5px;color:var(--ink-3);
+  transition:color .15s ease;
+}
+.back-link:hover{color:var(--ink)}
+.back-link .arr{font-size:14px}
+
+.topnav-right{
+  display:flex;align-items:center;gap:24px;
+}
+.trial{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:999px;
+  background:var(--ink);color:var(--bg);
+  font-size:13.5px;font-weight:500;
+  transition:background .2s ease,transform .2s ease;
+}
+.trial:hover{background:var(--ink-2);transform:translateY(-1px)}
+
+/* ============== HERO ============== */
+.hero{
+  padding:160px 40px 80px;
+  max-width:1180px;margin:0 auto;
+}
+.hero-eyebrow{
+  font-family:var(--mono);font-size:11.5px;
+  color:var(--ink-3);letter-spacing:.18em;text-transform:uppercase;
+  font-weight:500;margin-bottom:24px;
+  display:inline-flex;align-items:center;gap:12px;
+}
+.hero-eyebrow::before{content:'';width:28px;height:1px;background:var(--ink-3);opacity:.5}
+.hero-h1{
+  font-family:var(--sans);font-weight:700;
+  font-size:clamp(44px,5.2vw,82px);
+  line-height:1.02;letter-spacing:-.028em;
+  color:var(--ink);max-width:1000px;
+}
+.hero-h1 .big{
+  display:inline-block;
+  font-family:var(--sans);font-weight:800;
+  font-size:1.1em;
+  background:var(--accent);
+  color:var(--ink);
+  padding:0 14px;border-radius:14px;
+  line-height:.95;
+  margin-right:6px;
+  transform:translateY(2px);
+}
+.hero-sub{
+  margin-top:30px;
+  font-size:18.5px;line-height:1.55;color:var(--ink-3);
+  max-width:620px;
+}
+.hero-stats{
+  display:flex;gap:60px;margin-top:60px;flex-wrap:wrap;
+  padding-top:36px;border-top:1px solid var(--line);
+}
+.hero-stat .v{
+  font-family:var(--sans);font-weight:700;font-size:38px;
+  letter-spacing:-.025em;color:var(--ink);line-height:1;
+  margin-bottom:6px;
+}
+.hero-stat .v .pre{
+  font-weight:400;color:var(--ink-3);font-size:24px;margin-right:2px;
+}
+.hero-stat .l{
+  font-family:var(--mono);font-size:11px;
+  color:var(--ink-4);letter-spacing:.1em;text-transform:uppercase;
+}
+
+/* ============== REASONS LIST ============== */
+.reasons{
+  max-width:1180px;margin:60px auto 0;
+  padding:0 40px;
+}
+.reason{
+  display:grid;
+  grid-template-columns:120px 1fr;
+  gap:48px;
+  padding:60px 0;
+  border-top:1px solid var(--line);
+}
+.reason:last-child{border-bottom:1px solid var(--line)}
+.reason-num{
+  font-family:var(--sans);font-weight:700;
+  font-size:80px;line-height:.9;letter-spacing:-.04em;
+  color:var(--ink);
+  position:sticky;top:120px;align-self:start;
+}
+.reason-num .small{
+  display:block;font-size:11px;font-weight:500;
+  font-family:var(--mono);color:var(--ink-4);
+  letter-spacing:.18em;text-transform:uppercase;
+  margin-bottom:8px;
+}
+.reason-body h2{
+  font-family:var(--sans);font-weight:600;
+  font-size:clamp(28px,3vw,42px);
+  line-height:1.08;letter-spacing:-.02em;
+  color:var(--ink);max-width:780px;
+  margin-bottom:20px;
+}
+.reason-body h2 em{
+  font-family:var(--serif);font-style:italic;font-weight:500;
+  color:var(--ink-2);
+}
+.reason-body .lede{
+  font-size:17px;line-height:1.6;color:var(--ink-2);
+  max-width:680px;margin-bottom:24px;
+}
+.reason-body .body{
+  font-size:15px;line-height:1.65;color:var(--ink-3);
+  max-width:680px;
+}
+.reason-body .body p+p{margin-top:14px}
+
+/* Reason "callout" block */
+.callout{
+  background:var(--ink);color:var(--bg);
+  border-radius:14px;
+  padding:24px 28px;
+  margin-top:24px;
+  display:flex;gap:20px;align-items:flex-start;
+  max-width:680px;
+}
+.callout-ic{
+  flex-shrink:0;width:32px;height:32px;border-radius:8px;
+  background:var(--accent);color:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--sans);font-weight:700;font-size:14px;
+}
+.callout-body{font-size:14px;line-height:1.55;color:rgba(250,250,247,.85)}
+.callout-body strong{color:var(--bg);font-weight:600;display:block;margin-bottom:3px;font-size:14px}
+
+/* ============== COST COMPARISON TABLE ============== */
+.cost-table{
+  margin-top:28px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  background:var(--bg);
+}
+.cost-row{
+  display:grid;
+  grid-template-columns:1.6fr 1fr 1fr 1fr;
+  align-items:center;
+}
+.cost-row.head{
+  background:#F4F2EB;
+  border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:11px;
+  color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase;
+}
+.cost-row.body{
+  border-bottom:1px solid var(--line-2);
+}
+.cost-row.body:last-child{border-bottom:none}
+.cost-row.body.feat{
+  background:var(--ink);
+  color:var(--bg);
+}
+.cost-row.body.feat .cost-cell{color:var(--bg)}
+.cost-row.body.feat .cost-cell.label{color:var(--accent);font-weight:600}
+.cost-cell{
+  padding:16px 18px;font-size:14px;color:var(--ink-2);
+}
+.cost-cell.label{
+  font-weight:500;color:var(--ink);
+}
+.cost-cell.num{
+  font-family:var(--mono);font-size:13.5px;
+}
+.cost-cell.tick{
+  font-family:var(--sans);font-weight:500;color:var(--ink-2);
+}
+
+/* ============== FINAL CTA ============== */
+.final{
+  text-align:center;
+  padding:120px 40px 60px;
+  max-width:920px;margin:0 auto;
+}
+.final-h{
+  font-family:var(--sans);font-weight:700;
+  font-size:clamp(36px,4.6vw,60px);
+  line-height:1.04;letter-spacing:-.025em;color:var(--ink);
+  margin-bottom:18px;
+}
+.final-h em{
+  font-family:var(--serif);font-style:italic;font-weight:500;color:var(--ink-2);
+}
+.final-p{
+  font-size:17.5px;line-height:1.55;color:var(--ink-3);
+  max-width:520px;margin:0 auto 32px;
+}
+.final-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 22px;border-radius:999px;
+  background:var(--ink);color:var(--bg);
+  font-size:14.5px;font-weight:500;
+  transition:background .2s ease,transform .2s ease;
+}
+.btn-primary:hover{background:var(--ink-2);transform:translateY(-1px)}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 22px;border-radius:999px;
+  background:transparent;color:var(--ink);
+  font-size:14.5px;font-weight:500;
+  border:1px solid var(--line);
+  transition:all .2s ease;
+}
+.btn-ghost:hover{border-color:var(--ink);background:#fff}
+
+/* ============== FOOTER ============== */
+footer{
+  border-top:1px solid var(--line);
+  padding:30px 36px;
+  margin-top:60px;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:18px;
+  font-size:13px;color:var(--ink-3);
+}
+footer .foot-brand{
+  display:inline-flex;align-items:center;gap:14px;
+}
+footer .foot-brand em{
+  font-family:var(--serif);font-style:italic;color:var(--ink-3);font-size:14px;
+}
+footer .foot-links{
+  display:inline-flex;align-items:center;gap:22px;
+}
+footer .foot-links a{
+  color:var(--ink-3);font-size:13px;
+  transition:color .15s ease;
+}
+footer .foot-links a:hover{color:var(--ink)}
+footer .foot-copy{
+  font-size:12.5px;color:var(--ink-4);
+}
+
+/* ============== MOBILE ============== */
+@media (max-width:900px){
+  .topnav{padding:14px 20px}
+  .brand{font-size:16px;letter-spacing:.18em}
+  .back-link{display:none}
+  .hero{padding:110px 22px 50px}
+  .hero-h1{font-size:36px;line-height:1.06}
+  .hero-h1 .big{padding:0 10px;border-radius:10px}
+  .hero-stats{gap:30px}
+  .hero-stat .v{font-size:30px}
+  .reasons{padding:0 22px;margin-top:30px}
+  .reason{grid-template-columns:1fr;gap:14px;padding:40px 0}
+  .reason-num{font-size:54px;position:static}
+  .reason-body h2{font-size:24px}
+  .cost-row{grid-template-columns:1.4fr .8fr .8fr .8fr}
+  .cost-cell{padding:12px 10px;font-size:12.5px}
+  .cost-cell.num{font-size:12px}
+  .cost-row.head{font-size:9.5px}
+  .callout{padding:18px 20px;flex-direction:column;gap:12px}
+  .final{padding:80px 22px 40px}
+  .final-h{font-size:32px}
+  footer{padding:30px 22px;flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- ============== NAV ============== -->
+<nav class="topnav" id="topnav">
+  <a href="solutions.html" class="back-link"><span class="arr">←</span> Back to Dexter</a>
+  <a href="../index.html" class="back-link" style="margin-left:18px;opacity:.7">↗ Chrysalis Education</a>
+  <a href="solutions.html" class="brand">DE<span class="x">X</span>TER</a>
+  <div class="topnav-right">
+    <a href="mailto:hello@chrysalis.education?subject=Dexter%20demo%20request" class="trial">Book a demo</a>
+  </div>
+</nav>
+
+<!-- ============== HERO ============== -->
+<header class="hero">
+  <div class="hero-eyebrow">For Principals, IT Heads, and Bursars</div>
+  <h1 class="hero-h1">
+    <span class="big">10</span> reasons your school<br>can't avoid Dexter.
+  </h1>
+  <p class="hero-sub">
+    A working argument for why every GCC school should look at Dexter before signing another five-year LMS contract. Cost numbers, induction realities, security details, integration claims — all on the table.
+  </p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="v">Free</div>
+      <div class="l">tutors &amp; charities</div>
+    </div>
+    <div class="hero-stat">
+      <div class="v"><span class="pre">From</span>$250</div>
+      <div class="l">for institutions</div>
+    </div>
+    <div class="hero-stat">
+      <div class="v">14 days</div>
+      <div class="l">to go live</div>
+    </div>
+    <div class="hero-stat">
+      <div class="v">5 years</div>
+      <div class="l">in production</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============== REASONS ============== -->
+<section class="reasons">
+
+  <!-- 01 -->
+  <article class="reason">
+    <div class="reason-num">
+      <span class="small">Reason</span>01
+    </div>
+    <div class="reason-body">
+      <h2>The cost comparison <em>is not close.</em></h2>
+      <p class="lede">A 500-student school running Canvas or Blackboard will pay between $25,000 and $70,000 a year in licence fees alone — before training, integration, and IT overhead. Dexter for the same school size is $6,000 flat, including live support and free teacher AI-certification.</p>
+
+      <div class="cost-table">
+        <div class="cost-row head">
+          <div class="cost-cell">For a 500-student school</div>
+          <div class="cost-cell">Annual licence</div>
+          <div class="cost-cell">Setup &amp; training</div>
+          <div class="cost-cell">Year-1 total</div>
+        </div>
+        <div class="cost-row body">
+          <div class="cost-cell label">Canvas (Instructure)</div>
+          <div class="cost-cell num">$25k — $40k</div>
+          <div class="cost-cell num">$8k — $15k</div>
+          <div class="cost-cell num">~$45k</div>
+        </div>
+        <div class="cost-row body">
+          <div class="cost-cell label">Blackboard Learn</div>
+          <div class="cost-cell num">$35k — $70k</div>
+          <div class="cost-cell num">$10k — $20k</div>
+          <div class="cost-cell num">~$70k</div>
+        </div>
+        <div class="cost-row body">
+          <div class="cost-cell label">Moodle (self-hosted)</div>
+          <div class="cost-cell num">Free</div>
+          <div class="cost-cell num">$15k — $30k IT</div>
+          <div class="cost-cell num">~$25k + IT staff</div>
+        </div>
+        <div class="cost-row body feat">
+          <div class="cost-cell label">Dexter — School tier</div>
+          <div class="cost-cell num">$6,000</div>
+          <div class="cost-cell num">Included</div>
+          <div class="cost-cell num">$6,000</div>
+        </div>
+      </div>
+
+      <p class="body" style="margin-top:24px">Dexter is roughly one-seventh the cost of Canvas and one-eleventh the cost of Blackboard — and that's before counting the cost of teacher training, which most platforms charge $200–$500 per teacher for. Dexter includes AI-certification for every teacher on your account at no extra charge. The "free" Moodle option doesn't stay free either — you pay in IT salaries and consultancy fees instead. The savings show up in your budget every single year, not just at signing.</p>
+      <p class="body" style="margin-top:14px;font-style:italic;color:var(--ink-3)">For registered charities, not-for-profits, and small institutions that genuinely can't afford a subscription — Dexter is free. Just talk to us.</p>
+    </div>
+  </article>
+
+  <!-- 02 -->
+  <article class="reason">
+    <div class="reason-num">
+      <span class="small">Reason</span>02
+    </div>
+    <div class="reason-body">
+      <h2>Teachers are using it <em>by Friday afternoon.</em></h2>
+      <p class="lede">Two training sessions for teachers, one for admins, and a phased rollout starting with a single year group. That's the entire induction process — measured in days, not months.</p>
+      <p class="body">Most LMS rollouts fail not because the software is bad but because teachers refuse to use it. Dexter is built by working teachers who know exactly which buttons they don't want to click. Lesson planning, attendance, assignment marking — the daily workflows are designed to take less time than what your teachers do today, not more. Adoption isn't a fight; it's a relief.</p>
+
+      <div class="callout">
+        <div class="callout-ic">i</div>
+        <div class="callout-body">
+          <strong>What induction actually looks like</strong>
+          Day 1 — admins set up the school. Day 2 — teachers see their classes already loaded. Days 3–7 — phased rollout with one year group. Day 14 — whole school live.
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 03 -->
+  <article class="reason">
+    <div class="reason-num">
+      <span class="small">Reason</span>03
+    </div>
+    <div class="reason-body">
+      <h2>It adapts to <em>who's using it</em> — and how old they are.</h2>
+      <p class="lede">A Year 3 student doesn't see what a Year 12 student sees. A tutor with ten learners doesn't see what a Head of School with two thousand sees. Dexter's interface, language, and density adapt to the user's role and to the age range it's serving.</p>
+      <p class="body">Most platforms have a single interface, regardless of whether the user is seven or seventeen, an individual tutor or a multi-campus director. That's why teachers complain about software being "designed for adults" and why younger students get overwhelmed. Dexter ships with age-aware surfaces — calmer and simpler for primary, denser and more analytical for secondary — and role-aware navigation so a parent, a teacher, a student, and an admin each see only what's relevant to them.</p>
+    </div>
+  </article>
+
+  <!-- 04 -->
+  <article class="reason">
+    <div class="reason-num">
+      <span class="small">Reason</span>04
+    </div>
+    <div class="reason-body">
+      <h2>The content library <em>comes with it.</em></h2>
+      <p class="lede">Interactive lesson templates, adaptive practice sets, auto-generated revision packs, video lessons with embedded questions, past papers, marking rubrics — all included in every Dexter plan. Not an add-on. Not a separate purchase. Not a per-subject licence.</p>
+      <p class="body">Buying an LMS and then having to buy content for it is the dirty secret of the category — most schools end up paying for content libraries from a third vendor (Twinkl, Kognity, IXL) on top of their LMS bill. Dexter ships the content with the platform, and the library grows every term, drawn from real classroom use at Chrysalis School.</p>
+    </div>
+  </article>
+
+  <!-- 05 -->
+  <article class="reason">
+    <div class="reason-num">
+      <span class="small">Reason</span>05
+    </div>
+    <div class="reason-body">
+      <h2>Security and compliance, <em>built in.</em></h2>
+      <p class="lede">SOC 2-aligned controls. Role-based access. SSO from any major identity provider. UAE PDPL and Saudi PDPL compliance baked in by default. Data hosted in UAE and Saudi data centres — not bouncing through Frankfurt or Virginia.</p>
+      <p class="body">For schools, security isn't a feature you bolt on; it's the prerequisite for being trusted with anyone's children. We treat it that way. Every Dexter deployment includes audit logs, encrypted-at-rest data, daily backups, and a documented incident response process. Enterprise customers can opt for private cloud or on-premise deployment if regulatory frameworks demand it.</p>
+
+      <div class="callout">
+        <div class="callout-ic">✓</div>
+        <div class="callout-body">
+          <strong>Where your data lives</strong>
+          UAE residency (default) or Saudi residency (on request). Multi-region replication. Encrypted in transit (TLS 1.3) and at rest (AES-256). Customer-controlled retention &amp; deletion.
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- 06 -->
+  <article class="reason">
+    <div class="reason-num">
+      <span class="small">Reason</span>06
+    </div>
+    <div class="reason-body">
+      <h2>It's our <em>own product</em> — not someone else's that we resell.</h2>
+      <p class="lede">Dexter wasn't built to be sold. It was built because Chrysalis School needed it, and nothing on the market was good enough. Years of planning, countless engineering hours, and hundreds of iterations later, it became the platform that runs our classrooms every school day.</p>
+      <p class="body">We maintain it. We upgrade it. We use it. That feedback loop is the reason Dexter feels different from products built by software companies looking for a market — no theoretical features, no "wouldn't it be cool if" wishlist from people who haven't taught in fifteen years. Every screen has been reviewed by a teacher who'll use it on Monday morning. Every flow has been tested by an actual student.</p>
+      <p class="body">We're sharing Dexter with the educational world because the more institutions that get this right, the better the outcomes for students everywhere. It's our second product, run with the same care as our first.</p>
+    </div>
+  </article>
+
+  <!-- 07 -->
+  <article class="reason">
+    <div class="reason-num">
+      <span class="small">Reason</span>07
+    </div>
+    <div class="reason-body">
+      <h2>No servers. No IT team. <em>No capital expenditure.</em></h2>
+      <p class="lede">Dexter is fully managed in the cloud. There is nothing to install, nothing to host, nothing to maintain. Pay your monthly subscription and your school is live. The line in your budget that used to read "education platform" is now an operating expense, not a capital one.</p>
+      <p class="body">For boards and CFOs, this changes the conversation entirely. Approving an annual subscription is a different decision from approving a multi-year capital investment in software and infrastructure. Dexter makes the platform an OpEx line — and that single fact has unblocked more procurement processes than any feature we've ever shipped.</p>
+    </div>
+  </article>
+
+  <!-- 08 -->
+  <article class="reason">
+    <div class="reason-num">
+      <span class="small">Reason</span>08
+    </div>
+    <div class="reason-body">
+      <h2>GCC-native <em>by default</em>, not by translation.</h2>
+      <p class="lede">English and Arabic interface with full right-to-left support throughout every screen. Prayer-time aware scheduling. One-click report generation in KHDA, ADEK, Saudi MoE, and Qatar MOEHE formats. Hosted in regional data centres. Built by people who teach in the GCC.</p>
+      <p class="body">American and European LMS platforms treat Arabic and regional compliance as optional add-ons — features they got around to building once revenue justified it. Dexter was designed for the GCC from day one because the school that built it is in the GCC. The difference shows up the first time a parent receives a report in Arabic that actually reads like Arabic.</p>
+    </div>
+  </article>
+
+  <!-- 09 -->
+  <article class="reason">
+    <div class="reason-num">
+      <span class="small">Reason</span>09
+    </div>
+    <div class="reason-body">
+      <h2>From signed contract to <em>live in two weeks.</em></h2>
+      <p class="lede">Most LMS implementations take three to six months. Dexter goes live in 14 days. Our team handles the data migration, connects your existing systems, trains your staff, and runs a phased rollout — typically one year group first, then the whole school by day 14.</p>
+      <p class="body">If we miss that timeline, the first month is on us. That's not a marketing promise — it's a contract clause we include in every agreement. Speed-to-value matters because every month of delay is a month your students don't have the platform.</p>
+    </div>
+  </article>
+
+  <!-- 10 -->
+  <article class="reason">
+    <div class="reason-num">
+      <span class="small">Reason</span>10
+    </div>
+    <div class="reason-body">
+      <h2>Open APIs — <em>integrates with what you already run.</em></h2>
+      <p class="lede">Dexter is not an SIS replacement. Your rostering system, fee module, and admissions platform stay in place. Dexter handles the teaching and learning layer, and connects to the rest through bi-directional APIs.</p>
+      <p class="body">We integrate with PowerSchool, Engage, iSAMS, Open Apply, and most major school platforms. Rostering syncs in automatically. Grades sync back out. Parent contact details flow through. No double data entry, no spreadsheet exports at the end of term, no "we'll integrate next year" promises. It's how every school we onboard runs from day one.</p>
+    </div>
+  </article>
+
+</section>
+
+<!-- ============== FINAL CTA ============== -->
+<section class="final">
+  <h2 class="final-h">The next step <em>is a 30-minute demo.</em></h2>
+  <p class="final-p">We'll show both portals live, answer your questions, and put a pilot proposal together — no slides, no salespeople, no pressure.</p>
+  <div class="final-actions">
+    <a href="mailto:hello@chrysalis.education?subject=Dexter%20demo%20request" class="btn-primary">Book a demo →</a>
+    <a href="a-day-with-dexter.html" class="btn-ghost">A day with Dexter →</a>
+    <a href="behind-dexter.html" class="btn-ghost">Who is behind Dexter →</a>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer>
+  <div class="foot-brand">
+    <span class="brand">DE<span class="x">X</span>TER</span>
+    <em>by Chrysalis Education</em>
+  </div>
+  <div class="foot-links">
+    <a href="#">Privacy</a>
+    <a href="#">Security</a>
+    <a href="#">Terms</a>
+    <a href="mailto:hello@chrysalis.education">Contact</a>
+  </div>
+  <div class="foot-copy">© 2026</div>
+</footer>
+
+<script>
+const nav=document.getElementById('topnav');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',window.scrollY>20);
+},{passive:true});
+</script>
+
+</body>
+</html>

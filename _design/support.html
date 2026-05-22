@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support Center — Chrysalis School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:    #D6CDC0;
+    --canvas-2:  #C8BEAD;
+    --paper:     #FAF7F1;
+    --paper-2:   #F2EBDC;
+    --ink:       #1A1612;
+    --ink-soft:  #3A332C;
+    --muted:     #8B8276;
+    --hairline:  #C9C0A8;
+    --hairline-soft: #DDD4BD;
+    --plum:      #4A2C4B;
+    --plum-hero: #4A2C4B;
+    --plum-deep: #2F1D31;
+    --accent:    #C77B4F;
+    --accent-bright: #E89066;
+    --butter:    #D4B968;
+    --butter-bright:#F5D88A;
+    --leaf:      #7A9472;
+    --leaf-deep: #4F6E55;
+    --rose:      #B86F7A;
+
+    --display: 'Archivo', system-ui, sans-serif;
+    --serif:   'Instrument Serif', Georgia, serif;
+    --mono:    'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  *{ box-sizing: border-box; margin: 0; padding: 0;}
+  html{ scroll-behavior: smooth;}
+  body{
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: var(--display);
+    font-weight: 400;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a{ color: inherit; text-decoration: none;}
+  button{ font-family: inherit;}
+  ::selection{ background: var(--butter-bright); color: var(--ink);}
+
+  em.serif, .serif-em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  /* ============ TOPBAR ============ */
+  .page-topbar{
+    padding: 24px 36px;
+    display: grid; grid-template-columns: auto 1fr auto;
+    align-items: center; gap: 24px;
+    background: var(--canvas);
+    border-bottom: 1px solid var(--hairline);
+    position: sticky; top: 0; z-index: 30;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .pill-explore{
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 9px 16px 9px 12px;
+    background: var(--ink); color: var(--paper);
+    border: none; border-radius: 100px;
+    font-family: var(--display); font-weight: 500;
+    font-size: 12.5px; letter-spacing: 0.005em;
+    cursor: pointer;
+    transition: gap .25s, background .25s;
+  }
+  .pill-explore:hover{ gap: 14px; background: var(--accent);}
+  .pill-explore .ham{
+    display: inline-flex; flex-direction: column; gap: 3px;
+  }
+  .pill-explore .ham span{
+    display: block; width: 14px; height: 1.5px; background: var(--paper); border-radius: 1px;
+  }
+
+  .brand{
+    justify-self: center;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .brand-mark{
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brand-mark img{ width: 100%; height: 100%; object-fit: contain;}
+  .brand-text{
+    font-family: var(--display); font-weight: 700;
+    font-size: 12.5px; letter-spacing: 0.06em; text-transform: uppercase;
+    line-height: 1.05; color: var(--ink);
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .brand-text .b2{ color: var(--muted); font-weight: 500;}
+
+  .nav-right{
+    justify-self: end;
+    display: inline-flex; align-items: center; gap: 18px;
+  }
+  .nav-right a{
+    font-family: var(--display); font-weight: 500;
+    font-size: 12.5px; color: var(--ink-soft);
+    transition: color .2s;
+  }
+  .nav-right a:hover{ color: var(--accent);}
+  .nav-right .nav-reg{
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 12px;
+    background: var(--butter); color: var(--ink);
+    border-radius: 100px;
+    font-weight: 600;
+  }
+  .nav-right .nav-reg .reg-dot{
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--leaf-deep);
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity: 1;} 50%{ opacity: 0.4;} }
+  @media (max-width: 760px){
+    .page-topbar{ padding: 16px 18px; grid-template-columns: auto 1fr;}
+    .nav-right{ display: none;}
+    .pill-explore .pill-text{ display: none;}
+  }
+
+  /* ============ DRAWER ============ */
+  .menu-backdrop{
+    position: fixed; inset: 0;
+    background: rgba(26,22,18,0.40);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 49;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .menu-backdrop.open{ opacity: 1; pointer-events: auto;}
+  .menu-overlay{
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: min(360px, 88vw);
+    background: var(--ink); color: var(--paper);
+    z-index: 50;
+    transform: translateX(100%);
+    transition: transform .35s cubic-bezier(.2,.8,.2,1);
+    display: flex; flex-direction: column;
+    padding: 92px 36px 40px;
+    box-shadow: -24px 0 48px -16px rgba(26,22,18,0.35);
+    overflow: hidden;
+  }
+  .menu-overlay.open{ transform: translateX(0);}
+  .menu-overlay::before{
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(circle at 20% 12%, rgba(245,216,138,0.10) 0%, transparent 55%),
+      radial-gradient(circle at 90% 100%, rgba(199,123,79,0.08) 0%, transparent 55%);
+  }
+  .menu-overlay-inner{
+    position: relative; z-index: 2;
+    width: 100%; flex: 1;
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .menu-eyebrow{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--butter); margin-bottom: 24px;
+  }
+  .menu-links{ display: flex; flex-direction: column; gap: 2px;}
+
+  .menu-section{}
+  .menu-section-head{
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%;
+    font-family: var(--display); font-weight: 600;
+    font-size: 18px; line-height: 1.2; letter-spacing: -0.012em;
+    color: var(--paper);
+    padding: 11px 0;
+    background: none; border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: color .25s, padding .25s;
+  }
+  .menu-section-head:hover{ color: var(--butter); padding-left: 6px;}
+  .menu-section-head.is-active{ color: var(--butter);}
+  .menu-section-head.is-active span{
+    font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.005em;
+    font-size: 22px;
+  }
+  .menu-section-head .chev{
+    width: 11px; height: 11px;
+    color: rgba(250,247,241,0.55);
+    transition: transform .3s cubic-bezier(.2,.8,.2,1), color .25s;
+    flex-shrink: 0; margin-left: 12px;
+  }
+  .menu-section-head:hover .chev{ color: var(--butter);}
+  .menu-section.open .menu-section-head .chev{ transform: rotate(-180deg);}
+
+  .menu-sub{
+    display: flex; flex-direction: column;
+    padding: 0 0 0 14px;
+    border-left: 1px solid rgba(255,255,255,0.10);
+    margin: 0 0 0 4px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height .35s cubic-bezier(.2,.8,.2,1), opacity .25s ease, padding-bottom .35s, margin-bottom .35s;
+  }
+  .menu-section[data-collapsible].open .menu-sub{
+    max-height: 360px;
+    opacity: 1;
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+  }
+  .menu-sub a{
+    display: block;
+    font-family: var(--display); font-weight: 400;
+    font-size: 13px; line-height: 1.4;
+    color: rgba(250,247,241,0.65);
+    padding: 6px 0;
+    transition: color .2s, padding .2s;
+  }
+  .menu-sub a:hover{ color: var(--butter); padding-left: 6px;}
+
+  .menu-foot{
+    margin-top: auto; padding-top: 24px;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .menu-foot-link{
+    font-family: var(--display); font-weight: 500;
+    font-size: 13px; color: rgba(250,247,241,0.78);
+    transition: color .2s;
+  }
+  .menu-foot-link:hover{ color: var(--butter);}
+  .menu-foot-email{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em;
+    color: rgba(250,247,241,0.45);
+  }
+
+  /* ============ COMMON CONTENT BLOCKS ============ */
+  .page-wrap{ position: relative;}
+
+  /* Hero band — used by inner pages. Either paper or plum variant. */
+  .page-hero{
+    padding: 80px 56px 64px;
+    background: var(--canvas);
+    border-bottom: 1px solid var(--hairline);
+    position: relative; overflow: hidden;
+  }
+  .page-hero.plum{
+    background: var(--plum-hero); color: var(--paper);
+    border-bottom: none;
+  }
+  .page-hero.plum::before{
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(circle at 80% 20%, rgba(245,216,138,0.10) 0%, transparent 55%),
+      radial-gradient(circle at 15% 85%, rgba(199,123,79,0.08) 0%, transparent 55%);
+  }
+  .page-hero-inner{
+    position: relative; z-index: 2;
+    max-width: 1180px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.4fr 1fr;
+    gap: 48px; align-items: end;
+  }
+  .eyebrow-mono{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .page-hero.plum .eyebrow-mono{ color: var(--butter);}
+  .eyebrow-mono::before{
+    content: ""; width: 22px; height: 1px; background: currentColor;
+  }
+  .page-hero h1{
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(40px, 6vw, 80px);
+    line-height: 1; letter-spacing: -0.035em;
+    color: inherit;
+  }
+  .page-hero h1 em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    color: var(--accent);
+    letter-spacing: -0.015em;
+  }
+  .page-hero.plum h1 em{ color: var(--butter-bright);}
+  .page-hero .hero-lead{
+    font-family: var(--display); font-weight: 400;
+    font-size: 17px; line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 460px;
+  }
+  .page-hero.plum .hero-lead{ color: rgba(250,247,241,0.78);}
+  .page-hero .hero-lead em{
+    font-family: var(--serif); font-style: italic; color: var(--accent);
+  }
+  .page-hero.plum .hero-lead em{ color: var(--butter-bright);}
+  @media (max-width: 920px){
+    .page-hero{ padding: 56px 22px 40px;}
+    .page-hero-inner{ grid-template-columns: 1fr; gap: 24px;}
+    .page-hero h1{ font-size: clamp(36px, 11vw, 64px);}
+  }
+
+  /* Content sections */
+  .section{
+    padding: 96px 56px;
+    border-top: 1px solid var(--hairline);
+    background: var(--canvas);
+    scroll-margin-top: 96px;
+  }
+  .section.paper{ background: var(--paper); border-color: var(--hairline-soft);}
+  .section-inner{ max-width: 1180px; margin: 0 auto;}
+  .section-inner-narrow{ max-width: 820px; margin: 0 auto;}
+  .section-eyebrow{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500;
+    margin-bottom: 22px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .section-eyebrow .num{
+    font-family: var(--mono); font-weight: 500;
+    color: var(--ink);
+    background: var(--paper-2);
+    padding: 3px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+  }
+  .section h2{
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(30px, 3.6vw, 48px);
+    line-height: 1.05; letter-spacing: -0.025em;
+    color: var(--ink); margin-bottom: 24px;
+    max-width: 800px;
+  }
+  .section h2 em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    color: var(--accent);
+  }
+  .section h3{
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(20px, 1.8vw, 26px);
+    line-height: 1.2; letter-spacing: -0.018em;
+    color: var(--ink); margin-bottom: 12px;
+  }
+  .section h3 em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    color: var(--accent);
+  }
+  .section p{
+    font-size: 16px; line-height: 1.7;
+    color: var(--ink-soft); margin-bottom: 18px;
+    max-width: 720px;
+  }
+  .section p strong{ color: var(--ink); font-weight: 600;}
+  .section p em{
+    font-family: var(--serif); font-style: italic; color: var(--accent);
+  }
+  @media (max-width: 760px){
+    .section{ padding: 64px 22px;}
+  }
+
+  /* Two-column body grid */
+  .two-col{
+    display: grid; grid-template-columns: 1fr 1.4fr;
+    gap: 64px;
+    align-items: start;
+  }
+  @media (max-width: 920px){
+    .two-col{ grid-template-columns: 1fr; gap: 24px;}
+  }
+
+  /* Pills / chips */
+  .pill{
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    background: var(--paper-2);
+    border: 1px solid var(--hairline);
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+    color: var(--ink-soft); text-transform: uppercase;
+  }
+  .pill.butter{ background: var(--butter); border-color: var(--butter); color: var(--ink); font-weight: 600;}
+  .pill.leaf{ background: var(--leaf-deep); border-color: var(--leaf-deep); color: var(--paper);}
+  .pill.terra{ background: var(--accent); border-color: var(--accent); color: var(--paper);}
+
+  /* Cards */
+  .card{
+    background: var(--paper); border-radius: 18px;
+    padding: 28px 28px;
+    border: 1px solid var(--hairline-soft);
+    transition: transform .35s, box-shadow .35s;
+  }
+  .card:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 24px 48px -22px rgba(26,22,18,0.18);
+  }
+  .card.plum{
+    background: var(--plum); color: var(--paper); border-color: var(--plum);
+  }
+  .card.plum h3{ color: var(--paper);}
+  .card.plum h3 em{ color: var(--butter-bright);}
+  .card.plum p{ color: rgba(250,247,241,0.78);}
+  .card h3{ margin-bottom: 10px;}
+
+  /* Buttons / CTAs */
+  .btn-primary{
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 26px;
+    background: var(--ink); color: var(--paper);
+    border-radius: 100px;
+    font-family: var(--display); font-weight: 600;
+    font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase;
+    transition: gap .25s, background .25s;
+  }
+  .btn-primary:hover{ background: var(--accent); gap: 14px;}
+  .btn-primary::after{ content: "→";}
+  .btn-secondary{
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px;
+    background: transparent; color: var(--ink);
+    border: 1px solid var(--ink);
+    border-radius: 100px;
+    font-family: var(--display); font-weight: 500;
+    font-size: 13px; letter-spacing: 0.03em;
+    transition: background .25s, color .25s;
+  }
+  .btn-secondary:hover{ background: var(--ink); color: var(--paper);}
+
+  /* ============ FOOTER ============ */
+  .site-footer{
+    background: var(--ink); color: var(--paper);
+    padding: 80px 56px 36px;
+    position: relative; overflow: hidden;
+  }
+  .site-footer::before{
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(circle at 90% 0%, rgba(245,216,138,0.08) 0%, transparent 55%);
+  }
+  .footer-grid{
+    position: relative; z-index: 2;
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 64px;
+    max-width: 1280px; margin: 0 auto 56px;
+  }
+  .footer-brand .brand-footer{ margin-bottom: 16px; gap: 12px;}
+  .footer-brand .brand-footer .brand-text{ color: var(--paper);}
+  .footer-brand .brand-footer .brand-text .b2{ color: rgba(250,247,241,0.55);}
+  .footer-tagline{
+    font-size: 14px; line-height: 1.6;
+    color: rgba(250,247,241,0.65);
+    max-width: 320px;
+  }
+  .footer-col h4{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--butter); font-weight: 500;
+    margin-bottom: 18px;
+  }
+  .footer-col ul{ list-style: none;}
+  .footer-col li{ margin-bottom: 11px;}
+  .footer-col a{
+    font-size: 14px; color: rgba(250,247,241,0.82);
+    transition: color .2s;
+  }
+  .footer-col a:hover{ color: var(--butter);}
+
+  .footer-bottom{
+    position: relative; z-index: 2;
+    max-width: 1280px; margin: 0 auto;
+    padding-top: 28px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    color: rgba(250,247,241,0.45);
+    text-transform: uppercase;
+  }
+  @media (max-width: 920px){
+    .site-footer{ padding: 56px 22px 28px;}
+    .footer-grid{ grid-template-columns: 1fr 1fr; gap: 36px;}
+  }
+  @media (max-width: 540px){
+    .footer-grid{ grid-template-columns: 1fr; gap: 28px;}
+  }
+
+  /* ============ SPEAK FAB ============ */
+  .speak-fab{
+    position: fixed; bottom: 24px; right: 24px;
+    z-index: 40;
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 13px 20px 13px 15px;
+    background: var(--ink); color: var(--paper);
+    border-radius: 100px;
+    font-family: var(--display); font-weight: 600;
+    font-size: 13px; letter-spacing: 0.04em;
+    box-shadow: 0 14px 36px -12px rgba(26,22,18,0.35);
+    transition: gap .25s, background .25s, transform .25s;
+  }
+  .speak-fab:hover{ gap: 14px; background: var(--accent); transform: translateY(-2px);}
+  .fab-pulse{
+    position: absolute; inset: -4px; border-radius: 100px;
+    border: 2px solid var(--accent);
+    opacity: 0; pointer-events: none;
+    animation: fabPulse 2.5s ease-out infinite;
+  }
+  @keyframes fabPulse{
+    0%{ opacity: 0.7; transform: scale(1);}
+    100%{ opacity: 0; transform: scale(1.18);}
+  }
+  .fab-icon{
+    display: inline-flex; width: 18px; height: 18px;
+  }
+  .fab-icon svg{ width: 100%; height: 100%;}
+  @media (max-width: 540px){
+    .speak-fab{ padding: 11px 16px 11px 12px; font-size: 12px;}
+  }
+
+  /* ============ REVEAL ============ */
+  .reveal{
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1);
+  }
+  .reveal.in{ opacity: 1; transform: translateY(0);}
+</style>
+</head>
+<body class="">
+
+<div class="page-wrap">
+
+<header class="page-topbar">
+  <button class="pill-explore" id="menuBtn" aria-label="Explore the school" aria-expanded="false">
+    <span class="ham"><span></span><span></span><span></span></span>
+    <span class="pill-text">Explore the school</span>
+  </button>
+
+  <a href="school.html" class="brand">
+    <span class="brand-mark">
+      <img src="chrysalis-logo.png" alt="Chrysalis">
+    </span>
+    <span class="brand-text">
+      <span class="b1">Chrysalis</span>
+      <span class="b2">School</span>
+    </span>
+  </a>
+
+  <nav class="nav-right">
+    <a href="admission.html#register" class="nav-login">Apply</a>
+    <a href="admission.html" class="nav-reg">
+      <span class="reg-dot" aria-hidden="true"></span>
+      <span class="reg-text">Registration open · <strong>Sep 2026</strong></span>
+    </a>
+  </nav>
+</header>
+
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div>
+      <div class="eyebrow-mono">Support Center</div>
+      <h1>Help when you <em>need</em> it.</h1>
+    </div>
+    <p class="hero-lead">Quick answers, a real human at the other end of chat, and a thorough FAQ. Enrolled families have a dedicated Education Manager too — but this page is here for anyone with a question.</p>
+  </div>
+</section>
+
+<!-- 01 — CHAT -->
+<section class="section paper reveal" id="chat">
+  <div class="section-inner two-col">
+    <div>
+      <div class="section-eyebrow"><span class="num">01</span> Chat</div>
+      <h2>Talk to <em>someone</em>.</h2>
+      <p>Chat is open <strong>Sunday to Thursday, 8am–8pm GST</strong> (UAE time). A real member of our admissions team answers — not a bot. If we're offline, leave a message and we'll reply within 24 hours.</p>
+      <p style="margin-top: 16px;">For enrolled families: your Education Manager is your fastest route. Use the Parent Portal message thread, not chat.</p>
+    </div>
+    <div class="card" style="background: var(--paper); padding: 36px;">
+      <div class="eyebrow-mono" style="margin-bottom: 18px;">// Reach us</div>
+      <div style="display: flex; flex-direction: column; gap: 18px;">
+        <a href="mailto:hello@chrysalis.education" style="display: flex; align-items: center; gap: 16px; padding: 16px; background: var(--paper-2); border-radius: 12px; transition: transform .25s;">
+          <span style="width: 36px; height: 36px; background: var(--accent); color: var(--paper); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700;">✉</span>
+          <div>
+            <div style="font-weight: 600; color: var(--ink); font-size: 14.5px;">Email</div>
+            <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-soft);">hello@chrysalis.education</div>
+          </div>
+        </a>
+        <a href="#" style="display: flex; align-items: center; gap: 16px; padding: 16px; background: var(--paper-2); border-radius: 12px;">
+          <span style="width: 36px; height: 36px; background: var(--leaf-deep); color: var(--paper); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700;">💬</span>
+          <div>
+            <div style="font-weight: 600; color: var(--ink); font-size: 14.5px;">WhatsApp</div>
+            <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-soft);">Number live August 2026</div>
+          </div>
+        </a>
+        <a href="#" style="display: flex; align-items: center; gap: 16px; padding: 16px; background: var(--paper-2); border-radius: 12px;">
+          <span style="width: 36px; height: 36px; background: var(--butter); color: var(--ink); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700;">📞</span>
+          <div>
+            <div style="font-weight: 600; color: var(--ink); font-size: 14.5px;">Call</div>
+            <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-soft);">Number live August 2026</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 — FAQS -->
+<section class="section reveal" id="faqs">
+  <div class="section-inner-narrow">
+    <div class="section-eyebrow"><span class="num">02</span> FAQs</div>
+    <h2>Questions we get <em>most</em>.</h2>
+    <p>Grouped by topic. Click to expand. Don't see your question? Email us — we add new ones here every week.</p>
+
+    <div style="margin-top: 40px;">
+      <details style="border-bottom: 1px solid var(--hairline-soft); padding: 18px 0;">
+        <summary style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink); padding-right: 24px;">
+          Is this a real school?
+          <span style="font-family: var(--mono); font-size: 18px; color: var(--accent); transition: transform .25s;">+</span>
+        </summary>
+        <p style="margin: 14px 0 0; font-size: 15px; line-height: 1.65; color: var(--ink-soft);">Yes. Chrysalis School is a registered educational institution running the Pearson Edexcel International GCSE and IAL frameworks. Students sit externally-examined qualifications recognised by universities worldwide. The only thing "non-traditional" about us is the absence of a physical building.</p>
+      </details><details style="border-bottom: 1px solid var(--hairline-soft); padding: 18px 0;">
+        <summary style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink); padding-right: 24px;">
+          Will my child get into university?
+          <span style="font-family: var(--mono); font-size: 18px; color: var(--accent); transition: transform .25s;">+</span>
+        </summary>
+        <p style="margin: 14px 0 0; font-size: 15px; line-height: 1.65; color: var(--ink-soft);">Yes — through the same routes any IGCSE/IAL student takes. Our Sixth Form includes structured university guidance from Y12 term one. Recognised across the UK, GCC, Singapore, Australia, much of Europe, and US universities through standardised conversion.</p>
+      </details><details style="border-bottom: 1px solid var(--hairline-soft); padding: 18px 0;">
+        <summary style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink); padding-right: 24px;">
+          What time zone do classes run in?
+          <span style="font-family: var(--mono); font-size: 18px; color: var(--accent); transition: transform .25s;">+</span>
+        </summary>
+        <p style="margin: 14px 0 0; font-size: 15px; line-height: 1.65; color: var(--ink-soft);">Lessons are timetabled for GMT+0 to GMT+4 as the primary window (most of our students sit in the Gulf and the UK). Other time zones are accommodated case-by-case — some lessons attended live, others via lesson recording with a structured catch-up.</p>
+      </details><details style="border-bottom: 1px solid var(--hairline-soft); padding: 18px 0;">
+        <summary style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink); padding-right: 24px;">
+          What devices do we need?
+          <span style="font-family: var(--mono); font-size: 18px; color: var(--accent); transition: transform .25s;">+</span>
+        </summary>
+        <p style="margin: 14px 0 0; font-size: 15px; line-height: 1.65; color: var(--ink-soft);">A laptop or desktop computer with a webcam and a stable internet connection (minimum 15 Mbps download recommended). No specialist hardware required. We provide all software access.</p>
+      </details><details style="border-bottom: 1px solid var(--hairline-soft); padding: 18px 0;">
+        <summary style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink); padding-right: 24px;">
+          How do exams work for international students?
+          <span style="font-family: var(--mono); font-size: 18px; color: var(--accent); transition: transform .25s;">+</span>
+        </summary>
+        <p style="margin: 14px 0 0; font-size: 15px; line-height: 1.65; color: var(--ink-soft);">Edexcel exams can be sat at approved exam centres worldwide — typically British Council offices or partner schools. We help every family find a centre near them and handle the registration on your behalf.</p>
+      </details><details style="border-bottom: 1px solid var(--hairline-soft); padding: 18px 0;">
+        <summary style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink); padding-right: 24px;">
+          Will my child have friends?
+          <span style="font-family: var(--mono); font-size: 18px; color: var(--accent); transition: transform .25s;">+</span>
+        </summary>
+        <p style="margin: 14px 0 0; font-size: 15px; line-height: 1.65; color: var(--ink-soft);">Yes. Class sizes of 15 build close groups. The Community platform runs year-group circles, clubs, and live events. Many of our students travel to in-person meetups — including our annual summer week and termly regional gatherings.</p>
+      </details><details style="border-bottom: 1px solid var(--hairline-soft); padding: 18px 0;">
+        <summary style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink); padding-right: 24px;">
+          Can my child play sport / do music?
+          <span style="font-family: var(--mono); font-size: 18px; color: var(--accent); transition: transform .25s;">+</span>
+        </summary>
+        <p style="margin: 14px 0 0; font-size: 15px; line-height: 1.65; color: var(--ink-soft);">Not through the school itself — we don't pretend to. We partner with local sports academies and music schools in major hubs and help families find equivalents nearby. The fee saving versus traditional school more than covers private coaching.</p>
+      </details><details style="border-bottom: 1px solid var(--hairline-soft); padding: 18px 0;">
+        <summary style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink); padding-right: 24px;">
+          What about special educational needs?
+          <span style="font-family: var(--mono); font-size: 18px; color: var(--accent); transition: transform .25s;">+</span>
+        </summary>
+        <p style="margin: 14px 0 0; font-size: 15px; line-height: 1.65; color: var(--ink-soft);">We can support a range of SEN with adaptations — additional 1:1 time, modified assessment formats, dedicated learning specialist hours. We are honest if we can't fully meet a particular need; we will tell you at the Discovery Call stage.</p>
+      </details><details style="border-bottom: 1px solid var(--hairline-soft); padding: 18px 0;">
+        <summary style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink); padding-right: 24px;">
+          How is wellbeing handled?
+          <span style="font-family: var(--mono); font-size: 18px; color: var(--accent); transition: transform .25s;">+</span>
+        </summary>
+        <p style="margin: 14px 0 0; font-size: 15px; line-height: 1.65; color: var(--ink-soft);">Pastoral check-ins are timetabled, not optional. Every family has a named Education Manager who knows their child. Mental-health support is integrated, not bolted on — and we have specialist hours for students who need more.</p>
+      </details><details style="border-bottom: 1px solid var(--hairline-soft); padding: 18px 0;">
+        <summary style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; list-style: none; font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink); padding-right: 24px;">
+          What happens if it doesn't work out?
+          <span style="font-family: var(--mono); font-size: 18px; color: var(--accent); transition: transform .25s;">+</span>
+        </summary>
+        <p style="margin: 14px 0 0; font-size: 15px; line-height: 1.65; color: var(--ink-soft);">You can withdraw at the end of any term with one term's notice. No "we keep your fee" clauses. We will also tell you, frankly, if we think Chrysalis isn't the right fit — sometimes we suggest going back to in-person, sometimes we suggest waiting a year.</p>
+      </details>
+    </div>
+
+    <details style="position: relative;"><summary style="display:none;"></summary></details>
+    <p style="margin-top: 40px; font-size: 14px; color: var(--ink-soft);">Still have a question? Email <a href="mailto:hello@chrysalis.education" style="color: var(--ink); border-bottom: 1px solid var(--hairline);">hello@chrysalis.education</a>. We will reply within 24 hours and add the answer to this page if it's useful for others.</p>
+  </div>
+</section>
+
+<style>
+  details summary::-webkit-details-marker{ display: none;}
+  details[open] summary span{ transform: rotate(45deg);}
+</style>
+
+
+<footer class="site-footer">
+  <div class="footer-grid">
+
+    <div class="footer-brand">
+      <a href="school.html" class="brand brand-footer">
+        <span class="brand-mark"><img src="chrysalis-logo.png" alt="Chrysalis"></span>
+        <span class="brand-text">
+          <span class="b1">Chrysalis</span>
+          <span class="b2">School</span>
+        </span>
+      </a>
+      <p class="footer-tagline">An online British curriculum school designed for online learning — not adapted to it.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>The School</h4>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="why.html">Why Chrysalis</a></li>
+        <li><a href="curriculum.html">Curriculum</a></li>
+        <li><a href="admission.html">Admission</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>For Parents</h4>
+      <ul>
+        <li><a href="parent-resources.html">Parent Resources</a></li>
+        <li><a href="library.html">Knowledge Library</a></li>
+        <li><a href="community.html">Community</a></li>
+        <li><a href="support.html">Support Center</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Chrysalis Education</h4>
+      <ul>
+        <li><a href="index.html">Chrysalis hub ↗</a></li>
+        <li><a href="concierge.html">EDU Concierge</a></li>
+        <li><a href="careers.html">Careers</a></li>
+        <li><a href="mailto:hello@chrysalis.education">Contact</a></li>
+      </ul>
+    </div>
+
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Chrysalis Education · UK-headquartered · Operating worldwide</span>
+    <span class="footer-bottom-loc">Inaugural intake · September 2026</span>
+  </div>
+</footer>
+
+</div>
+
+<div class="menu-backdrop" id="menuBackdrop" aria-hidden="true"></div>
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu-overlay-inner">
+    <div class="menu-eyebrow">// Explore the school</div>
+    <nav class="menu-links">
+
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>About</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="about.html#welcome">Welcome Message from Principal</a>
+          <a href="about.html#vision">Vision and Mission</a>
+          <a href="about.html#team">Our Team</a>
+          <a href="about.html#documents">Key Documents and Policies</a>
+        </div>
+      </div>
+
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Why Chrysalis School</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="why.html#innovation">Innovation</a>
+          <a href="why.html#life">Life at Chrysalis</a>
+          <a href="concierge.html">Education Concierge</a>
+          <a href="why.html#promise">Our Promise</a>
+        </div>
+      </div>
+
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Admission</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="admission.html#process">Process</a>
+          <a href="admission.html#fee">Fee</a>
+          <a href="admission.html#register">Register</a>
+        </div>
+      </div>
+
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Curriculum</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="curriculum.html#overview">Overview</a>
+          <a href="curriculum.html#secondary">Secondary</a>
+          <a href="curriculum.html#approaches">Learning Approaches</a>
+        </div>
+      </div>
+
+      
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Dexter</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="dexter/solutions.html">Overview</a>
+          <a href="dexter/dexter-vs.html">10 Reasons</a>
+          <a href="dexter/a-day-with-dexter.html">A Day with Dexter</a>
+          <a href="dexter/behind-dexter.html">Behind Dexter</a>
+        </div>
+      </div>
+
+<div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Parent Resources</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="parent-resources.html#news">News</a>
+          <a href="parent-resources.html#calendar">Calendar</a>
+          <a href="parent-resources.html#portal">Parent Portal</a>
+          <a href="library.html">Knowledge Library</a>
+          <a href="community.html">Community</a>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <a href="careers.html" class="menu-section-head menu-section-flat">
+          <span>Careers</span>
+        </a>
+      </div>
+
+      <div class="menu-section open" data-collapsible>
+        <button class="menu-section-head is-active" type="button" aria-expanded="true">
+          <span>Support Center</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="support.html#chat">Chat</a>
+          <a href="support.html#faqs">FAQs</a>
+        </div>
+      </div>
+
+    </nav>
+    <div class="menu-foot">
+      <a href="index.html" class="menu-foot-link">↗ Chrysalis hub</a>
+      <a href="mailto:hello@chrysalis.education" class="menu-foot-email">hello@chrysalis.education</a>
+    </div>
+  </div>
+</div>
+
+<a href="mailto:hello@chrysalis.education?subject=I%27d%20like%20to%20speak%20with%20you" class="speak-fab" aria-label="Speak to us now">
+  <span class="fab-pulse" aria-hidden="true"></span>
+  <span class="fab-icon">
+    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6">
+      <path d="M3 4 Q3 2.5 4.5 2.5 L9.5 2.5 Q11 2.5 11 4 L11 8 Q11 9.5 9.5 9.5 L7 9.5 L4.5 11.5 L4.5 9.5 Q3 9.5 3 8 Z"/>
+      <circle cx="5.5" cy="6" r="0.6" fill="currentColor"/>
+      <circle cx="7" cy="6" r="0.6" fill="currentColor"/>
+      <circle cx="8.5" cy="6" r="0.6" fill="currentColor"/>
+    </svg>
+  </span>
+  <span class="fab-text">Speak to us</span>
+</a>
+
+<script>
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }});
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Drawer
+  const menuBtn = document.getElementById('menuBtn');
+  const menuOverlay = document.getElementById('menuOverlay');
+  const menuBackdrop = document.getElementById('menuBackdrop');
+  function toggleMenu(force){
+    if(!menuBtn) return;
+    const isOpen = force !== undefined ? force : !menuOverlay.classList.contains('open');
+    menuOverlay.classList.toggle('open', isOpen);
+    menuBackdrop.classList.toggle('open', isOpen);
+    menuBtn.setAttribute('aria-expanded', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+  if(menuBtn) menuBtn.addEventListener('click', () => toggleMenu());
+  if(menuOverlay) menuOverlay.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
+  if(menuBackdrop) menuBackdrop.addEventListener('click', () => toggleMenu(false));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
+
+  // Drawer collapsibles
+  if(menuOverlay){
+    menuOverlay.querySelectorAll('.menu-section[data-collapsible] .menu-section-head').forEach(head => {
+      head.addEventListener('click', () => {
+        const section = head.closest('.menu-section');
+        const isOpen = section.classList.toggle('open');
+        head.setAttribute('aria-expanded', isOpen);
+      });
+    });
+  }
+</script>
+
+</body>
+</html>

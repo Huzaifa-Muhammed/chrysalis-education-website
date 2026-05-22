@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Community — Chrysalis School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:    #2F1D31;        /* deep plum */
+    --canvas-2:  #1F1322;
+    --plum:      #4A2C4B;
+    --paper:     #F4EEDF;
+    --paper-soft:#E8E0CE;
+    --ink:       #1A1612;
+    --ink-soft:  #3A332C;
+    --muted:     #8B8276;
+
+    --accent:        #C77B4F;
+    --butter:        #D4B968;
+    --butter-bright: #F5D88A;
+    --leaf:          #7A9472;
+    --leaf-deep:     #4F6E55;
+    --teal:          #2F5C5E;
+    --teal-bright:   #4A8B8E;
+    --rose:          #B86F7A;
+
+    --display: 'Archivo', system-ui, sans-serif;
+    --serif:   'Instrument Serif', Georgia, serif;
+    --mono:    'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  *{ box-sizing: border-box; margin: 0; padding: 0;}
+  html{ scroll-behavior: smooth;}
+  body{
+    background: var(--canvas);
+    color: var(--paper);
+    font-family: var(--display);
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+  body::before{
+    /* Soft atmospheric glows in the canvas corners */
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse at 90% 10%, rgba(212,185,104,0.08) 0%, transparent 55%),
+      radial-gradient(ellipse at 10% 90%, rgba(199,123,79,0.06) 0%, transparent 55%);
+  }
+  a{ color: inherit; text-decoration: none;}
+  button{ font-family: inherit;}
+  ::selection{ background: var(--butter-bright); color: var(--ink);}
+
+  /* ============ TOPBAR ============ */
+  .topbar{
+    position: relative; z-index: 5;
+    padding: 22px 40px;
+    display: grid; grid-template-columns: auto 1fr auto;
+    align-items: center; gap: 32px;
+    border-bottom: 1px solid rgba(244,238,223,0.10);
+  }
+  .brand{
+    display: inline-flex; align-items: center; gap: 10px;
+    cursor: pointer; transition: opacity .25s;
+  }
+  .brand:hover{ opacity: 0.7;}
+  .brand-mark{
+    width: 30px; height: 30px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brand-mark img{ width: 100%; height: 100%; object-fit: contain;}
+  .brand-text{
+    font-family: var(--display); font-weight: 700;
+    font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+    line-height: 1.05; color: var(--paper);
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .brand-text .b2{ color: rgba(244,238,223,0.55); font-weight: 500;}
+
+  /* Center filter row — group filter pills */
+  .top-filters{
+    justify-self: center;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(244,238,223,0.04);
+    border: 1px solid rgba(244,238,223,0.10);
+    border-radius: 100px;
+    padding: 4px;
+  }
+  .top-filter{
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    background: transparent; border: none;
+    font-family: var(--display); font-weight: 500;
+    font-size: 12.5px; letter-spacing: 0.005em;
+    color: rgba(244,238,223,0.70);
+    cursor: pointer; transition: background .25s, color .25s;
+  }
+  .top-filter::before{
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: rgba(244,238,223,0.5);
+    transition: background .25s;
+  }
+  .top-filter:hover{ color: var(--paper);}
+  .top-filter.active{
+    background: var(--paper); color: var(--ink);
+  }
+  .top-filter.active::before{ background: var(--accent);}
+  .top-filter .count{
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.5); margin-left: 2px;
+    transition: color .25s;
+  }
+  .top-filter.active .count{ color: var(--muted);}
+
+  .top-actions{
+    justify-self: end;
+    display: inline-flex; align-items: center; gap: 14px;
+  }
+  .menu-btn{
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: transparent; border: 1px solid rgba(244,238,223,0.20);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background .25s, border-color .25s;
+  }
+  .menu-btn:hover{ background: rgba(244,238,223,0.06); border-color: rgba(244,238,223,0.45);}
+  .menu-btn .ham{ display: inline-flex; flex-direction: column; gap: 3px;}
+  .menu-btn .ham span{ display: block; width: 13px; height: 1.2px; background: var(--paper); border-radius: 1px;}
+  .top-search{
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 100px;
+    border: 1px solid rgba(244,238,223,0.20);
+    background: transparent;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+    color: rgba(244,238,223,0.65);
+    cursor: pointer; transition: border-color .25s, color .25s;
+  }
+  .top-search:hover{ border-color: rgba(244,238,223,0.45); color: var(--paper);}
+
+  /* ============ PAGE HEADER ============ */
+  .page-header{
+    position: relative; z-index: 2;
+    padding: 56px 40px 40px;
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: end; gap: 32px;
+  }
+  .page-title{
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(36px, 4.4vw, 60px);
+    line-height: 1; letter-spacing: -0.025em;
+    color: var(--paper);
+    text-transform: lowercase;
+  }
+  .page-title em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    color: var(--butter);
+  }
+  .page-sub{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: rgba(244,238,223,0.60);
+  }
+  .page-sub strong{ color: var(--butter); font-weight: 500;}
+
+  /* ============ HORIZONTAL SCROLL ============ */
+  .scroll-hint{
+    position: relative; z-index: 2;
+    padding: 0 40px 18px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: rgba(244,238,223,0.45);
+  }
+  .scroll-hint .arrows{ display: inline-flex; gap: 8px;}
+  .scroll-arrow{
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: transparent; border: 1px solid rgba(244,238,223,0.20);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--paper);
+    cursor: pointer; transition: background .25s, border-color .25s;
+  }
+  .scroll-arrow:hover{ background: rgba(244,238,223,0.06); border-color: var(--butter);}
+  .scroll-arrow:disabled{ opacity: 0.35; cursor: not-allowed;}
+  .scroll-arrow svg{ width: 12px; height: 12px;}
+
+  .group-track{
+    position: relative; z-index: 2;
+    padding: 0 40px 80px;
+    overflow-x: auto;
+    overflow-y: visible;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .group-track::-webkit-scrollbar{ display: none;}
+  .group-row{
+    display: flex; gap: 20px;
+    width: max-content;
+    padding-right: 80px; /* let last card breathe so 'next' affordance stays */
+  }
+  .group-card{
+    scroll-snap-align: start;
+    flex: 0 0 360px;
+    aspect-ratio: 0.75;
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    display: flex; flex-direction: column;
+    cursor: pointer;
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s;
+    box-shadow: 0 16px 40px -16px rgba(0,0,0,0.4);
+  }
+  .group-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 24px 56px -20px rgba(0,0,0,0.55);
+  }
+
+  /* Card content (text portion) */
+  .group-content{
+    position: relative; z-index: 2;
+    padding: 28px 24px 20px;
+  }
+  .group-name{
+    font-family: var(--display); font-weight: 700;
+    font-size: 28px; line-height: 1.05; letter-spacing: -0.022em;
+    margin-bottom: 12px;
+  }
+  .group-name em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    letter-spacing: -0.005em;
+  }
+  .group-tag{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    font-weight: 500;
+    opacity: 0.65;
+  }
+
+  /* Visual area (lower portion of card) */
+  .group-visual{
+    position: relative;
+    flex: 1;
+    margin: 0 24px 24px;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .group-visual svg{ width: 100%; height: 100%; display: block;}
+
+  .group-meta{
+    position: absolute; bottom: 24px; right: 24px;
+    z-index: 3;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px;
+    background: rgba(0,0,0,0.20);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 100px;
+    border: 1px solid rgba(255,255,255,0.18);
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+  .group-meta .meta-dot{
+    width: 5px; height: 5px; border-radius: 50%;
+    background: currentColor; opacity: 0.7;
+  }
+  .group-meta.live .meta-dot{
+    background: #4F6E55;
+    animation: livePulse 2s ease-in-out infinite;
+  }
+  @keyframes livePulse{ 0%,100%{ opacity: 1;} 50%{ opacity: 0.4;} }
+
+  /* Card variants — each card has its own personality */
+  .gc-paper{ background: var(--paper); color: var(--ink);}
+  .gc-paper .group-visual{ background: var(--paper-soft);}
+
+  .gc-butter{ background: var(--butter-bright); color: var(--ink);}
+  .gc-butter .group-visual{ background: rgba(255,255,255,0.30);}
+
+  .gc-leaf{ background: var(--leaf-deep); color: var(--paper);}
+  .gc-leaf .group-visual{ background: rgba(0,0,0,0.18);}
+
+  .gc-terra{ background: var(--accent); color: var(--paper);}
+  .gc-terra .group-visual{ background: rgba(0,0,0,0.15);}
+
+  .gc-teal{ background: var(--teal); color: var(--paper);}
+  .gc-teal .group-visual{ background: rgba(0,0,0,0.18);}
+
+  .gc-rose{ background: var(--rose); color: var(--paper);}
+  .gc-rose .group-visual{ background: rgba(0,0,0,0.15);}
+
+  .gc-ink{ background: var(--ink); color: var(--paper);}
+  .gc-ink .group-visual{ background: rgba(255,255,255,0.04);}
+
+  /* "Featured" card variant — taller / wider */
+  .group-card.gc-featured{
+    flex: 0 0 460px;
+  }
+
+  /* Closing card — "Start your own group" */
+  .group-card.gc-create{
+    background: transparent;
+    border: 1.5px dashed rgba(244,238,223,0.30);
+    color: var(--paper);
+    box-shadow: none;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 32px 28px;
+    transition: border-color .35s, transform .35s;
+  }
+  .group-card.gc-create:hover{
+    border-color: var(--butter);
+    transform: translateY(-4px);
+    box-shadow: none;
+  }
+  .group-card.gc-create .group-content{
+    padding: 0; max-width: 220px;
+  }
+  .group-card.gc-create .plus{
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(244,238,223,0.06);
+    border: 1px solid rgba(244,238,223,0.25);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+    transition: background .35s, border-color .35s;
+  }
+  .group-card.gc-create:hover .plus{
+    background: var(--butter); border-color: var(--butter);
+  }
+  .group-card.gc-create:hover .plus svg{ color: var(--ink);}
+  .group-card.gc-create .plus svg{ width: 20px; height: 20px; transition: color .35s;}
+
+  /* ============ FEATURED RIBBON (below scroller) ============ */
+  .ribbon{
+    position: relative; z-index: 2;
+    padding: 56px 40px;
+    border-top: 1px solid rgba(244,238,223,0.08);
+    border-bottom: 1px solid rgba(244,238,223,0.08);
+    background: rgba(0,0,0,0.18);
+  }
+  .ribbon-inner{
+    display: grid; grid-template-columns: auto 1fr auto;
+    gap: 40px; align-items: center;
+    max-width: 1380px; margin: 0 auto;
+  }
+  .ribbon-eyebrow{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--butter);
+  }
+  .ribbon-text{
+    font-family: var(--display); font-weight: 500;
+    font-size: clamp(16px, 1.6vw, 22px); line-height: 1.4; letter-spacing: -0.015em;
+    color: var(--paper);
+  }
+  .ribbon-text em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    color: var(--butter);
+  }
+  .ribbon-cta{
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 22px;
+    background: var(--butter); color: var(--ink);
+    border-radius: 100px;
+    font-family: var(--display); font-weight: 600;
+    font-size: 12.5px; letter-spacing: 0.05em; text-transform: uppercase;
+    transition: gap .25s, background .25s;
+  }
+  .ribbon-cta:hover{ background: var(--paper); gap: 14px;}
+  .ribbon-cta::after{ content: "→";}
+
+  /* ============ FOOTER ============ */
+  .footer{
+    position: relative; z-index: 2;
+    padding: 36px 40px 28px;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.10em;
+    color: rgba(244,238,223,0.45);
+    text-transform: uppercase;
+  }
+  .footer a{ color: rgba(244,238,223,0.75); transition: color .2s;}
+  .footer a:hover{ color: var(--butter);}
+  .footer-links{ display: inline-flex; gap: 24px; flex-wrap: wrap;}
+
+  /* ============ DRAWER ============ */
+  .menu-backdrop{
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.50);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 49;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .menu-backdrop.open{ opacity: 1; pointer-events: auto;}
+  .menu-overlay{
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: min(340px, 88vw);
+    background: var(--ink); color: var(--paper);
+    z-index: 50;
+    transform: translateX(100%);
+    transition: transform .35s cubic-bezier(.2,.8,.2,1);
+    display: flex; flex-direction: column;
+    padding: 92px 36px 40px;
+    box-shadow: -24px 0 48px -16px rgba(0,0,0,0.45);
+    overflow: hidden;
+  }
+  .menu-overlay.open{ transform: translateX(0);}
+  .menu-overlay-inner{
+    width: 100%; flex: 1;
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .menu-eyebrow{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--butter); margin-bottom: 24px;
+  }
+  .menu-links{ display: flex; flex-direction: column;}
+  .menu-links a{
+    display: block;
+    font-family: var(--display); font-weight: 500;
+    font-size: 26px; line-height: 1.15; letter-spacing: -0.018em;
+    color: var(--paper);
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    transition: color .25s, padding .25s;
+  }
+  .menu-links a:last-child{ border-bottom: none;}
+  .menu-links a em{ font-family: var(--serif); font-style: italic; color: var(--butter); font-weight: 400;}
+  .menu-links a:hover{ color: var(--butter); padding-left: 8px;}
+  .menu-foot{
+    margin-top: auto; padding-top: 24px;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-family: var(--display); font-size: 13px;
+  }
+  .menu-foot a{ color: rgba(244,238,223,0.78);}
+  .menu-foot a:hover{ color: var(--butter);}
+  .menu-foot-email{
+    font-family: var(--mono) !important; font-size: 11px !important;
+    color: rgba(244,238,223,0.45) !important;
+    margin-top: 4px;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 980px){
+    .topbar{ padding: 18px 22px; gap: 16px;}
+    .top-filters{ display: none;}
+    .page-header{ padding: 36px 22px 28px; grid-template-columns: 1fr; gap: 16px; align-items: start;}
+    .scroll-hint{ padding: 0 22px 16px;}
+    .group-track{ padding: 0 22px 60px;}
+    .group-card{ flex: 0 0 280px;}
+    .group-card.gc-featured{ flex: 0 0 320px;}
+    .ribbon{ padding: 40px 22px;}
+    .ribbon-inner{ grid-template-columns: 1fr; gap: 16px;}
+    .footer{ padding: 28px 22px 24px;}
+  }
+  @media (max-width: 600px){
+    .group-card{ flex: 0 0 240px; aspect-ratio: 0.7;}
+    .group-card.gc-featured{ flex: 0 0 280px;}
+    .group-name{ font-size: 22px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TOPBAR ============ -->
+<header class="topbar">
+  <a href="school.html" class="brand">
+    <span class="brand-mark"><img src="chrysalis-logo.png" alt="Chrysalis"></span>
+    <span class="brand-text">
+      <span>Chrysalis</span>
+      <span class="b2">School · Community</span>
+    </span>
+  </a>
+
+  <div class="top-filters" role="tablist">
+    <button class="top-filter active" data-filter="all">all <span class="count">19</span></button>
+    <button class="top-filter" data-filter="parents">parents <span class="count">07</span></button>
+    <button class="top-filter" data-filter="students">students <span class="count">06</span></button>
+    <button class="top-filter" data-filter="events">events <span class="count">04</span></button>
+    <button class="top-filter" data-filter="topics">topics <span class="count">02</span></button>
+  </div>
+
+  <div class="top-actions">
+    <button class="top-search" aria-label="Search community">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12">
+        <circle cx="6" cy="6" r="4"/>
+        <path d="M9 9 L12 12"/>
+      </svg>
+      <span>Search</span>
+    </button>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+      <span class="ham"><span></span><span></span><span></span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ============ PAGE HEADER ============ -->
+<section class="page-header">
+  <h1 class="page-title">join the <em>community</em>.</h1>
+  <span class="page-sub">19 active groups · <strong>1,240 members</strong></span>
+</section>
+
+<!-- Scroll affordance row -->
+<div class="scroll-hint">
+  <span>← scroll to explore →</span>
+  <div class="arrows">
+    <button class="scroll-arrow" id="scrollPrev" aria-label="Previous">
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 2 L4 6 L8 10"/></svg>
+    </button>
+    <button class="scroll-arrow" id="scrollNext" aria-label="Next">
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 2 L8 6 L4 10"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ============ HORIZONTAL CARD SCROLLER ============ -->
+<div class="group-track" id="groupTrack">
+  <div class="group-row">
+
+    <!-- CARD 1 — Year 9 Parents (paper, featured) -->
+    <a href="#group-y9p" class="group-card gc-paper gc-featured" data-cat="parents">
+      <div class="group-content">
+        <h3 class="group-name">Year 9<br>Parents <em>Circle</em></h3>
+        <span class="group-tag">// Parents</span>
+      </div>
+      <div class="group-visual">
+        <svg viewBox="0 0 320 360" xmlns="http://www.w3.org/2000/svg">
+          <!-- Cluster of avatar dots representing community -->
+          <g>
+            <circle cx="80" cy="120" r="36" fill="#C77B4F"/>
+            <circle cx="160" cy="80" r="44" fill="#7A9472"/>
+            <circle cx="240" cy="130" r="32" fill="#4A2C4B"/>
+            <circle cx="100" cy="220" r="40" fill="#D4B968"/>
+            <circle cx="200" cy="240" r="36" fill="#B86F7A"/>
+            <circle cx="160" cy="170" r="28" fill="#1A1612"/>
+          </g>
+          <!-- Connection lines -->
+          <g stroke="#1A1612" stroke-width="1" opacity="0.18">
+            <line x1="80" y1="120" x2="160" y2="80"/>
+            <line x1="160" y1="80" x2="240" y2="130"/>
+            <line x1="80" y1="120" x2="100" y2="220"/>
+            <line x1="100" y1="220" x2="200" y2="240"/>
+            <line x1="200" y1="240" x2="240" y2="130"/>
+            <line x1="160" y1="170" x2="160" y2="80"/>
+            <line x1="160" y1="170" x2="100" y2="220"/>
+          </g>
+        </svg>
+      </div>
+      <div class="group-meta live">
+        <span class="meta-dot"></span><span>Active · 86 members</span>
+      </div>
+    </a>
+
+    <!-- CARD 2 — Future Engineers (leaf) -->
+    <a href="#group-fe" class="group-card gc-leaf" data-cat="students">
+      <div class="group-content">
+        <h3 class="group-name">Future<br>Engineers</h3>
+        <span class="group-tag">// Students · Club</span>
+      </div>
+      <div class="group-visual">
+        <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+          <!-- Gear motif -->
+          <g transform="translate(140 140)">
+            <circle r="60" fill="none" stroke="#D4B968" stroke-width="2"/>
+            <g stroke="#D4B968" stroke-width="2" fill="none">
+              <line x1="0" y1="-78" x2="0" y2="-62"/>
+              <line x1="0" y1="78" x2="0" y2="62"/>
+              <line x1="-78" y1="0" x2="-62" y2="0"/>
+              <line x1="78" y1="0" x2="62" y2="0"/>
+              <line x1="-55" y1="-55" x2="-44" y2="-44"/>
+              <line x1="55" y1="-55" x2="44" y2="-44"/>
+              <line x1="-55" y1="55" x2="-44" y2="44"/>
+              <line x1="55" y1="55" x2="44" y2="44"/>
+            </g>
+            <circle r="20" fill="#D4B968"/>
+            <!-- Smaller offset gear -->
+            <circle cx="-90" cy="40" r="32" fill="none" stroke="#F4EEDF" stroke-width="1.5" opacity="0.5"/>
+            <circle cx="90" cy="-50" r="24" fill="none" stroke="#F4EEDF" stroke-width="1.5" opacity="0.5"/>
+          </g>
+        </svg>
+      </div>
+      <div class="group-meta">
+        <span class="meta-dot"></span><span>54 members</span>
+      </div>
+    </a>
+
+    <!-- CARD 3 — Family Learning Lab (terra) -->
+    <a href="#group-fll" class="group-card gc-terra" data-cat="topics">
+      <div class="group-content">
+        <h3 class="group-name">Family<br><em>Learning</em> Lab</h3>
+        <span class="group-tag">// Topic · Open</span>
+      </div>
+      <div class="group-visual">
+        <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+          <!-- Open book with pages -->
+          <g transform="translate(140 140)">
+            <path d="M-90 0 L0 -16 L0 60 Q-50 50 -90 56 Z" fill="#F4EEDF"/>
+            <path d="M90 0 L0 -16 L0 60 Q50 50 90 56 Z" fill="#F4EEDF"/>
+            <line x1="0" y1="-16" x2="0" y2="60" stroke="#1A1612" stroke-width="1.5"/>
+            <g stroke="#1A1612" stroke-width="1" opacity="0.4">
+              <line x1="-72" y1="6" x2="-12" y2="-2"/>
+              <line x1="-72" y1="14" x2="-12" y2="6"/>
+              <line x1="-72" y1="22" x2="-12" y2="14"/>
+              <line x1="-72" y1="30" x2="-20" y2="22"/>
+              <line x1="12" y1="-2" x2="72" y2="6"/>
+              <line x1="12" y1="6" x2="72" y2="14"/>
+              <line x1="12" y1="14" x2="72" y2="22"/>
+              <line x1="12" y1="22" x2="60" y2="30"/>
+            </g>
+            <!-- Light bulb above -->
+            <g transform="translate(0 -70)">
+              <circle r="14" fill="#D4B968"/>
+              <line x1="0" y1="14" x2="0" y2="22" stroke="#1A1612" stroke-width="1.5"/>
+              <rect x="-8" y="22" width="16" height="6" fill="#1A1612"/>
+              <line x1="-22" y1="-14" x2="-30" y2="-22" stroke="#F4EEDF" stroke-width="1.5"/>
+              <line x1="22" y1="-14" x2="30" y2="-22" stroke="#F4EEDF" stroke-width="1.5"/>
+              <line x1="0" y1="-22" x2="0" y2="-32" stroke="#F4EEDF" stroke-width="1.5"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="group-meta">
+        <span class="meta-dot"></span><span>312 members</span>
+      </div>
+    </a>
+
+    <!-- CARD 4 — Wellbeing Wednesdays (rose) -->
+    <a href="#group-ww" class="group-card gc-rose" data-cat="events">
+      <div class="group-content">
+        <h3 class="group-name">Wellbeing<br>Wednesdays</h3>
+        <span class="group-tag">// Event · Weekly</span>
+      </div>
+      <div class="group-visual">
+        <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+          <!-- Calendar tile + leaf -->
+          <g transform="translate(140 140)">
+            <rect x="-60" y="-60" width="120" height="120" rx="12" fill="#F4EEDF"/>
+            <rect x="-60" y="-60" width="120" height="30" rx="12" fill="#1A1612"/>
+            <rect x="-60" y="-40" width="120" height="10" fill="#1A1612"/>
+            <text x="0" y="22" font-family="Archivo" font-size="44" font-weight="700" fill="#1A1612" text-anchor="middle">12</text>
+            <!-- Leaf accent -->
+            <g transform="translate(38 -36)">
+              <path d="M0 0 Q12 -8 18 0 Q12 12 0 0 Z" fill="#7A9472"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="group-meta live">
+        <span class="meta-dot"></span><span>Live · Wed 4pm</span>
+      </div>
+    </a>
+
+    <!-- CARD 5 — Year 11 GCSE Prep (butter) -->
+    <a href="#group-y11" class="group-card gc-butter" data-cat="parents">
+      <div class="group-content">
+        <h3 class="group-name">Year 11<br>GCSE Prep</h3>
+        <span class="group-tag">// Parents · Year Group</span>
+      </div>
+      <div class="group-visual">
+        <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+          <!-- Stacked papers/notes -->
+          <g transform="translate(140 140) rotate(-6)">
+            <rect x="-70" y="-90" width="140" height="180" rx="8" fill="#FAF7F1" stroke="#1A1612" stroke-width="1.5"/>
+            <line x1="-50" y1="-60" x2="40" y2="-60" stroke="#1A1612" stroke-width="1.5" opacity="0.3"/>
+            <line x1="-50" y1="-44" x2="50" y2="-44" stroke="#1A1612" stroke-width="1.5" opacity="0.3"/>
+            <line x1="-50" y1="-28" x2="30" y2="-28" stroke="#1A1612" stroke-width="1.5" opacity="0.3"/>
+            <line x1="-50" y1="-12" x2="50" y2="-12" stroke="#1A1612" stroke-width="1.5" opacity="0.3"/>
+            <line x1="-50" y1="4" x2="20" y2="4" stroke="#1A1612" stroke-width="1.5" opacity="0.3"/>
+            <line x1="-50" y1="20" x2="50" y2="20" stroke="#1A1612" stroke-width="1.5" opacity="0.3"/>
+            <line x1="-50" y1="36" x2="40" y2="36" stroke="#1A1612" stroke-width="1.5" opacity="0.3"/>
+            <line x1="-50" y1="52" x2="30" y2="52" stroke="#1A1612" stroke-width="1.5" opacity="0.3"/>
+            <!-- Star sticker -->
+            <g transform="translate(50 70)">
+              <circle r="14" fill="#C77B4F"/>
+              <text y="4" font-family="Archivo" font-size="14" font-weight="700" fill="#FAF7F1" text-anchor="middle">A*</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="group-meta">
+        <span class="meta-dot"></span><span>72 members</span>
+      </div>
+    </a>
+
+    <!-- CARD 6 — Debate Society (teal) -->
+    <a href="#group-ds" class="group-card gc-teal" data-cat="students">
+      <div class="group-content">
+        <h3 class="group-name">Debate<br>Society</h3>
+        <span class="group-tag">// Students · Club</span>
+      </div>
+      <div class="group-visual">
+        <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+          <!-- Speech bubbles overlapping -->
+          <g transform="translate(140 140)">
+            <path d="M-78 -50 Q-78 -76 -52 -76 L-2 -76 Q24 -76 24 -50 L24 -10 Q24 16 -2 16 L-30 16 L-46 32 L-46 16 Q-78 16 -78 -10 Z" fill="#F4EEDF" stroke="#1A1612" stroke-width="2"/>
+            <path d="M-2 -10 Q-2 -36 24 -36 L74 -36 Q100 -36 100 -10 L100 30 Q100 56 74 56 L46 56 L62 72 L62 56 Q26 56 26 30 Z" fill="#D4B968" stroke="#1A1612" stroke-width="2"/>
+            <line x1="-58" y1="-50" x2="0" y2="-50" stroke="#1A1612" stroke-width="1.5" opacity="0.4"/>
+            <line x1="-58" y1="-34" x2="-10" y2="-34" stroke="#1A1612" stroke-width="1.5" opacity="0.4"/>
+            <line x1="6" y1="-10" x2="86" y2="-10" stroke="#1A1612" stroke-width="1.5" opacity="0.4"/>
+            <line x1="6" y1="6" x2="76" y2="6" stroke="#1A1612" stroke-width="1.5" opacity="0.4"/>
+          </g>
+        </svg>
+      </div>
+      <div class="group-meta">
+        <span class="meta-dot"></span><span>28 members</span>
+      </div>
+    </a>
+
+    <!-- CARD 7 — Principal's Open Hour (ink) -->
+    <a href="#group-poh" class="group-card gc-ink" data-cat="events">
+      <div class="group-content">
+        <h3 class="group-name">Principal's<br>Open <em>Hour</em></h3>
+        <span class="group-tag">// Event · Monthly</span>
+      </div>
+      <div class="group-visual">
+        <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(140 140)">
+            <!-- Clock face -->
+            <circle r="80" fill="none" stroke="#D4B968" stroke-width="2"/>
+            <circle r="4" fill="#D4B968"/>
+            <line x1="0" y1="0" x2="0" y2="-50" stroke="#D4B968" stroke-width="3" stroke-linecap="round"/>
+            <line x1="0" y1="0" x2="36" y2="6" stroke="#D4B968" stroke-width="3" stroke-linecap="round"/>
+            <!-- Hour markers -->
+            <line x1="0" y1="-72" x2="0" y2="-66" stroke="#F4EEDF" stroke-width="2" opacity="0.6"/>
+            <line x1="72" y1="0" x2="66" y2="0" stroke="#F4EEDF" stroke-width="2" opacity="0.6"/>
+            <line x1="0" y1="72" x2="0" y2="66" stroke="#F4EEDF" stroke-width="2" opacity="0.6"/>
+            <line x1="-72" y1="0" x2="-66" y2="0" stroke="#F4EEDF" stroke-width="2" opacity="0.6"/>
+          </g>
+        </svg>
+      </div>
+      <div class="group-meta live">
+        <span class="meta-dot"></span><span>Next: Tue 6pm</span>
+      </div>
+    </a>
+
+    <!-- CARD 8 — Music & Performance (rose) -->
+    <a href="#group-mp" class="group-card gc-rose" data-cat="students">
+      <div class="group-content">
+        <h3 class="group-name">Music &amp;<br>Performance</h3>
+        <span class="group-tag">// Students · Club</span>
+      </div>
+      <div class="group-visual">
+        <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(140 140)">
+            <!-- Music note -->
+            <ellipse cx="-30" cy="40" rx="20" ry="14" fill="#F4EEDF" transform="rotate(-15 -30 40)"/>
+            <line x1="-12" y1="35" x2="-12" y2="-50" stroke="#F4EEDF" stroke-width="3"/>
+            <ellipse cx="40" cy="20" rx="20" ry="14" fill="#F4EEDF" transform="rotate(-15 40 20)"/>
+            <line x1="58" y1="14" x2="58" y2="-70" stroke="#F4EEDF" stroke-width="3"/>
+            <path d="M-12 -50 Q24 -54 58 -70 L58 -50 Q24 -34 -12 -30 Z" fill="#F4EEDF"/>
+          </g>
+        </svg>
+      </div>
+      <div class="group-meta">
+        <span class="meta-dot"></span><span>41 members</span>
+      </div>
+    </a>
+
+    <!-- CARD 9 — Alumni Network (paper) -->
+    <a href="#group-alumni" class="group-card gc-paper" data-cat="topics">
+      <div class="group-content">
+        <h3 class="group-name">Alumni<br>Network</h3>
+        <span class="group-tag">// Coming Sept 2027</span>
+      </div>
+      <div class="group-visual">
+        <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(140 140)">
+            <!-- Mortarboard cap -->
+            <polygon points="-70,0 0,-30 70,0 0,30" fill="#1A1612"/>
+            <rect x="-26" y="0" width="52" height="22" fill="#1A1612"/>
+            <line x1="70" y1="0" x2="86" y2="20" stroke="#C77B4F" stroke-width="2.5"/>
+            <circle cx="86" cy="22" r="6" fill="#C77B4F"/>
+            <!-- Tag -->
+            <text y="76" font-family="Archivo" font-size="12" font-weight="500" fill="#8B8276" text-anchor="middle" letter-spacing="2">FORWARD-LOOKING</text>
+          </g>
+        </svg>
+      </div>
+      <div class="group-meta">
+        <span class="meta-dot"></span><span>Opens 2027</span>
+      </div>
+    </a>
+
+    <!-- CLOSING — Start your own group -->
+    <a href="#new-group" class="group-card gc-create">
+      <div class="plus">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6">
+          <line x1="10" y1="3" x2="10" y2="17"/>
+          <line x1="3" y1="10" x2="17" y2="10"/>
+        </svg>
+      </div>
+      <div class="group-content">
+        <h3 class="group-name">Start a <em>group</em></h3>
+        <span class="group-tag" style="opacity:0.85;">// Got an idea?</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- ============ FEATURED RIBBON ============ -->
+<section class="ribbon">
+  <div class="ribbon-inner">
+    <span class="ribbon-eyebrow">/ This week's discussion</span>
+    <p class="ribbon-text">In the <em>Family Learning Lab</em>: <strong>"How do we talk to teenagers about failure?"</strong> — 47 replies and counting.</p>
+    <a href="#group-fll" class="ribbon-cta">Join the thread</a>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <span>© 2026 Chrysalis School · Community</span>
+  <div class="footer-links">
+    <a href="school.html">School Home</a>
+    <a href="#guidelines">Community Guidelines</a>
+    <a href="#code">Code of Conduct</a>
+    <a href="mailto:hello@chrysalis.education">Contact</a>
+  </div>
+</footer>
+
+<!-- Backdrop + drawer -->
+<div class="menu-backdrop" id="menuBackdrop" aria-hidden="true"></div>
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu-overlay-inner">
+    <div class="menu-eyebrow">// Community</div>
+    <nav class="menu-links">
+      <a href="school.html">← Back to School</a>
+      <a href="#all"><em>All groups</em></a>
+      <a href="#new-group">Start a group</a>
+      <a href="#guidelines">Community Guidelines</a>
+      <a href="library.html">Knowledge Library</a>
+    </nav>
+    <div class="menu-foot">
+      <a href="index.html">Chrysalis hub</a>
+      <a href="concierge.html">EDU Concierge</a>
+          <a href="dexter/solutions.html">Dexter</a>
+      <a class="menu-foot-email" href="mailto:hello@chrysalis.education">hello@chrysalis.education</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Drawer
+  const menuBtn = document.getElementById('menuBtn');
+  const menuOverlay = document.getElementById('menuOverlay');
+  const menuBackdrop = document.getElementById('menuBackdrop');
+  function toggleMenu(force){
+    const isOpen = force !== undefined ? force : !menuOverlay.classList.contains('open');
+    menuOverlay.classList.toggle('open', isOpen);
+    menuBackdrop.classList.toggle('open', isOpen);
+    menuBtn.setAttribute('aria-expanded', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+  menuBtn.addEventListener('click', () => toggleMenu());
+  menuOverlay.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
+  menuBackdrop.addEventListener('click', () => toggleMenu(false));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
+
+  // Filter pills
+  const filters = document.querySelectorAll('.top-filter');
+  const cards = document.querySelectorAll('.group-card[data-cat]');
+  filters.forEach(f => {
+    f.addEventListener('click', () => {
+      filters.forEach(x => x.classList.remove('active'));
+      f.classList.add('active');
+      const cat = f.dataset.filter;
+      cards.forEach(c => {
+        if (cat === 'all' || c.dataset.cat === cat){
+          c.style.display = '';
+        } else {
+          c.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Horizontal scroll arrows
+  const track = document.getElementById('groupTrack');
+  const prevBtn = document.getElementById('scrollPrev');
+  const nextBtn = document.getElementById('scrollNext');
+  function scrollByCard(dir){
+    const card = track.querySelector('.group-card');
+    const step = card ? card.offsetWidth + 20 : 380;
+    track.scrollBy({ left: dir * step, behavior: 'smooth' });
+  }
+  prevBtn.addEventListener('click', () => scrollByCard(-1));
+  nextBtn.addEventListener('click', () => scrollByCard(1));
+  // Update arrow disabled state
+  function updateArrows(){
+    prevBtn.disabled = track.scrollLeft <= 4;
+    nextBtn.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+  }
+  track.addEventListener('scroll', updateArrows);
+  window.addEventListener('resize', updateArrows);
+  updateArrows();
+</script>
+
+</body>
+</html>

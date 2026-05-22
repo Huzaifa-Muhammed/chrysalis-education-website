@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knowledge Library — Chrysalis School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:    #D6CDC0;
+    --canvas-2:  #C8BEAD;
+    --paper:     #FAF7F1;
+    --paper-2:   #F2EBDC;
+    --ink:       #1A1612;
+    --ink-soft:  #3A332C;
+    --muted:     #8B8276;
+    --hairline:  #C9C0A8;
+    --hairline-soft: #DDD4BD;
+    --plum:      #4A2C4B;
+    --plum-hero: #4A2C4B;
+    --plum-deep: #2F1D31;
+    --accent:    #C77B4F;
+    --accent-bright: #E89066;
+    --butter:    #D4B968;
+    --butter-bright:#F5D88A;
+    --leaf:      #7A9472;
+    --leaf-deep: #4F6E55;
+    --rose:      #B86F7A;
+
+    --display: 'Archivo', system-ui, sans-serif;
+    --serif:   'Instrument Serif', Georgia, serif;
+    --mono:    'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  *{ box-sizing: border-box; margin: 0; padding: 0;}
+  html{ scroll-behavior: smooth;}
+  body{
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: var(--display);
+    font-weight: 400;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a{ color: inherit; text-decoration: none;}
+  button{ font-family: inherit;}
+  ::selection{ background: var(--butter-bright); color: var(--ink);}
+
+  em.serif, .serif-em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  /* ============ TOPBAR ============ */
+  .page-topbar{
+    padding: 24px 36px;
+    display: grid; grid-template-columns: auto 1fr auto;
+    align-items: center; gap: 24px;
+    background: var(--canvas);
+    border-bottom: 1px solid var(--hairline);
+    position: sticky; top: 0; z-index: 30;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .pill-explore{
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 9px 16px 9px 12px;
+    background: var(--ink); color: var(--paper);
+    border: none; border-radius: 100px;
+    font-family: var(--display); font-weight: 500;
+    font-size: 12.5px; letter-spacing: 0.005em;
+    cursor: pointer;
+    transition: gap .25s, background .25s;
+  }
+  .pill-explore:hover{ gap: 14px; background: var(--accent);}
+  .pill-explore .ham{
+    display: inline-flex; flex-direction: column; gap: 3px;
+  }
+  .pill-explore .ham span{
+    display: block; width: 14px; height: 1.5px; background: var(--paper); border-radius: 1px;
+  }
+
+  .brand{
+    justify-self: center;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .brand-mark{
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brand-mark img{ width: 100%; height: 100%; object-fit: contain;}
+  .brand-text{
+    font-family: var(--display); font-weight: 700;
+    font-size: 12.5px; letter-spacing: 0.06em; text-transform: uppercase;
+    line-height: 1.05; color: var(--ink);
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .brand-text .b2{ color: var(--muted); font-weight: 500;}
+
+  .nav-right{
+    justify-self: end;
+    display: inline-flex; align-items: center; gap: 18px;
+  }
+  .nav-right a{
+    font-family: var(--display); font-weight: 500;
+    font-size: 12.5px; color: var(--ink-soft);
+    transition: color .2s;
+  }
+  .nav-right a:hover{ color: var(--accent);}
+  .nav-right .nav-reg{
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 12px;
+    background: var(--butter); color: var(--ink);
+    border-radius: 100px;
+    font-weight: 600;
+  }
+  .nav-right .nav-reg .reg-dot{
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--leaf-deep);
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity: 1;} 50%{ opacity: 0.4;} }
+  @media (max-width: 760px){
+    .page-topbar{ padding: 16px 18px; grid-template-columns: auto 1fr;}
+    .nav-right{ display: none;}
+    .pill-explore .pill-text{ display: none;}
+  }
+
+  /* ============ DRAWER ============ */
+  .menu-backdrop{
+    position: fixed; inset: 0;
+    background: rgba(26,22,18,0.40);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 49;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .menu-backdrop.open{ opacity: 1; pointer-events: auto;}
+  .menu-overlay{
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: min(360px, 88vw);
+    background: var(--ink); color: var(--paper);
+    z-index: 50;
+    transform: translateX(100%);
+    transition: transform .35s cubic-bezier(.2,.8,.2,1);
+    display: flex; flex-direction: column;
+    padding: 92px 36px 40px;
+    box-shadow: -24px 0 48px -16px rgba(26,22,18,0.35);
+    overflow: hidden;
+  }
+  .menu-overlay.open{ transform: translateX(0);}
+  .menu-overlay::before{
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(circle at 20% 12%, rgba(245,216,138,0.10) 0%, transparent 55%),
+      radial-gradient(circle at 90% 100%, rgba(199,123,79,0.08) 0%, transparent 55%);
+  }
+  .menu-overlay-inner{
+    position: relative; z-index: 2;
+    width: 100%; flex: 1;
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .menu-eyebrow{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--butter); margin-bottom: 24px;
+  }
+  .menu-links{ display: flex; flex-direction: column; gap: 2px;}
+
+  .menu-section{}
+  .menu-section-head{
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%;
+    font-family: var(--display); font-weight: 600;
+    font-size: 18px; line-height: 1.2; letter-spacing: -0.012em;
+    color: var(--paper);
+    padding: 11px 0;
+    background: none; border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: color .25s, padding .25s;
+  }
+  .menu-section-head:hover{ color: var(--butter); padding-left: 6px;}
+  .menu-section-head.is-active{ color: var(--butter);}
+  .menu-section-head.is-active span{
+    font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.005em;
+    font-size: 22px;
+  }
+  .menu-section-head .chev{
+    width: 11px; height: 11px;
+    color: rgba(250,247,241,0.55);
+    transition: transform .3s cubic-bezier(.2,.8,.2,1), color .25s;
+    flex-shrink: 0; margin-left: 12px;
+  }
+  .menu-section-head:hover .chev{ color: var(--butter);}
+  .menu-section.open .menu-section-head .chev{ transform: rotate(-180deg);}
+
+  .menu-sub{
+    display: flex; flex-direction: column;
+    padding: 0 0 0 14px;
+    border-left: 1px solid rgba(255,255,255,0.10);
+    margin: 0 0 0 4px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height .35s cubic-bezier(.2,.8,.2,1), opacity .25s ease, padding-bottom .35s, margin-bottom .35s;
+  }
+  .menu-section[data-collapsible].open .menu-sub{
+    max-height: 360px;
+    opacity: 1;
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+  }
+  .menu-sub a{
+    display: block;
+    font-family: var(--display); font-weight: 400;
+    font-size: 13px; line-height: 1.4;
+    color: rgba(250,247,241,0.65);
+    padding: 6px 0;
+    transition: color .2s, padding .2s;
+  }
+  .menu-sub a:hover{ color: var(--butter); padding-left: 6px;}
+
+  .menu-foot{
+    margin-top: auto; padding-top: 24px;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .menu-foot-link{
+    font-family: var(--display); font-weight: 500;
+    font-size: 13px; color: rgba(250,247,241,0.78);
+    transition: color .2s;
+  }
+  .menu-foot-link:hover{ color: var(--butter);}
+  .menu-foot-email{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em;
+    color: rgba(250,247,241,0.45);
+  }
+
+  /* ============ COMMON CONTENT BLOCKS ============ */
+  .page-wrap{ position: relative;}
+
+  /* Hero band — used by inner pages. Either paper or plum variant. */
+  .page-hero{
+    padding: 80px 56px 64px;
+    background: var(--canvas);
+    border-bottom: 1px solid var(--hairline);
+    position: relative; overflow: hidden;
+  }
+  .page-hero.plum{
+    background: var(--plum-hero); color: var(--paper);
+    border-bottom: none;
+  }
+  .page-hero.plum::before{
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(circle at 80% 20%, rgba(245,216,138,0.10) 0%, transparent 55%),
+      radial-gradient(circle at 15% 85%, rgba(199,123,79,0.08) 0%, transparent 55%);
+  }
+  .page-hero-inner{
+    position: relative; z-index: 2;
+    max-width: 1180px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.4fr 1fr;
+    gap: 48px; align-items: end;
+  }
+  .eyebrow-mono{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .page-hero.plum .eyebrow-mono{ color: var(--butter);}
+  .eyebrow-mono::before{
+    content: ""; width: 22px; height: 1px; background: currentColor;
+  }
+  .page-hero h1{
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(40px, 6vw, 80px);
+    line-height: 1; letter-spacing: -0.035em;
+    color: inherit;
+  }
+  .page-hero h1 em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    color: var(--accent);
+    letter-spacing: -0.015em;
+  }
+  .page-hero.plum h1 em{ color: var(--butter-bright);}
+  .page-hero .hero-lead{
+    font-family: var(--display); font-weight: 400;
+    font-size: 17px; line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 460px;
+  }
+  .page-hero.plum .hero-lead{ color: rgba(250,247,241,0.78);}
+  .page-hero .hero-lead em{
+    font-family: var(--serif); font-style: italic; color: var(--accent);
+  }
+  .page-hero.plum .hero-lead em{ color: var(--butter-bright);}
+  @media (max-width: 920px){
+    .page-hero{ padding: 56px 22px 40px;}
+    .page-hero-inner{ grid-template-columns: 1fr; gap: 24px;}
+    .page-hero h1{ font-size: clamp(36px, 11vw, 64px);}
+  }
+
+  /* Content sections */
+  .section{
+    padding: 96px 56px;
+    border-top: 1px solid var(--hairline);
+    background: var(--canvas);
+    scroll-margin-top: 96px;
+  }
+  .section.paper{ background: var(--paper); border-color: var(--hairline-soft);}
+  .section-inner{ max-width: 1180px; margin: 0 auto;}
+  .section-inner-narrow{ max-width: 820px; margin: 0 auto;}
+  .section-eyebrow{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500;
+    margin-bottom: 22px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .section-eyebrow .num{
+    font-family: var(--mono); font-weight: 500;
+    color: var(--ink);
+    background: var(--paper-2);
+    padding: 3px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+  }
+  .section h2{
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(30px, 3.6vw, 48px);
+    line-height: 1.05; letter-spacing: -0.025em;
+    color: var(--ink); margin-bottom: 24px;
+    max-width: 800px;
+  }
+  .section h2 em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    color: var(--accent);
+  }
+  .section h3{
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(20px, 1.8vw, 26px);
+    line-height: 1.2; letter-spacing: -0.018em;
+    color: var(--ink); margin-bottom: 12px;
+  }
+  .section h3 em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    color: var(--accent);
+  }
+  .section p{
+    font-size: 16px; line-height: 1.7;
+    color: var(--ink-soft); margin-bottom: 18px;
+    max-width: 720px;
+  }
+  .section p strong{ color: var(--ink); font-weight: 600;}
+  .section p em{
+    font-family: var(--serif); font-style: italic; color: var(--accent);
+  }
+  @media (max-width: 760px){
+    .section{ padding: 64px 22px;}
+  }
+
+  /* Two-column body grid */
+  .two-col{
+    display: grid; grid-template-columns: 1fr 1.4fr;
+    gap: 64px;
+    align-items: start;
+  }
+  @media (max-width: 920px){
+    .two-col{ grid-template-columns: 1fr; gap: 24px;}
+  }
+
+  /* Pills / chips */
+  .pill{
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    background: var(--paper-2);
+    border: 1px solid var(--hairline);
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+    color: var(--ink-soft); text-transform: uppercase;
+  }
+  .pill.butter{ background: var(--butter); border-color: var(--butter); color: var(--ink); font-weight: 600;}
+  .pill.leaf{ background: var(--leaf-deep); border-color: var(--leaf-deep); color: var(--paper);}
+  .pill.terra{ background: var(--accent); border-color: var(--accent); color: var(--paper);}
+
+  /* Cards */
+  .card{
+    background: var(--paper); border-radius: 18px;
+    padding: 28px 28px;
+    border: 1px solid var(--hairline-soft);
+    transition: transform .35s, box-shadow .35s;
+  }
+  .card:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 24px 48px -22px rgba(26,22,18,0.18);
+  }
+  .card.plum{
+    background: var(--plum); color: var(--paper); border-color: var(--plum);
+  }
+  .card.plum h3{ color: var(--paper);}
+  .card.plum h3 em{ color: var(--butter-bright);}
+  .card.plum p{ color: rgba(250,247,241,0.78);}
+  .card h3{ margin-bottom: 10px;}
+
+  /* Buttons / CTAs */
+  .btn-primary{
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 26px;
+    background: var(--ink); color: var(--paper);
+    border-radius: 100px;
+    font-family: var(--display); font-weight: 600;
+    font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase;
+    transition: gap .25s, background .25s;
+  }
+  .btn-primary:hover{ background: var(--accent); gap: 14px;}
+  .btn-primary::after{ content: "→";}
+  .btn-secondary{
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px;
+    background: transparent; color: var(--ink);
+    border: 1px solid var(--ink);
+    border-radius: 100px;
+    font-family: var(--display); font-weight: 500;
+    font-size: 13px; letter-spacing: 0.03em;
+    transition: background .25s, color .25s;
+  }
+  .btn-secondary:hover{ background: var(--ink); color: var(--paper);}
+
+  /* ============ FOOTER ============ */
+  .site-footer{
+    background: var(--ink); color: var(--paper);
+    padding: 80px 56px 36px;
+    position: relative; overflow: hidden;
+  }
+  .site-footer::before{
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(circle at 90% 0%, rgba(245,216,138,0.08) 0%, transparent 55%);
+  }
+  .footer-grid{
+    position: relative; z-index: 2;
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 64px;
+    max-width: 1280px; margin: 0 auto 56px;
+  }
+  .footer-brand .brand-footer{ margin-bottom: 16px; gap: 12px;}
+  .footer-brand .brand-footer .brand-text{ color: var(--paper);}
+  .footer-brand .brand-footer .brand-text .b2{ color: rgba(250,247,241,0.55);}
+  .footer-tagline{
+    font-size: 14px; line-height: 1.6;
+    color: rgba(250,247,241,0.65);
+    max-width: 320px;
+  }
+  .footer-col h4{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--butter); font-weight: 500;
+    margin-bottom: 18px;
+  }
+  .footer-col ul{ list-style: none;}
+  .footer-col li{ margin-bottom: 11px;}
+  .footer-col a{
+    font-size: 14px; color: rgba(250,247,241,0.82);
+    transition: color .2s;
+  }
+  .footer-col a:hover{ color: var(--butter);}
+
+  .footer-bottom{
+    position: relative; z-index: 2;
+    max-width: 1280px; margin: 0 auto;
+    padding-top: 28px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    color: rgba(250,247,241,0.45);
+    text-transform: uppercase;
+  }
+  @media (max-width: 920px){
+    .site-footer{ padding: 56px 22px 28px;}
+    .footer-grid{ grid-template-columns: 1fr 1fr; gap: 36px;}
+  }
+  @media (max-width: 540px){
+    .footer-grid{ grid-template-columns: 1fr; gap: 28px;}
+  }
+
+  /* ============ SPEAK FAB ============ */
+  .speak-fab{
+    position: fixed; bottom: 24px; right: 24px;
+    z-index: 40;
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 13px 20px 13px 15px;
+    background: var(--ink); color: var(--paper);
+    border-radius: 100px;
+    font-family: var(--display); font-weight: 600;
+    font-size: 13px; letter-spacing: 0.04em;
+    box-shadow: 0 14px 36px -12px rgba(26,22,18,0.35);
+    transition: gap .25s, background .25s, transform .25s;
+  }
+  .speak-fab:hover{ gap: 14px; background: var(--accent); transform: translateY(-2px);}
+  .fab-pulse{
+    position: absolute; inset: -4px; border-radius: 100px;
+    border: 2px solid var(--accent);
+    opacity: 0; pointer-events: none;
+    animation: fabPulse 2.5s ease-out infinite;
+  }
+  @keyframes fabPulse{
+    0%{ opacity: 0.7; transform: scale(1);}
+    100%{ opacity: 0; transform: scale(1.18);}
+  }
+  .fab-icon{
+    display: inline-flex; width: 18px; height: 18px;
+  }
+  .fab-icon svg{ width: 100%; height: 100%;}
+  @media (max-width: 540px){
+    .speak-fab{ padding: 11px 16px 11px 12px; font-size: 12px;}
+  }
+
+  /* ============ REVEAL ============ */
+  .reveal{
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1);
+  }
+  .reveal.in{ opacity: 1; transform: translateY(0);}
+
+  /* ============ KNOWLEDGE LIBRARY ============ */
+  body.lib{ background: var(--paper);}
+  .lib-page{ background: var(--paper);}
+
+  /* Masthead */
+  .lib-masthead{
+    padding: 64px 56px 48px;
+    border-bottom: 1px solid var(--ink);
+    background: var(--paper);
+  }
+  .lib-masthead-inner{
+    max-width: 1240px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 48px; align-items: end;
+  }
+  .lib-mast-mono{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--muted); font-weight: 500;
+    margin-bottom: 24px;
+    display: flex; flex-wrap: wrap; gap: 14px; align-items: center;
+  }
+  .lib-mast-mono .sep{ color: var(--hairline); font-weight: 400;}
+  .lib-mast-mono strong{ color: var(--ink); font-weight: 500;}
+  .lib-mast-title{
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(48px, 6vw, 88px);
+    line-height: 0.95; letter-spacing: -0.035em;
+    color: var(--ink); margin: 0;
+  }
+  .lib-mast-title em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    color: var(--ink); letter-spacing: -0.015em;
+  }
+  .lib-mast-dek{
+    font-family: var(--display); font-weight: 400;
+    font-size: 15px; line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 320px;
+    margin: 0 0 8px;
+    padding-bottom: 6px;
+  }
+  .lib-mast-dek strong{ color: var(--ink); font-weight: 500;}
+  @media (max-width: 880px){
+    .lib-masthead{ padding: 40px 22px 32px;}
+    .lib-masthead-inner{ grid-template-columns: 1fr; gap: 24px; align-items: start;}
+    .lib-mast-title{ font-size: clamp(42px, 11vw, 72px);}
+  }
+
+  /* Section tab nav */
+  .lib-tabs{
+    background: var(--paper);
+    border-bottom: 1px solid var(--hairline);
+    padding: 0 56px;
+    position: sticky; top: 0; z-index: 20;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .lib-tabs-inner{
+    max-width: 1240px; margin: 0 auto;
+    display: flex; gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .lib-tabs-inner::-webkit-scrollbar{ display: none;}
+  .lib-tab{
+    flex-shrink: 0;
+    background: none; border: none; cursor: pointer;
+    padding: 16px 14px 14px;
+    font-family: var(--display); font-weight: 500;
+    font-size: 13px; letter-spacing: 0.005em;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color .2s, border-color .2s;
+    white-space: nowrap;
+  }
+  .lib-tab:hover{ color: var(--ink);}
+  .lib-tab.active{ color: var(--ink); border-bottom-color: var(--accent);}
+  @media (max-width: 760px){ .lib-tabs{ padding: 0 16px;} }
+
+  /* Lead story */
+  .lib-lead{
+    padding: 64px 56px;
+    background: var(--paper);
+  }
+  .lib-lead-inner{
+    max-width: 1240px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.2fr 1fr;
+    gap: 64px; align-items: center;
+  }
+  .lib-lead-fig{
+    aspect-ratio: 7/5;
+    border-radius: 6px; overflow: hidden;
+    border: 1px solid var(--hairline-soft);
+  }
+  .lib-lead-fig svg{ width: 100%; height: 100%; display: block;}
+  .lib-lead-text{}
+  .lib-lead-eyebrow{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500;
+    margin-bottom: 18px;
+    display: inline-flex; align-items: center; gap: 12px;
+  }
+  .lib-lead-eyebrow .sep{ color: var(--hairline); font-weight: 400;}
+  .lib-lead-eyebrow .feat{ color: var(--ink); font-weight: 600;}
+  .lib-lead h2{
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(28px, 3.6vw, 48px);
+    line-height: 1.08; letter-spacing: -0.022em;
+    color: var(--ink); margin: 0 0 18px;
+  }
+  .lib-lead h2 em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    color: var(--ink);
+  }
+  .lib-lead-dek{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    font-size: 19px; line-height: 1.45;
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+  }
+  .lib-byline{
+    font-family: var(--display);
+    font-size: 13px; color: var(--muted);
+    padding-top: 18px; margin-bottom: 24px;
+    border-top: 1px solid var(--hairline-soft);
+    display: flex; flex-wrap: wrap; gap: 14px; align-items: center;
+  }
+  .lib-byline .author{ color: var(--ink); font-weight: 500;}
+  .lib-byline .author small{ color: var(--muted); font-weight: 400; margin-left: 6px;}
+  .lib-byline .dot{ color: var(--hairline);}
+  .lib-cta-read{
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--display); font-weight: 500;
+    font-size: 14px; color: var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 4px;
+    transition: gap .25s, color .25s, border-color .25s;
+  }
+  .lib-cta-read:hover{ color: var(--accent); border-color: var(--accent); gap: 12px;}
+  @media (max-width: 880px){
+    .lib-lead{ padding: 40px 22px;}
+    .lib-lead-inner{ grid-template-columns: 1fr; gap: 28px;}
+  }
+
+  /* Recent grid */
+  .lib-recent{
+    padding: 24px 56px 80px;
+    background: var(--paper);
+    border-top: 1px solid var(--hairline);
+  }
+  .lib-section-head{
+    max-width: 1240px; margin: 0 auto 36px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-top: 36px;
+  }
+  .lib-section-head h3{
+    font-family: var(--display); font-weight: 500;
+    font-size: 22px; letter-spacing: -0.015em;
+    color: var(--ink); margin: 0;
+  }
+  .lib-section-head h3 em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    color: var(--ink);
+  }
+  .lib-section-head .count{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+    color: var(--muted); text-transform: uppercase;
+  }
+  .lib-grid{
+    max-width: 1240px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 48px 40px;
+  }
+  @media (max-width: 1000px){
+    .lib-grid{ grid-template-columns: repeat(2, 1fr); gap: 36px 28px;}
+  }
+  @media (max-width: 640px){
+    .lib-grid{ grid-template-columns: 1fr;}
+    .lib-recent{ padding: 16px 22px 56px;}
+  }
+  .lib-card{
+    display: flex; flex-direction: column;
+    gap: 12px;
+    text-decoration: none; color: inherit;
+    transition: transform .25s;
+  }
+  .lib-card:hover{ transform: translateY(-3px);}
+  .lib-card-fig{
+    aspect-ratio: 7/5;
+    border-radius: 4px; overflow: hidden;
+    border: 1px solid var(--hairline-soft);
+    margin-bottom: 6px;
+  }
+  .lib-card-fig svg{ width: 100%; height: 100%; display: block;}
+  .lib-card-cat{
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500;
+  }
+  .lib-card h4{
+    font-family: var(--display); font-weight: 500;
+    font-size: 20px; line-height: 1.2; letter-spacing: -0.015em;
+    color: var(--ink); margin: 0;
+  }
+  .lib-card h4 em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    color: var(--ink);
+  }
+  .lib-card .dek{
+    font-family: var(--display);
+    font-size: 14px; line-height: 1.55; color: var(--ink-soft);
+    margin: 0;
+  }
+  .lib-card .meta{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em;
+    color: var(--muted);
+    padding-top: 10px;
+    border-top: 1px solid var(--hairline-soft);
+    margin-top: 4px;
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .lib-card .meta .author{ color: var(--ink-soft); font-weight: 500;}
+
+  /* Series block */
+  .lib-series{
+    padding: 80px 56px;
+    background: var(--canvas);
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .lib-series-inner{ max-width: 1240px; margin: 0 auto;}
+  .lib-series-head{
+    margin-bottom: 36px;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .lib-series-head h3{
+    font-family: var(--display); font-weight: 500;
+    font-size: 28px; letter-spacing: -0.018em;
+    color: var(--ink); margin: 0;
+  }
+  .lib-series-head h3 em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+  }
+  .lib-series-grid{
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  @media (max-width: 880px){
+    .lib-series{ padding: 56px 22px;}
+    .lib-series-grid{ grid-template-columns: 1fr; gap: 18px;}
+  }
+  .lib-series-card{
+    background: var(--paper);
+    border: 1px solid var(--hairline-soft);
+    border-radius: 12px;
+    padding: 28px 24px;
+    display: flex; flex-direction: column; gap: 14px;
+    transition: border-color .25s, transform .25s;
+    text-decoration: none; color: inherit;
+  }
+  .lib-series-card:hover{ border-color: var(--ink); transform: translateY(-3px);}
+  .lib-series-card .ix{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500;
+  }
+  .lib-series-card h4{
+    font-family: var(--display); font-weight: 500;
+    font-size: 19px; line-height: 1.2; letter-spacing: -0.012em;
+    color: var(--ink); margin: 0;
+  }
+  .lib-series-card h4 em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+  }
+  .lib-series-card p{
+    font-size: 14px; line-height: 1.55; color: var(--ink-soft);
+    margin: 0;
+  }
+  .lib-series-card .progress{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em;
+    color: var(--muted);
+    padding-top: 12px;
+    border-top: 1px solid var(--hairline-soft);
+    margin-top: auto;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+
+  /* Archive list */
+  .lib-archive{
+    padding: 80px 56px;
+    background: var(--paper);
+  }
+  .lib-archive-inner{ max-width: 1240px; margin: 0 auto;}
+  .lib-archive-head{ margin-bottom: 36px;}
+  .lib-archive-head h3{
+    font-family: var(--display); font-weight: 500;
+    font-size: 28px; letter-spacing: -0.018em;
+    color: var(--ink); margin: 0 0 6px;
+  }
+  .lib-archive-head h3 em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+  }
+  .lib-archive-head p{
+    font-size: 14px; color: var(--ink-soft); margin: 0;
+  }
+  .lib-archive-list{ border-top: 1px solid var(--ink);}
+  .lib-archive-row{
+    display: grid; grid-template-columns: 100px 130px 1fr auto;
+    gap: 24px; align-items: baseline;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--hairline-soft);
+    text-decoration: none; color: inherit;
+    transition: background .2s, padding-left .25s;
+  }
+  .lib-archive-row:hover{ padding-left: 8px;}
+  .lib-archive-row .date{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .lib-archive-row .cat{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500;
+  }
+  .lib-archive-row .title{
+    font-family: var(--display); font-weight: 500;
+    font-size: 17px; letter-spacing: -0.01em;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .lib-archive-row .title em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+  }
+  .lib-archive-row .read{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+  @media (max-width: 760px){
+    .lib-archive{ padding: 48px 22px;}
+    .lib-archive-row{ grid-template-columns: 1fr; gap: 4px; padding: 16px 0;}
+    .lib-archive-row .read{ display: none;}
+  }
+
+  /* Subscribe band */
+  .lib-subscribe{
+    background: var(--ink);
+    color: var(--paper);
+    padding: 72px 56px;
+  }
+  .lib-subscribe-inner{
+    max-width: 1240px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 48px; align-items: center;
+  }
+  .lib-subscribe-eyebrow{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--butter); font-weight: 500;
+    margin-bottom: 14px;
+  }
+  .lib-subscribe h3{
+    font-family: var(--display); font-weight: 500;
+    font-size: clamp(28px, 3vw, 40px);
+    line-height: 1.1; letter-spacing: -0.02em;
+    color: var(--paper); margin: 0 0 14px;
+  }
+  .lib-subscribe h3 em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    color: var(--butter-bright);
+  }
+  .lib-subscribe p{
+    font-size: 14.5px; color: rgba(250,247,241,0.7);
+    margin: 0;
+    max-width: 440px;
+  }
+  .lib-subscribe-form{
+    display: flex; gap: 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 100px;
+    padding: 6px 6px 6px 22px;
+  }
+  .lib-subscribe-form input{
+    flex: 1;
+    background: none; border: none; outline: none;
+    color: var(--paper);
+    font-family: var(--display); font-size: 14px;
+    padding: 8px 0;
+  }
+  .lib-subscribe-form input::placeholder{ color: rgba(250,247,241,0.45);}
+  .lib-subscribe-form button{
+    background: var(--butter); color: var(--ink); border: none;
+    border-radius: 100px;
+    padding: 10px 22px;
+    font-family: var(--display); font-weight: 600;
+    font-size: 13px; letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background .25s;
+  }
+  .lib-subscribe-form button:hover{ background: var(--butter-bright);}
+  .lib-subscribe-meta{
+    margin-top: 18px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(250,247,241,0.45);
+  }
+  @media (max-width: 880px){
+    .lib-subscribe{ padding: 56px 22px;}
+    .lib-subscribe-inner{ grid-template-columns: 1fr; gap: 28px;}
+  }
+</style>
+</head>
+<body class="lib">
+
+<div class="page-wrap">
+
+<header class="page-topbar">
+  <button class="pill-explore" id="menuBtn" aria-label="Explore the school" aria-expanded="false">
+    <span class="ham"><span></span><span></span><span></span></span>
+    <span class="pill-text">Explore the school</span>
+  </button>
+
+  <a href="school.html" class="brand">
+    <span class="brand-mark">
+      <img src="chrysalis-logo.png" alt="Chrysalis">
+    </span>
+    <span class="brand-text">
+      <span class="b1">Chrysalis</span>
+      <span class="b2">School</span>
+    </span>
+  </a>
+
+  <nav class="nav-right">
+    <a href="admission.html#register" class="nav-login">Apply</a>
+    <a href="admission.html" class="nav-reg">
+      <span class="reg-dot" aria-hidden="true"></span>
+      <span class="reg-text">Registration open · <strong>Sep 2026</strong></span>
+    </a>
+  </nav>
+</header>
+
+
+<main class="lib-page">
+
+  <!-- Masthead -->
+  <header class="lib-masthead">
+    <div class="lib-masthead-inner">
+      <div>
+        <div class="lib-mast-mono">
+          <strong>Chrysalis School</strong>
+          <span class="sep">·</span>
+          <span>Volume 01</span>
+          <span class="sep">·</span>
+          <span>Issue 12 · Week of 06 May 2026</span>
+          <span class="sep">·</span>
+          <span>Weekly</span>
+        </div>
+        <h1 class="lib-mast-title">The Knowledge <em>Library</em>.</h1>
+      </div>
+      <p class="lib-mast-dek">
+        Editorial writing on <strong>learning, parenting, wellbeing,</strong> and the modern realities of raising school-age children — published weekly by the educators at Chrysalis School.
+      </p>
+    </div>
+  </header>
+
+  <!-- Section tabs -->
+  <nav class="lib-tabs" aria-label="Filter articles by category">
+    <div class="lib-tabs-inner" id="libTabs">
+      <button class="lib-tab active" data-cat="all">All</button>
+      <button class="lib-tab" data-cat="learning">Learning</button>
+      <button class="lib-tab" data-cat="wellbeing">Wellbeing</button>
+      <button class="lib-tab" data-cat="parenting">Parenting</button>
+      <button class="lib-tab" data-cat="curriculum">Curriculum</button>
+      <button class="lib-tab" data-cat="digital">Digital</button>
+      <button class="lib-tab" data-cat="careers">Careers</button>
+      <button class="lib-tab" data-cat="from-school">From the School</button>
+    </div>
+  </nav>
+
+  <!-- Lead story -->
+  <section class="lib-lead" data-cat="learning">
+    <div class="lib-lead-inner">
+      <div class="lib-lead-fig"><svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <rect width="400" height="280" fill="#FAF7F1"/>
+      <circle cx="200" cy="140" r="80" fill="none" stroke="#4A2C4B" stroke-width="1"/>
+      <circle cx="200" cy="140" r="50" fill="none" stroke="#C77B4F" stroke-width="1"/>
+      <circle cx="200" cy="140" r="20" fill="#D4B968"/>
+      <circle cx="120" cy="140" r="3" fill="#4A2C4B"/>
+      <circle cx="280" cy="140" r="3" fill="#4A2C4B"/>
+      <circle cx="200" cy="60" r="3" fill="#4A2C4B"/>
+      <circle cx="200" cy="220" r="3" fill="#4A2C4B"/>
+      <text x="200" y="270" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="9" letter-spacing="2" fill="#8B8276">FIG. 01 — COGNITIVE ARCHITECTURE</text>
+    </svg></div>
+      <div class="lib-lead-text">
+        <div class="lib-lead-eyebrow">
+          <span class="feat">Featured</span>
+          <span class="sep">·</span>
+          <span>Learning</span>
+        </div>
+        <h2>How children actually <em>learn</em> — and what that means for school.</h2>
+        <p class="lib-lead-dek">A century of cognitive science has settled enough of the debate to draw conclusions. Most schools haven't caught up.</p>
+        <div class="lib-byline">
+          <span class="author">Dr. Sarah Mansfield<small>Director of Studies</small></span>
+          <span class="dot">·</span>
+          <span>06 May 2026</span>
+          <span class="dot">·</span>
+          <span>12 min read</span>
+        </div>
+        <a href="#article-1" class="lib-cta-read">Read the essay →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent -->
+  <section class="lib-recent">
+    <div class="lib-section-head">
+      <h3>Recent <em>writing</em>.</h3>
+      <span class="count">6 articles</span>
+    </div>
+    <div class="lib-grid" id="libGrid">
+      <a href="#article-2" class="lib-card" data-cat="wellbeing">
+    <div class="lib-card-fig"><svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <rect width="400" height="280" fill="#4A2C4B"/>
+      <circle cx="280" cy="100" r="40" fill="#F5D88A"/>
+      <circle cx="295" cy="92" r="32" fill="#4A2C4B"/>
+      <g opacity="0.45">
+        <circle cx="80" cy="60" r="1.5" fill="#FAF7F1"/>
+        <circle cx="140" cy="40" r="1.5" fill="#FAF7F1"/>
+        <circle cx="180" cy="80" r="1" fill="#FAF7F1"/>
+        <circle cx="60" cy="120" r="1" fill="#FAF7F1"/>
+        <circle cx="220" cy="160" r="1.5" fill="#FAF7F1"/>
+        <circle cx="340" cy="200" r="1.5" fill="#FAF7F1"/>
+        <circle cx="40" cy="200" r="1" fill="#FAF7F1"/>
+      </g>
+      <text x="200" y="265" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="9" letter-spacing="2" fill="#F5D88A" opacity="0.7">FIG. 02 — NIGHTS LOST</text>
+    </svg></div>
+    <div class="lib-card-cat">Wellbeing</div>
+    <h4>Sleep, screens, and the teenage brain.</h4>
+    <p class="dek">What the AAP, the WHO, and a generation of sleep researchers actually agree on — and what changes when you act on it.</p>
+    <div class="meta">
+      <span class="author">Dr. Imran Khan</span>
+      <span>02 May 2026</span>
+      <span>8 min</span>
+    </div>
+  </a>
+      <a href="#article-3" class="lib-card" data-cat="parenting">
+    <div class="lib-card-fig"><svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <rect width="400" height="280" fill="#D6CDC0"/>
+      <rect x="100" y="80" width="200" height="140" rx="6" fill="#FAF7F1" stroke="#1A1612" stroke-width="1.5"/>
+      <line x1="130" y1="120" x2="270" y2="120" stroke="#8B8276" stroke-width="1"/>
+      <line x1="130" y1="140" x2="240" y2="140" stroke="#8B8276" stroke-width="1"/>
+      <line x1="130" y1="160" x2="260" y2="160" stroke="#8B8276" stroke-width="1"/>
+      <line x1="130" y1="180" x2="180" y2="180" stroke="#8B8276" stroke-width="1"/>
+      <circle cx="200" cy="60" r="14" fill="#C77B4F"/>
+      <text x="200" y="270" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="9" letter-spacing="2" fill="#8B8276">FIG. 03 — THE BLANK PAGE</text>
+    </svg></div>
+    <div class="lib-card-cat">Parenting</div>
+    <h4>The real reason your child won't talk about school.</h4>
+    <p class="dek">It isn't secrecy. It isn't a phase. The literature on adolescent disclosure has a clearer answer.</p>
+    <div class="meta">
+      <span class="author">Sara Whitfield</span>
+      <span>29 Apr 2026</span>
+      <span>7 min</span>
+    </div>
+  </a>
+      <a href="#article-4" class="lib-card" data-cat="curriculum">
+    <div class="lib-card-fig"><svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <rect width="400" height="280" fill="#FAF7F1"/>
+      <g stroke="#1A1612" stroke-width="1" fill="none">
+        <line x1="60" y1="220" x2="340" y2="220"/>
+        <line x1="60" y1="220" x2="60" y2="60"/>
+        <path d="M60 200 Q 130 160 200 130 T 340 80" stroke="#C77B4F" stroke-width="1.8"/>
+        <path d="M60 215 L 200 180 L 340 100" stroke="#4A2C4B" stroke-width="1.5" stroke-dasharray="3 3"/>
+      </g>
+      <circle cx="60" cy="200" r="3" fill="#1A1612"/>
+      <circle cx="200" cy="130" r="3" fill="#C77B4F"/>
+      <circle cx="340" cy="80" r="3" fill="#C77B4F"/>
+      <text x="200" y="265" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="9" letter-spacing="2" fill="#8B8276">FIG. 04 — PROGRESSION CURVE</text>
+    </svg></div>
+    <div class="lib-card-cat">Curriculum</div>
+    <h4>Why we teach maths the way we do.</h4>
+    <p class="dek">Three pedagogical principles, three subject heads, one short answer to a question parents ask weekly.</p>
+    <div class="meta">
+      <span class="author">Head of Mathematics</span>
+      <span>24 Apr 2026</span>
+      <span>9 min</span>
+    </div>
+  </a>
+      <a href="#article-5" class="lib-card" data-cat="digital">
+    <div class="lib-card-fig"><svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <rect width="400" height="280" fill="#1A1612"/>
+      <rect x="170" y="60" width="60" height="120" rx="8" fill="#FAF7F1" stroke="#D4B968" stroke-width="1"/>
+      <rect x="178" y="72" width="44" height="80" fill="#1A1612"/>
+      <circle cx="200" cy="168" r="3" fill="#1A1612"/>
+      <text x="200" y="265" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="9" letter-spacing="2" fill="#D4B968" opacity="0.7">FIG. 05 — THRESHOLD MOMENT</text>
+    </svg></div>
+    <div class="lib-card-cat">Digital</div>
+    <h4>Your child's first phone.</h4>
+    <p class="dek">The decision matrix every parent eventually faces — without the moral panic and without the techno-optimism.</p>
+    <div class="meta">
+      <span class="author">Tarek Hassan</span>
+      <span>19 Apr 2026</span>
+      <span>11 min</span>
+    </div>
+  </a>
+      <a href="#article-6" class="lib-card" data-cat="learning">
+    <div class="lib-card-fig"><svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <rect width="400" height="280" fill="#D6CDC0"/>
+      <line x1="80" y1="140" x2="320" y2="140" stroke="#1A1612" stroke-width="1"/>
+      <circle cx="200" cy="140" r="6" fill="#1A1612"/>
+      <text x="200" y="265" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="9" letter-spacing="2" fill="#8B8276">FIG. 06 — SILENCE</text>
+    </svg></div>
+    <div class="lib-card-cat">Learning</div>
+    <h4>The case for boredom.</h4>
+    <p class="dek">Why the absence of stimulation is one of the most under-rated educational inputs in modern childhood.</p>
+    <div class="meta">
+      <span class="author">Dr. Sarah Mansfield</span>
+      <span>15 Apr 2026</span>
+      <span>6 min</span>
+    </div>
+  </a>
+      <a href="#article-7" class="lib-card" data-cat="parenting">
+    <div class="lib-card-fig"><svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <rect width="400" height="280" fill="#FAF7F1"/>
+      <rect x="100" y="80" width="200" height="120" fill="#F2EBDC" stroke="#1A1612" stroke-width="1.5"/>
+      <line x1="130" y1="120" x2="270" y2="120" stroke="#8B8276" stroke-width="1"/>
+      <line x1="130" y1="140" x2="270" y2="140" stroke="#8B8276" stroke-width="1"/>
+      <line x1="130" y1="160" x2="220" y2="160" stroke="#8B8276" stroke-width="1"/>
+      <path d="M250 100 L 290 180" stroke="#C77B4F" stroke-width="3"/>
+      <path d="M290 100 L 250 180" stroke="#C77B4F" stroke-width="3"/>
+      <text x="200" y="265" text-anchor="middle" font-family="JetBrains Mono, ui-monospace, monospace" font-size="9" letter-spacing="2" fill="#8B8276">FIG. 07 — RECOVERY</text>
+    </svg></div>
+    <div class="lib-card-cat">Parenting</div>
+    <h4>What to say when they fail a test.</h4>
+    <p class="dek">A short scripted-conversation framework, drawn from twenty years of work with families.</p>
+    <div class="meta">
+      <span class="author">Sara Whitfield</span>
+      <span>10 Apr 2026</span>
+      <span>5 min</span>
+    </div>
+  </a>
+    </div>
+  </section>
+
+  <!-- Series -->
+  <section class="lib-series">
+    <div class="lib-series-inner">
+      <div class="lib-series-head">
+        <h3>Ongoing <em>series</em>.</h3>
+      </div>
+      <div class="lib-series-grid">
+        <a href="#series-learn" class="lib-series-card">
+          <div class="ix">/ Series 01</div>
+          <h4>How children <em>learn</em>.</h4>
+          <p>Six essays drawing on cognitive science and classroom experience. From how memory forms to why repetition matters.</p>
+          <div class="progress"><span>4 of 6 published</span><span>·</span><span>Next: 13 May</span></div>
+        </a>
+        <a href="#series-pastoral" class="lib-series-card">
+          <div class="ix">/ Series 02</div>
+          <h4>Pastoral <em>notes</em>.</h4>
+          <p>Conversations the school has with parents, week in and week out — written up so they reach further than one family at a time.</p>
+          <div class="progress"><span>3 of 8 published</span><span>·</span><span>Next: 16 May</span></div>
+        </a>
+        <a href="#series-modern" class="lib-series-card">
+          <div class="ix">/ Series 03</div>
+          <h4>The <em>modern</em> classroom.</h4>
+          <p>What changes — and what doesn't — when teaching moves online. Lessons from four years of building this in practice.</p>
+          <div class="progress"><span>2 of 5 published</span><span>·</span><span>Next: 20 May</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Archive -->
+  <section class="lib-archive">
+    <div class="lib-archive-inner">
+      <div class="lib-archive-head">
+        <h3>From the <em>archive</em>.</h3>
+        <p>Earlier writing — searchable, dated, kept open.</p>
+      </div>
+      <div class="lib-archive-list">
+        <a href="#article-8" class="lib-archive-row" data-cat="careers">
+    <span class="date">05 Apr 2026</span>
+    <span class="cat">Careers</span>
+    <span class="title">A-Level choices that don't close doors.</span>
+    <span class="read">10 min</span>
+  </a>
+        <a href="#article-9" class="lib-archive-row" data-cat="wellbeing">
+    <span class="date">01 Apr 2026</span>
+    <span class="cat">Wellbeing</span>
+    <span class="title">The quiet kid problem.</span>
+    <span class="read">7 min</span>
+  </a>
+        <a href="#article-10" class="lib-archive-row" data-cat="from-school">
+    <span class="date">25 Mar 2026</span>
+    <span class="cat">From the School</span>
+    <span class="title">A letter from our Principal: Term One reflections.</span>
+    <span class="read">4 min</span>
+  </a>
+        <a href="#article-11" class="lib-archive-row" data-cat="curriculum">
+    <span class="date">20 Mar 2026</span>
+    <span class="cat">Curriculum</span>
+    <span class="title">IGCSE vs A-Level: the gap year nobody talks about.</span>
+    <span class="read">8 min</span>
+  </a>
+        <a href="#article-12" class="lib-archive-row" data-cat="digital">
+    <span class="date">15 Mar 2026</span>
+    <span class="cat">Digital</span>
+    <span class="title">Why we don't ban screens — and what we do instead.</span>
+    <span class="read">9 min</span>
+  </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Subscribe band -->
+  <section class="lib-subscribe">
+    <div class="lib-subscribe-inner">
+      <div>
+        <div class="lib-subscribe-eyebrow">// THE FRIDAY BRIEFING</div>
+        <h3>One <em>essay</em>. One <em>note</em>. Every Friday.</h3>
+        <p>A five-minute read from the school's editorial team. No advertising, no upsell — just one piece of writing worth your weekend.</p>
+      </div>
+      <div>
+        <form class="lib-subscribe-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed ✓';">
+          <input type="email" required placeholder="you@example.com" aria-label="Email address">
+          <button type="submit">Subscribe</button>
+        </form>
+        <div class="lib-subscribe-meta">Weekly · Free · Unsubscribe in one click</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // Filter tabs
+  (function(){
+    const tabs = document.querySelectorAll('.lib-tab');
+    if(!tabs.length) return;
+    const articles = document.querySelectorAll('[data-cat]');
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+      const cat = tab.dataset.cat;
+      tabs.forEach(t => t.classList.toggle('active', t === tab));
+      articles.forEach(a => {
+        if(cat === 'all'){ a.style.display = ''; return; }
+        if(a.classList.contains('lib-tab')) return;
+        a.style.display = (a.dataset.cat === cat) ? '' : 'none';
+      });
+    }));
+  })();
+</script>
+
+
+<footer class="site-footer">
+  <div class="footer-grid">
+
+    <div class="footer-brand">
+      <a href="school.html" class="brand brand-footer">
+        <span class="brand-mark"><img src="chrysalis-logo.png" alt="Chrysalis"></span>
+        <span class="brand-text">
+          <span class="b1">Chrysalis</span>
+          <span class="b2">School</span>
+        </span>
+      </a>
+      <p class="footer-tagline">An online British curriculum school designed for online learning — not adapted to it.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>The School</h4>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="why.html">Why Chrysalis</a></li>
+        <li><a href="curriculum.html">Curriculum</a></li>
+        <li><a href="admission.html">Admission</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>For Parents</h4>
+      <ul>
+        <li><a href="parent-resources.html">Parent Resources</a></li>
+        <li><a href="library.html">Knowledge Library</a></li>
+        <li><a href="community.html">Community</a></li>
+        <li><a href="support.html">Support Center</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Chrysalis Education</h4>
+      <ul>
+        <li><a href="index.html">Chrysalis hub ↗</a></li>
+        <li><a href="concierge.html">EDU Concierge</a></li>
+        <li><a href="careers.html">Careers</a></li>
+        <li><a href="mailto:hello@chrysalis.education">Contact</a></li>
+      </ul>
+    </div>
+
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Chrysalis Education · UK-headquartered · Operating worldwide</span>
+    <span class="footer-bottom-loc">Inaugural intake · September 2026</span>
+  </div>
+</footer>
+
+</div>
+
+<div class="menu-backdrop" id="menuBackdrop" aria-hidden="true"></div>
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu-overlay-inner">
+    <div class="menu-eyebrow">// Explore the school</div>
+    <nav class="menu-links">
+
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>About</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="about.html#welcome">Welcome Message from Principal</a>
+          <a href="about.html#vision">Vision and Mission</a>
+          <a href="about.html#team">Our Team</a>
+          <a href="about.html#documents">Key Documents and Policies</a>
+        </div>
+      </div>
+
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Why Chrysalis School</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="why.html#innovation">Innovation</a>
+          <a href="why.html#life">Life at Chrysalis</a>
+          <a href="concierge.html">Education Concierge</a>
+          <a href="why.html#promise">Our Promise</a>
+        </div>
+      </div>
+
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Admission</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="admission.html#process">Process</a>
+          <a href="admission.html#fee">Fee</a>
+          <a href="admission.html#register">Register</a>
+        </div>
+      </div>
+
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Curriculum</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="curriculum.html#overview">Overview</a>
+          <a href="curriculum.html#secondary">Secondary</a>
+          <a href="curriculum.html#approaches">Learning Approaches</a>
+        </div>
+      </div>
+
+      
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Dexter</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="dexter/solutions.html">Overview</a>
+          <a href="dexter/dexter-vs.html">10 Reasons</a>
+          <a href="dexter/a-day-with-dexter.html">A Day with Dexter</a>
+          <a href="dexter/behind-dexter.html">Behind Dexter</a>
+        </div>
+      </div>
+
+<div class="menu-section open" data-collapsible>
+        <button class="menu-section-head is-active" type="button" aria-expanded="true">
+          <span>Parent Resources</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="parent-resources.html#news">News</a>
+          <a href="parent-resources.html#calendar">Calendar</a>
+          <a href="parent-resources.html#portal">Parent Portal</a>
+          <a href="library.html">Knowledge Library</a>
+          <a href="community.html">Community</a>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <a href="careers.html" class="menu-section-head menu-section-flat">
+          <span>Careers</span>
+        </a>
+      </div>
+
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Support Center</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="support.html#chat">Chat</a>
+          <a href="support.html#faqs">FAQs</a>
+        </div>
+      </div>
+
+    </nav>
+    <div class="menu-foot">
+      <a href="index.html" class="menu-foot-link">↗ Chrysalis hub</a>
+      <a href="mailto:hello@chrysalis.education" class="menu-foot-email">hello@chrysalis.education</a>
+    </div>
+  </div>
+</div>
+
+<a href="mailto:hello@chrysalis.education?subject=I%27d%20like%20to%20speak%20with%20you" class="speak-fab" aria-label="Speak to us now">
+  <span class="fab-pulse" aria-hidden="true"></span>
+  <span class="fab-icon">
+    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6">
+      <path d="M3 4 Q3 2.5 4.5 2.5 L9.5 2.5 Q11 2.5 11 4 L11 8 Q11 9.5 9.5 9.5 L7 9.5 L4.5 11.5 L4.5 9.5 Q3 9.5 3 8 Z"/>
+      <circle cx="5.5" cy="6" r="0.6" fill="currentColor"/>
+      <circle cx="7" cy="6" r="0.6" fill="currentColor"/>
+      <circle cx="8.5" cy="6" r="0.6" fill="currentColor"/>
+    </svg>
+  </span>
+  <span class="fab-text">Speak to us</span>
+</a>
+
+<script>
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }});
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Drawer
+  const menuBtn = document.getElementById('menuBtn');
+  const menuOverlay = document.getElementById('menuOverlay');
+  const menuBackdrop = document.getElementById('menuBackdrop');
+  function toggleMenu(force){
+    if(!menuBtn) return;
+    const isOpen = force !== undefined ? force : !menuOverlay.classList.contains('open');
+    menuOverlay.classList.toggle('open', isOpen);
+    menuBackdrop.classList.toggle('open', isOpen);
+    menuBtn.setAttribute('aria-expanded', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+  if(menuBtn) menuBtn.addEventListener('click', () => toggleMenu());
+  if(menuOverlay) menuOverlay.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
+  if(menuBackdrop) menuBackdrop.addEventListener('click', () => toggleMenu(false));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
+
+  // Drawer collapsibles
+  if(menuOverlay){
+    menuOverlay.querySelectorAll('.menu-section[data-collapsible] .menu-section-head').forEach(head => {
+      head.addEventListener('click', () => {
+        const section = head.closest('.menu-section');
+        const isOpen = section.classList.toggle('open');
+        head.setAttribute('aria-expanded', isOpen);
+      });
+    });
+  }
+</script>
+
+</body>
+</html>

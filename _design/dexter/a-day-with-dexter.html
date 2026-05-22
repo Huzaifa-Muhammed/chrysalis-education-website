@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>A day with vs. without Dexter — Dexter by Chrysalis Education</title>
+<meta name="description" content="One teacher. One school day. Two realities. See exactly where Dexter saves a teacher hours every day — and where it doesn't." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;450;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet" />
+
+<style>
+:root{
+  --bg:#FAFAF7;
+  --ink:#0F1419;
+  --ink-2:#2A3138;
+  --ink-3:#5A636C;
+  --ink-4:#8A929A;
+  --line:#E8E4DA;
+  --line-2:#F0EDE3;
+  --accent:#D4FF3D;
+  --accent-deep:#B8E625;
+  --warn:#E8A87C;
+  --warn-bg:#F8EEDE;
+  --warn-deep:#B5703C;
+
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  font-size:15.5px;line-height:1.55;font-weight:400;
+  color:var(--ink);background:var(--bg);
+}
+a{color:inherit;text-decoration:none}
+
+/* ============== NAV ============== */
+.topnav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 36px;
+  background:rgba(250,250,247,.85);
+  backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid transparent;
+  transition:border-color .2s ease;
+}
+.topnav.scrolled{border-bottom-color:var(--line)}
+
+.brand{
+  display:inline-flex;align-items:baseline;
+  font-family:var(--sans);font-weight:700;font-size:19px;
+  color:var(--ink);letter-spacing:.22em;line-height:1;
+}
+.brand .x{
+  position:relative;display:inline-block;
+  margin:0 1.5px;
+}
+.brand .x::after{
+  content:'';position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);
+  width:12px;height:2.5px;background:var(--accent-deep);border-radius:2px;
+}
+
+.back-link{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:13.5px;color:var(--ink-3);
+  transition:color .15s ease;
+}
+.back-link:hover{color:var(--ink)}
+
+.trial{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:999px;
+  background:var(--ink);color:var(--bg);
+  font-size:13.5px;font-weight:500;
+  transition:background .2s ease,transform .2s ease;
+}
+.trial:hover{background:var(--ink-2);transform:translateY(-1px)}
+
+/* ============== HERO ============== */
+.hero{
+  padding:160px 40px 60px;
+  max-width:1180px;margin:0 auto;
+}
+.hero-eyebrow{
+  font-family:var(--mono);font-size:11.5px;
+  color:var(--ink-3);letter-spacing:.18em;text-transform:uppercase;
+  font-weight:500;margin-bottom:24px;
+  display:inline-flex;align-items:center;gap:12px;
+}
+.hero-eyebrow::before{content:'';width:28px;height:1px;background:var(--ink-3);opacity:.5}
+.hero-h1{
+  font-family:var(--sans);font-weight:700;
+  font-size:clamp(40px,5vw,72px);
+  line-height:1.04;letter-spacing:-.028em;
+  color:var(--ink);max-width:1000px;
+}
+.hero-h1 em{
+  font-family:var(--serif);font-style:italic;font-weight:500;
+  color:var(--ink-2);
+}
+.hero-sub{
+  margin-top:24px;
+  font-size:18px;line-height:1.55;color:var(--ink-3);
+  max-width:680px;
+}
+
+/* The protagonist intro card */
+.protag{
+  display:flex;align-items:center;gap:18px;
+  margin-top:44px;padding:18px 22px;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:999px;
+  width:fit-content;
+  max-width:100%;
+}
+.protag-avatar{
+  width:46px;height:46px;border-radius:50%;
+  background:linear-gradient(135deg,#7C5FE6,#3D5AFE);
+  color:#fff;font-weight:600;font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.protag-body{font-size:14px;line-height:1.4}
+.protag-body strong{font-weight:600;color:var(--ink);display:block;font-size:14.5px}
+.protag-body span{color:var(--ink-3);font-size:13px}
+
+/* ============== HEADER ROW FOR THE TIMELINE ============== */
+.timeline-wrap{
+  max-width:1180px;margin:30px auto 0;
+  padding:0 40px;
+}
+.timeline-headers{
+  position:sticky;top:78px;z-index:50;
+  display:grid;grid-template-columns:1fr 1fr;gap:24px;
+  padding:18px 0;
+  background:linear-gradient(180deg,rgba(250,250,247,.95) 80%,rgba(250,250,247,0) 100%);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.col-head{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 18px;border-radius:12px;
+  font-family:var(--sans);font-weight:600;font-size:14px;
+  letter-spacing:-.005em;
+}
+.col-head.without{
+  background:var(--warn-bg);color:var(--warn-deep);
+  border:1px solid var(--warn);
+}
+.col-head.with{
+  background:var(--ink);color:var(--bg);
+  border:1px solid var(--ink);
+}
+.col-head-tag{
+  font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.15em;text-transform:uppercase;
+  opacity:.75;
+}
+.col-head.with .col-head-tag{color:var(--accent)}
+
+/* ============== TIMELINE ROWS ============== */
+.beat{
+  display:grid;
+  grid-template-columns:120px 1fr 1fr;
+  gap:24px;
+  padding:32px 0;
+  border-top:1px solid var(--line);
+}
+.beat:last-child{border-bottom:1px solid var(--line)}
+
+.beat-time{
+  padding-top:4px;
+  position:sticky;top:160px;align-self:start;
+}
+.beat-time-label{
+  font-family:var(--mono);font-size:11px;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-4);font-weight:500;
+  margin-bottom:4px;
+}
+.beat-time-val{
+  font-family:var(--sans);font-weight:700;
+  font-size:24px;line-height:1;letter-spacing:-.015em;
+  color:var(--ink);
+}
+.beat-time-sub{
+  margin-top:6px;
+  font-size:12px;color:var(--ink-3);
+  max-width:100px;line-height:1.4;
+}
+
+.beat-card{
+  border-radius:14px;
+  padding:22px 24px;
+  display:flex;flex-direction:column;gap:10px;
+  position:relative;
+}
+.beat-card.without{
+  background:var(--warn-bg);
+  border:1px solid var(--warn);
+}
+.beat-card.with{
+  background:var(--ink);
+  color:var(--bg);
+  border:1px solid var(--ink);
+}
+.beat-card-headline{
+  font-family:var(--sans);font-weight:600;font-size:16px;
+  line-height:1.3;letter-spacing:-.005em;
+}
+.beat-card.without .beat-card-headline{color:var(--ink)}
+.beat-card.with .beat-card-headline{color:#F5F4EE}
+.beat-card-body{
+  font-size:14px;line-height:1.6;
+}
+.beat-card.without .beat-card-body{color:var(--ink-2)}
+.beat-card.with .beat-card-body{color:rgba(245,244,238,.78)}
+
+.beat-card-foot{
+  margin-top:auto;padding-top:10px;
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;
+  font-family:var(--mono);font-size:11px;
+  letter-spacing:.06em;
+}
+.beat-card.without .beat-card-foot{color:var(--warn-deep)}
+.beat-card.with .beat-card-foot{color:var(--accent)}
+.beat-card-time-cost{
+  display:inline-flex;align-items:center;gap:5px;
+  font-weight:600;
+}
+.beat-card-time-cost::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:currentColor;
+}
+
+/* ============== TOTALS BLOCK ============== */
+.totals{
+  max-width:1180px;margin:60px auto 0;padding:0 40px;
+}
+.totals-inner{
+  background:var(--ink);color:#F5F4EE;
+  border-radius:18px;
+  padding:48px 56px;
+  position:relative;overflow:hidden;
+}
+.totals-inner::before{
+  content:'';position:absolute;top:-80px;right:-80px;
+  width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,255,61,.15),transparent 70%);
+}
+.totals-eyebrow{
+  font-family:var(--mono);font-size:11px;
+  color:var(--accent);letter-spacing:.18em;text-transform:uppercase;
+  font-weight:500;margin-bottom:18px;
+}
+.totals-h{
+  font-family:var(--sans);font-weight:700;
+  font-size:clamp(28px,3.4vw,44px);
+  line-height:1.08;letter-spacing:-.02em;
+  color:#F5F4EE;max-width:760px;margin-bottom:36px;
+}
+.totals-h em{
+  font-family:var(--serif);font-style:italic;font-weight:500;color:var(--accent);
+}
+.totals-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  position:relative;
+}
+.totals-stat{
+  padding-top:24px;border-top:1px solid rgba(245,244,238,.18);
+}
+.totals-stat-v{
+  font-family:var(--sans);font-weight:700;font-size:46px;
+  line-height:1;letter-spacing:-.025em;color:#F5F4EE;
+  margin-bottom:6px;
+}
+.totals-stat-v .small{font-size:24px;font-weight:500;color:rgba(245,244,238,.6);margin-left:4px}
+.totals-stat-l{
+  font-size:13.5px;color:rgba(245,244,238,.65);line-height:1.5;
+  max-width:240px;
+}
+
+/* ============== HONESTY BLOCK ============== */
+.honest{
+  max-width:1180px;margin:80px auto 0;padding:0 40px;
+}
+.honest-inner{
+  display:grid;grid-template-columns:280px 1fr;gap:60px;
+  padding:50px 0;
+  border-top:1px solid var(--line);
+}
+.honest-eyebrow{
+  font-family:var(--mono);font-size:11px;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:500;
+}
+.honest-h{
+  font-family:var(--sans);font-weight:600;font-size:22px;
+  line-height:1.2;letter-spacing:-.01em;color:var(--ink);
+  margin-top:12px;
+}
+.honest-body{
+  font-size:15.5px;line-height:1.65;color:var(--ink-2);
+}
+.honest-body p+p{margin-top:14px}
+.honest-body em{
+  font-family:var(--serif);font-style:italic;color:var(--ink);
+}
+
+/* ============== FINAL CTA ============== */
+.final{
+  text-align:center;
+  padding:120px 40px 60px;
+  max-width:920px;margin:0 auto;
+}
+.final-h{
+  font-family:var(--sans);font-weight:700;
+  font-size:clamp(36px,4.6vw,60px);
+  line-height:1.04;letter-spacing:-.025em;color:var(--ink);
+  margin-bottom:18px;
+}
+.final-h em{
+  font-family:var(--serif);font-style:italic;font-weight:500;color:var(--ink-2);
+}
+.final-p{
+  font-size:17.5px;line-height:1.55;color:var(--ink-3);
+  max-width:520px;margin:0 auto 32px;
+}
+.final-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 22px;border-radius:999px;
+  background:var(--ink);color:var(--bg);
+  font-size:14.5px;font-weight:500;
+  transition:background .2s ease,transform .2s ease;
+}
+.btn-primary:hover{background:var(--ink-2);transform:translateY(-1px)}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:13px 22px;border-radius:999px;
+  background:transparent;color:var(--ink);
+  font-size:14.5px;font-weight:500;
+  border:1px solid var(--line);
+  transition:all .2s ease;
+}
+.btn-ghost:hover{border-color:var(--ink);background:#fff}
+
+/* ============== FOOTER ============== */
+footer{
+  border-top:1px solid var(--line);
+  padding:30px 36px;
+  margin-top:60px;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:18px;
+  font-size:13px;color:var(--ink-3);
+}
+footer .foot-brand{display:inline-flex;align-items:center;gap:14px}
+footer .foot-brand em{font-family:var(--serif);font-style:italic;color:var(--ink-3);font-size:14px}
+footer .foot-links{
+  display:inline-flex;align-items:center;gap:22px;
+}
+footer .foot-links a{
+  color:var(--ink-3);font-size:13px;
+  transition:color .15s ease;
+}
+footer .foot-links a:hover{color:var(--ink)}
+footer .foot-copy{
+  font-size:12.5px;color:var(--ink-4);
+}
+
+/* ============== MOBILE ============== */
+@media (max-width:900px){
+  .topnav{padding:14px 20px}
+  .brand{font-size:16px;letter-spacing:.18em}
+  .back-link{display:none}
+  .hero{padding:110px 22px 40px}
+  .hero-h1{font-size:34px;line-height:1.08}
+  .protag{padding:14px 16px;gap:12px}
+  .timeline-wrap{padding:0 22px;margin-top:20px}
+  .timeline-headers{top:64px;grid-template-columns:1fr;gap:8px;padding:10px 0}
+  .col-head{padding:10px 14px;font-size:12.5px}
+  .beat{grid-template-columns:1fr;gap:14px;padding:24px 0}
+  .beat-time{position:static}
+  .beat-time-val{font-size:20px;display:inline}
+  .beat-time-label{display:inline;margin-right:8px}
+  .beat-time-sub{display:inline;margin-left:8px}
+  .beat-card{padding:18px 20px}
+  .totals{padding:0 22px}
+  .totals-inner{padding:36px 28px;border-radius:14px}
+  .totals-grid{grid-template-columns:1fr;gap:18px}
+  .totals-stat-v{font-size:36px}
+  .honest{padding:0 22px}
+  .honest-inner{grid-template-columns:1fr;gap:18px;padding:36px 0}
+  .final{padding:80px 22px 40px}
+  .final-h{font-size:32px}
+  footer{padding:30px 22px;flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- ============== NAV ============== -->
+<nav class="topnav" id="topnav">
+  <a href="solutions.html" class="back-link">← Back to Dexter</a>
+  <a href="../index.html" class="back-link" style="margin-left:18px;opacity:.7">↗ Chrysalis Education</a>
+  <a href="solutions.html" class="brand">DE<span class="x">X</span>TER</a>
+  <a href="mailto:hello@chrysalis.education?subject=Dexter%20demo%20request" class="trial">Book a demo</a>
+</nav>
+
+<!-- ============== HERO ============== -->
+<header class="hero">
+  <div class="hero-eyebrow">A day in the life</div>
+  <h1 class="hero-h1">
+    One teacher. One school day.<br>
+    <em>Two realities.</em>
+  </h1>
+  <p class="hero-sub">
+    Meet Sarah. She teaches Year 9 Mathematics at a 600-student private school in Dubai. Tuesday morning, 32 students, an algebra unit beginning. Below — her day, twice. Once without Dexter, once with.
+  </p>
+
+  <div class="protag">
+    <div class="protag-avatar">SR</div>
+    <div class="protag-body">
+      <strong>Sarah Reyes</strong>
+      <span>Head of Maths · 5 classes · 142 students</span>
+    </div>
+  </div>
+</header>
+
+<!-- ============== TIMELINE ============== -->
+<section class="timeline-wrap">
+
+  <div class="timeline-headers">
+    <div class="col-head without">
+      <span class="col-head-tag">Scenario A</span>
+      Without Dexter
+    </div>
+    <div class="col-head with">
+      <span class="col-head-tag">Scenario B</span>
+      With Dexter
+    </div>
+  </div>
+
+  <!-- BEAT 1 -->
+  <div class="beat">
+    <div class="beat-time">
+      <div class="beat-time-label">Monday</div>
+      <div class="beat-time-val">9:30 PM</div>
+      <div class="beat-time-sub">The night before</div>
+    </div>
+    <div class="beat-card without">
+      <div class="beat-card-headline">Sarah is at her kitchen table preparing tomorrow's lesson.</div>
+      <div class="beat-card-body">She opens Word to write a worksheet, switches to PowerPoint to update last term's slides, hunts for a video on YouTube, copies a problem set from her textbook PDF. She emails the worksheet to her Year 9 WhatsApp group at 10:40 PM. Two parents reply asking what file format it's in.</div>
+      <div class="beat-card-foot">
+        <span>5 apps · 1 textbook · 1 group chat</span>
+        <span class="beat-card-time-cost">1h 45m</span>
+      </div>
+    </div>
+    <div class="beat-card with">
+      <div class="beat-card-headline">Sarah picks tomorrow's lesson from her Dexter scheme of work — it's already loaded.</div>
+      <div class="beat-card-body">The next lesson in the algebra unit is pre-built: opening explainer video, a worked example, an interactive practice set, and a quiz. Sarah adjusts two problems to match her class's level and adds a personal note. She publishes to her class with one click. Students see it the moment they open the app.</div>
+      <div class="beat-card-foot">
+        <span>One platform · auto-published to 32 students</span>
+        <span class="beat-card-time-cost">12 minutes</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEAT 2 -->
+  <div class="beat">
+    <div class="beat-time">
+      <div class="beat-time-label">Tuesday</div>
+      <div class="beat-time-val">8:15 AM</div>
+      <div class="beat-time-sub">Before first bell</div>
+    </div>
+    <div class="beat-card without">
+      <div class="beat-card-headline">Attendance register on paper, then transcribed into the school portal at break.</div>
+      <div class="beat-card-body">Sarah ticks names off a printed register. Two students arrive late and need to be edited in. She'll transfer this to the school's attendance system between lessons — if she remembers. Last week she had to retro-fill three days at the end of term.</div>
+      <div class="beat-card-foot">
+        <span>Paper register · manual entry later</span>
+        <span class="beat-card-time-cost">15m + 10m later</span>
+      </div>
+    </div>
+    <div class="beat-card with">
+      <div class="beat-card-headline">Attendance auto-captures when students join the room — Dexter syncs to her SIS.</div>
+      <div class="beat-card-body">Students tap to confirm presence on the Dexter mobile app, or Sarah marks them in three taps. Late arrivals show automatically. The school's SIS receives the attendance data without Sarah ever opening it. Pastoral team gets a flag if a student has been absent twice this week.</div>
+      <div class="beat-card-foot">
+        <span>Auto-captured · synced to SIS</span>
+        <span class="beat-card-time-cost">2 minutes</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEAT 3 -->
+  <div class="beat">
+    <div class="beat-time">
+      <div class="beat-time-label">Tuesday</div>
+      <div class="beat-time-val">9:00 AM</div>
+      <div class="beat-time-sub">The lesson</div>
+    </div>
+    <div class="beat-card without">
+      <div class="beat-card-headline">She's projecting from her laptop. Three students don't have the worksheet open.</div>
+      <div class="beat-card-body">"Miss, what file did you send?" The WhatsApp message is buried. Sarah re-shares it via email. The lesson starts five minutes late. She has no idea who's following along until she calls on someone and gets a blank look. The quiet students stay quiet.</div>
+      <div class="beat-card-foot">
+        <span>Late start · no visibility into engagement</span>
+        <span class="beat-card-time-cost">5m lost · 0 signal</span>
+      </div>
+    </div>
+    <div class="beat-card with">
+      <div class="beat-card-headline">Every student has the lesson open. Dexter shows Sarah who's actually following.</div>
+      <div class="beat-card-body">The interactive practice set tracks who's answering, who's stuck, and who's flying through. Three students get questions wrong on the same concept — Sarah sees this live and pauses to re-explain. Two students who've finished early get auto-promoted to the stretch problems. The quiet ones can't hide.</div>
+      <div class="beat-card-foot">
+        <span>Live engagement signal · adaptive content</span>
+        <span class="beat-card-time-cost">Real-time visibility</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEAT 4 -->
+  <div class="beat">
+    <div class="beat-time">
+      <div class="beat-time-label">Tuesday</div>
+      <div class="beat-time-val">11:00 AM</div>
+      <div class="beat-time-sub">Between lessons</div>
+    </div>
+    <div class="beat-card without">
+      <div class="beat-card-headline">Three parent emails, one WhatsApp from a parent, and an admin asking for a behaviour note.</div>
+      <div class="beat-card-body">Sarah opens Outlook, replies to a parent about a missed homework. She opens WhatsApp, replies to another parent. She opens a Google Doc to log a behaviour incident, then forwards it to the head of pastoral. Between two cups of coffee, she switches between four windows and forgets to log one of the emails into the school's CRM.</div>
+      <div class="beat-card-foot">
+        <span>4 channels · context lost between them</span>
+        <span class="beat-card-time-cost">25 minutes</span>
+      </div>
+    </div>
+    <div class="beat-card with">
+      <div class="beat-card-headline">All parent messages and pastoral notes flow through one Dexter inbox.</div>
+      <div class="beat-card-body">Parents message Sarah through the Dexter parent portal — moderated, logged, parent-visible. Sarah replies once, in one place, and the conversation is automatically attached to the student's record. The behaviour note she logs is automatically routed to pastoral, with the relevant lesson context attached. No forwarding, no copy-paste.</div>
+      <div class="beat-card-foot">
+        <span>One inbox · auto-routed · auto-logged</span>
+        <span class="beat-card-time-cost">8 minutes</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEAT 5 -->
+  <div class="beat">
+    <div class="beat-time">
+      <div class="beat-time-label">Tuesday</div>
+      <div class="beat-time-val">4:30 PM</div>
+      <div class="beat-time-sub">After the bell</div>
+    </div>
+    <div class="beat-card without">
+      <div class="beat-card-headline">A stack of worksheets to mark. She'll do them tonight after dinner.</div>
+      <div class="beat-card-body">32 worksheets, hand-marked, each with a written comment. She manually transfers grades to her Excel gradebook, then again to the school's reporting system. Two grades get transcribed wrong — she'll find out at parents' evening. Bedtime: 11:45 PM.</div>
+      <div class="beat-card-foot">
+        <span>Paper · Excel · school system (3× entry)</span>
+        <span class="beat-card-time-cost">2h 30m at home</span>
+      </div>
+    </div>
+    <div class="beat-card with">
+      <div class="beat-card-headline">The quiz auto-marked itself. Sarah reviews flagged answers and adds feedback to three students.</div>
+      <div class="beat-card-body">Multiple-choice and short-answer questions are auto-graded. Three students gave answers Dexter wasn't sure about — Sarah reviews these, marks them, and writes personalised feedback. Grades flow automatically to the gradebook, the parent portal, and the school's reporting system. Bedtime: 9:30 PM.</div>
+      <div class="beat-card-foot">
+        <span>Auto-marked · one source of truth</span>
+        <span class="beat-card-time-cost">22 minutes</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEAT 6 -->
+  <div class="beat">
+    <div class="beat-time">
+      <div class="beat-time-label">Friday</div>
+      <div class="beat-time-val">3:00 PM</div>
+      <div class="beat-time-sub">End-of-week reports</div>
+    </div>
+    <div class="beat-card without">
+      <div class="beat-card-headline">Sarah needs to flag at-risk students to the Head of Year. She has no real data.</div>
+      <div class="beat-card-body">She scans her Excel gradebook, tries to remember who's been quiet in class, who handed work in late, who scored badly on the quiz. She names three students based on gut feel. The Head of Year asks for evidence. Sarah spends an hour pulling screenshots together. The list is incomplete.</div>
+      <div class="beat-card-foot">
+        <span>Gut feel · incomplete data</span>
+        <span class="beat-card-time-cost">1 hour to compile</span>
+      </div>
+    </div>
+    <div class="beat-card with">
+      <div class="beat-card-headline">Dexter has already flagged six students. Sarah reviews and confirms.</div>
+      <div class="beat-card-body">The Dexter analytics dashboard shows Sarah which students are declining in grade, which have missed three or more assignments, and which engagement has dropped. Six students are flagged automatically — two she'd have missed on gut feel. Full evidence trail attached. She forwards to pastoral with one click.</div>
+      <div class="beat-card-foot">
+        <span>Data-driven · automatic · evidence-based</span>
+        <span class="beat-card-time-cost">5 minutes</span>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============== TOTALS BLOCK ============== -->
+<section class="totals">
+  <div class="totals-inner">
+    <div class="totals-eyebrow">By Friday afternoon</div>
+    <h2 class="totals-h">
+      Sarah gets back nearly <em>a full working day</em> every week —<br>
+      and her students learn more, not less.
+    </h2>
+    <div class="totals-grid">
+      <div class="totals-stat">
+        <div class="totals-stat-v">6.5 <span class="small">hrs</span></div>
+        <div class="totals-stat-l">saved per teacher, per week — at the conservative read. Goes higher in marking-heavy weeks.</div>
+      </div>
+      <div class="totals-stat">
+        <div class="totals-stat-v">0 <span class="small">apps</span></div>
+        <div class="totals-stat-l">opened in addition to Dexter. No more switching between Word, Outlook, WhatsApp, Excel.</div>
+      </div>
+      <div class="totals-stat">
+        <div class="totals-stat-v">+38<span class="small">%</span></div>
+        <div class="totals-stat-l">improvement in early at-risk detection at Chrysalis School since switching to Dexter.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== HONESTY BLOCK ============== -->
+<section class="honest">
+  <div class="honest-inner">
+    <div>
+      <div class="honest-eyebrow">A note on honesty</div>
+      <h3 class="honest-h">What Dexter doesn't do.</h3>
+    </div>
+    <div class="honest-body">
+      <p>The story above is the difference Dexter makes in a teacher's day. It's not a magic spell. The lessons still need to be planned with intent. The feedback still needs to be thoughtful. The relationships with students still need to be built one conversation at a time.</p>
+      <p>What Dexter removes is the <em>friction</em> — the administrative overhead, the app-switching, the duplicate data entry, the buried WhatsApp messages — so the human work of teaching gets the time and attention it deserves. The teacher is still the teacher. We just gave her better tools.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FINAL CTA ============== -->
+<section class="final">
+  <h2 class="final-h">See it for yourself <em>in 30 minutes.</em></h2>
+  <p class="final-p">We'll walk you through Sarah's actual day on Dexter — live, on the real platform. No slides, no salespeople, no pressure.</p>
+  <div class="final-actions">
+    <a href="mailto:hello@chrysalis.education?subject=Dexter%20demo%20request" class="btn-primary">Book a demo →</a>
+    <a href="dexter-vs.html" class="btn-ghost">See the 10 reasons →</a>
+    <a href="behind-dexter.html" class="btn-ghost">Who is behind Dexter →</a>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer>
+  <div class="foot-brand">
+    <span class="brand">DE<span class="x">X</span>TER</span>
+    <em>by Chrysalis Education</em>
+  </div>
+  <div class="foot-links">
+    <a href="#">Privacy</a>
+    <a href="#">Security</a>
+    <a href="#">Terms</a>
+    <a href="mailto:hello@chrysalis.education">Contact</a>
+  </div>
+  <div class="foot-copy">© 2026</div>
+</footer>
+
+<script>
+const nav=document.getElementById('topnav');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',window.scrollY>20);
+},{passive:true});
+</script>
+
+</body>
+</html>

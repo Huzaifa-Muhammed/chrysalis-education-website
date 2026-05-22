@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chrysalis School — Built for learning.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas: #F4F0E6;
+    --paper:  #FAF7F1;
+    --ink:    #1A1612;
+    --ink-soft:#3A332C;
+    --muted:  #8B8276;
+    --line:   #D6CFBE;
+
+    --plum:        #4A2C4B;
+    --plum-deep:   #2F1D31;
+    --plum-light:  #6B4A6E;
+
+    --accent:        #C77B4F;
+    --accent-bright: #E89066;
+    --butter:        #F5D88A;
+    --butter-deep:   #E8C465;
+    --leaf:          #7A9472;
+
+    --display: 'Archivo', system-ui, sans-serif;
+    --serif:   'Instrument Serif', Georgia, serif;
+    --mono:    'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  *{ box-sizing: border-box; margin: 0; padding: 0;}
+  html{ scroll-behavior: smooth;}
+  body{
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: var(--display);
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a{ color: inherit; text-decoration: none;}
+  button{ font-family: inherit;}
+  ::selection{ background: var(--butter); color: var(--ink);}
+
+  /* ============ HERO — IMMERSIVE PLUM ============ */
+  .hero{
+    background: var(--canvas);
+    position: relative;
+    padding: 28px 24px 0;
+  }
+  .hero-frame{
+    position: relative;
+    background: var(--plum);
+    color: var(--paper);
+    border-radius: 28px;
+    overflow: hidden;
+    padding: 28px 32px 32px;
+    max-width: 1480px;
+    margin: 0 auto;
+    min-height: calc(100vh - 56px);
+    display: flex; flex-direction: column;
+    box-shadow:
+      0 40px 80px -30px rgba(74,44,75,0.45),
+      inset 0 0 0 1px rgba(255,255,255,0.04);
+  }
+  .hero-frame::before{
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse at 80% 20%, rgba(245,216,138,0.14) 0%, transparent 55%),
+      radial-gradient(ellipse at 15% 85%, rgba(199,123,79,0.12) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(122,148,114,0.06) 0%, transparent 60%);
+  }
+  .hero-frame::after{
+    content: "";
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.40'/></svg>");
+    opacity: 0.05;
+    mix-blend-mode: screen;
+  }
+
+  .topbar{
+    position: relative; z-index: 3;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 56px;
+  }
+  .pill-explore{
+    justify-self: start;
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 12px 18px 12px 14px;
+    background: var(--paper); color: var(--ink);
+    border-radius: 100px;
+    font-family: var(--display); font-weight: 500;
+    font-size: 13px; letter-spacing: 0.01em;
+    transition: gap .25s, padding .25s;
+    cursor: pointer; border: none;
+  }
+  .pill-explore:hover{ gap: 14px; padding-right: 22px;}
+  .pill-explore .ham{
+    display: inline-flex; flex-direction: column; gap: 3px;
+  }
+  .pill-explore .ham span{
+    display: block; width: 14px; height: 1.5px; background: var(--ink); border-radius: 1px;
+  }
+
+  .brand{
+    justify-self: center;
+    display: inline-flex; align-items: center; gap: 12px;
+    cursor: pointer; transition: opacity .25s;
+  }
+  .brand:hover{ opacity: 0.85;}
+  .brand-mark{
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .brand-mark img{ width: 100%; height: 100%; object-fit: contain;}
+  .brand-text{
+    font-family: var(--display); font-weight: 700;
+    font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
+    line-height: 1.05; color: var(--paper);
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .brand-text .b2{ color: rgba(250,247,241,0.65); font-weight: 500;}
+
+  .nav-right{
+    justify-self: end;
+    display: inline-flex; align-items: center; gap: 20px;
+  }
+  .nav-right a{
+    font-family: var(--display); font-weight: 500;
+    font-size: 13.5px; color: rgba(250,247,241,0.80);
+    transition: color .2s;
+  }
+  .nav-right a:hover{ color: var(--butter);}
+
+  .nav-login{
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 4px;
+    border-bottom: 1px solid transparent;
+    transition: color .2s, border-color .2s;
+  }
+  .nav-login:hover{ border-color: rgba(245,216,138,0.5);}
+
+  /* Registration open pill — high-priority status badge */
+  .nav-reg{
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 9px 16px 9px 13px;
+    border-radius: 100px;
+    background: rgba(245,216,138,0.10);
+    border: 1px solid rgba(245,216,138,0.45);
+    color: var(--paper) !important;
+    font-size: 12.5px !important;
+    letter-spacing: 0.005em;
+    transition: background .25s, border-color .25s, gap .25s;
+    position: relative;
+  }
+  .nav-reg:hover{
+    background: var(--butter);
+    border-color: var(--butter);
+    color: var(--ink) !important;
+    gap: 11px;
+  }
+  .nav-reg .reg-dot{
+    position: relative;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--butter);
+    flex-shrink: 0;
+  }
+  .nav-reg .reg-dot::after{
+    content: ""; position: absolute; inset: 0;
+    border-radius: 50%;
+    background: var(--butter);
+    animation: regPulse 2s cubic-bezier(.4,0,.6,1) infinite;
+  }
+  .nav-reg:hover .reg-dot{ background: var(--ink);}
+  .nav-reg:hover .reg-dot::after{ background: var(--ink);}
+  @keyframes regPulse{
+    0%{ transform: scale(1); opacity: 0.7;}
+    70%{ transform: scale(2.6); opacity: 0;}
+    100%{ transform: scale(2.6); opacity: 0;}
+  }
+  .nav-reg .reg-text strong{ font-weight: 700;}
+
+  .hero-headline{
+    position: relative; z-index: 2;
+    text-align: center;
+    font-family: var(--display); font-weight: 900;
+    font-size: clamp(56px, 11vw, 168px);
+    line-height: 0.92;
+    letter-spacing: -0.045em;
+    color: var(--paper);
+    margin: 40px 0 20px;
+  }
+  .hero-headline .row{ display: block; overflow: hidden;}
+  .hero-headline .row > span{
+    display: inline-block;
+    transform: translateY(110%);
+    animation: rise 1s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  .hero-headline .row:nth-child(1) > span{ animation-delay: .15s;}
+  .hero-headline .row:nth-child(2) > span{ animation-delay: .28s;}
+  @keyframes rise{ to{ transform: translateY(0);} }
+  .hero-headline em{
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    color: var(--butter);
+    letter-spacing: -0.015em;
+  }
+
+  .hero-sub{
+    position: relative; z-index: 2;
+    text-align: center;
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(15px, 1.4vw, 19px);
+    line-height: 1.55;
+    color: rgba(250,247,241,0.78);
+    margin: 0 auto;
+    max-width: 680px;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards .6s;
+  }
+  @keyframes fadeIn{ to{ opacity: 1;} }
+  .hero-sub em{
+    font-family: var(--serif); font-style: italic; color: var(--butter);
+  }
+
+  /* Smart link strip — 5 horizontal cells inside the hero frame */
+  .hero-links{
+    position: relative; z-index: 2;
+    margin: auto auto 0;
+    width: 100%;
+    max-width: 1180px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    border-top: 1px solid rgba(245,216,138,0.18);
+    border-bottom: 1px solid rgba(245,216,138,0.18);
+    opacity: 0;
+    animation: linksRise 1s cubic-bezier(.2,.8,.2,1) forwards 1.0s;
+  }
+  @keyframes linksRise{ to{ opacity: 1; transform: translateY(0);} }
+  .hero-link{
+    position: relative;
+    padding: 28px 24px;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    min-height: 84px;
+    color: var(--paper);
+    border-right: 1px solid rgba(245,216,138,0.12);
+    transition: background .35s, padding-left .35s;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .hero-link:last-child{ border-right: none;}
+  .hero-link::before{
+    /* hover-fill butter swipe from below */
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 0;
+    background: var(--butter);
+    transition: height .35s cubic-bezier(.2,.8,.2,1);
+    z-index: -1;
+  }
+  .hero-link:hover{
+    color: var(--ink);
+    padding-left: 28px;
+  }
+  .hero-link:hover::before{ height: 100%;}
+  .hl-label{
+    font-family: var(--display); font-weight: 600;
+    font-size: 20px; letter-spacing: -0.012em;
+    line-height: 1.1;
+    color: inherit;
+  }
+  .hl-arr{
+    position: absolute;
+    top: 28px; right: 24px;
+    width: 14px; height: 14px;
+    color: rgba(250,247,241,0.45);
+    transition: color .35s, transform .35s;
+  }
+  .hero-link:hover .hl-arr{
+    color: var(--ink);
+    transform: translate(2px, -2px);
+  }
+
+  /* ============ DRAWER ============ */
+  .menu-backdrop{
+    position: fixed; inset: 0;
+    background: rgba(26,22,18,0.40);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 49;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .menu-backdrop.open{ opacity: 1; pointer-events: auto;}
+  .menu-overlay{
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: min(340px, 88vw);
+    background: var(--ink); color: var(--paper);
+    z-index: 50;
+    transform: translateX(100%);
+    transition: transform .35s cubic-bezier(.2,.8,.2,1);
+    display: flex; flex-direction: column;
+    padding: 92px 36px 40px;
+    box-shadow: -24px 0 48px -16px rgba(26,22,18,0.35);
+    overflow: hidden;
+  }
+  .menu-overlay.open{ transform: translateX(0);}
+  .menu-overlay::before{
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(circle at 20% 12%, rgba(245,216,138,0.10) 0%, transparent 55%),
+      radial-gradient(circle at 90% 100%, rgba(199,123,79,0.08) 0%, transparent 55%);
+  }
+  .menu-overlay-inner{
+    position: relative; z-index: 2;
+    width: 100%; flex: 1;
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .menu-eyebrow{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--butter); margin-bottom: 24px;
+    opacity: 0; transform: translateY(-8px);
+    transition: opacity .4s ease .15s, transform .4s ease .15s;
+  }
+  .menu-overlay.open .menu-eyebrow{ opacity: 1; transform: translateY(0);}
+  .menu-links{ display: flex; flex-direction: column; gap: 2px;}
+
+  /* Top-level section block — wraps the head link + sub-items */
+  .menu-section{
+    opacity: 0; transform: translateX(-12px);
+  }
+  .menu-overlay.open .menu-section{ opacity: 1; transform: translateX(0);}
+  .menu-overlay.open .menu-section:nth-child(1){ transition: opacity .45s ease .20s, transform .45s ease .20s;}
+  .menu-overlay.open .menu-section:nth-child(2){ transition: opacity .45s ease .26s, transform .45s ease .26s;}
+  .menu-overlay.open .menu-section:nth-child(3){ transition: opacity .45s ease .32s, transform .45s ease .32s;}
+  .menu-overlay.open .menu-section:nth-child(4){ transition: opacity .45s ease .38s, transform .45s ease .38s;}
+  .menu-overlay.open .menu-section:nth-child(5){ transition: opacity .45s ease .44s, transform .45s ease .44s;}
+  .menu-overlay.open .menu-section:nth-child(6){ transition: opacity .45s ease .50s, transform .45s ease .50s;}
+  .menu-overlay.open .menu-section:nth-child(7){ transition: opacity .45s ease .56s, transform .45s ease .56s;}
+  .menu-overlay.open .menu-section:nth-child(8){ transition: opacity .45s ease .62s, transform .45s ease .62s;}
+
+  /* Section head — works as either button (collapsible) or anchor (flat) */
+  .menu-section-head{
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%;
+    font-family: var(--display); font-weight: 600;
+    font-size: 19px; line-height: 1.2; letter-spacing: -0.012em;
+    color: var(--paper);
+    padding: 11px 0;
+    background: none; border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: color .25s, padding .25s;
+  }
+  .menu-section-head:hover{ color: var(--butter); padding-left: 6px;}
+  .menu-section-head .chev{
+    width: 11px; height: 11px;
+    color: rgba(250,247,241,0.55);
+    transition: transform .3s cubic-bezier(.2,.8,.2,1), color .25s;
+    flex-shrink: 0;
+    margin-left: 12px;
+  }
+  .menu-section-head:hover .chev{ color: var(--butter);}
+  .menu-section-head[aria-expanded="true"] .chev{ transform: rotate(-180deg);}
+
+  /* Sub-item wrapper — collapsible */
+  .menu-sub{
+    display: flex; flex-direction: column;
+    padding: 0 0 0 14px;
+    border-left: 1px solid rgba(255,255,255,0.10);
+    margin: 0 0 0 4px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height .35s cubic-bezier(.2,.8,.2,1), opacity .25s ease, padding-bottom .35s, margin-bottom .35s;
+  }
+  .menu-section[data-collapsible].open .menu-sub{
+    max-height: 300px;
+    opacity: 1;
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+  }
+  .menu-sub a{
+    display: block;
+    font-family: var(--display); font-weight: 400;
+    font-size: 13px; line-height: 1.4;
+    color: rgba(250,247,241,0.65);
+    padding: 6px 0;
+    transition: color .2s, padding .2s;
+  }
+  .menu-sub a:hover{ color: var(--butter); padding-left: 6px;}
+
+  /* Footer of drawer */
+  .menu-foot{
+    margin-top: auto; padding-top: 24px;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    opacity: 0; transition: opacity .5s ease .55s;
+  }
+  .menu-overlay.open .menu-foot{ opacity: 1;}
+  .menu-foot-link{
+    font-family: var(--display); font-weight: 500;
+    font-size: 13px; letter-spacing: 0.005em;
+    color: rgba(250,247,241,0.78);
+    transition: color .2s, padding .2s;
+  }
+  .menu-foot-link:hover{ color: var(--butter); padding-left: 4px;}
+  .menu-foot-email{
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+    color: rgba(250,247,241,0.45);
+    margin-top: 4px;
+    transition: color .2s;
+  }
+  .menu-foot-email:hover{ color: var(--butter);}
+
+  /* ============ SPEAK FAB ============ */
+  .speak-fab{
+    position: fixed;
+    bottom: 28px; right: 28px;
+    z-index: 100;
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 20px 14px 16px;
+    border-radius: 100px;
+    background: var(--ink); color: var(--paper);
+    border: 1px solid var(--ink);
+    font-family: var(--display); font-weight: 500; font-size: 13px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    box-shadow: 0 16px 32px -10px rgba(26,22,18,0.40);
+    transition: background .25s, transform .25s, box-shadow .25s;
+  }
+  .speak-fab:hover{
+    background: var(--accent); border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -10px rgba(199,123,79,0.45);
+  }
+  .speak-fab .fab-icon{
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--butter); color: var(--ink);
+    transition: background .25s;
+    flex-shrink: 0;
+  }
+  .speak-fab:hover .fab-icon{ background: var(--paper);}
+  .speak-fab .fab-icon svg{ width: 14px; height: 14px;}
+  .speak-fab .fab-pulse{
+    position: absolute;
+    top: 14px; left: 16px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--butter);
+    pointer-events: none;
+    opacity: 0.5;
+    animation: fabPulse 2.4s cubic-bezier(.4,0,.6,1) infinite;
+  }
+  @keyframes fabPulse{
+    0%{ transform: scale(1); opacity: 0.5;}
+    70%{ transform: scale(2.2); opacity: 0;}
+    100%{ transform: scale(2.2); opacity: 0;}
+  }
+
+  .reveal{ opacity: 0; transform: translateY(20px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1);}
+  .reveal.in{ opacity: 1; transform: translateY(0);}
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 980px){
+    .hero{ padding: 18px 16px 0;}
+    .hero-frame{ padding: 22px 22px 22px; min-height: calc(100vh - 36px);}
+    .topbar{ grid-template-columns: auto 1fr auto; gap: 16px; margin-bottom: 40px;}
+    .pill-explore .pill-text{ display: none;}
+    .pill-explore{ padding: 10px;}
+    .nav-login{ display: none;}
+    .nav-reg{ padding: 8px 12px 8px 10px; font-size: 11.5px !important;}
+    .hero-headline{ font-size: clamp(56px, 14vw, 112px); margin: 24px 0 20px;}
+    .hero-sub{ margin-bottom: 36px; padding: 0 8px;}
+    .hero-links{ grid-template-columns: 1fr 1fr 1fr; margin-top: 40px;}
+    .hero-link{ padding: 22px 18px;}
+    .hero-link:nth-child(3){ border-right: none;}
+    .hero-link:nth-child(4),
+    .hero-link:nth-child(5){
+      border-top: 1px solid rgba(245,216,138,0.12);
+    }
+    .hero-link:nth-child(5){ border-right: none;}
+    .hl-label{ font-size: 16px;}
+    .hl-arr{ top: 22px; right: 18px;}
+  }
+  @media (max-width: 600px){
+    .hero-links{ grid-template-columns: 1fr 1fr;}
+    .hero-link:nth-child(3){ border-right: 1px solid rgba(245,216,138,0.12);}
+    .hero-link:nth-child(2n){ border-right: none;}
+    .hero-link:nth-child(3),
+    .hero-link:nth-child(4),
+    .hero-link:nth-child(5){
+      border-top: 1px solid rgba(245,216,138,0.12);
+    }
+    .speak-fab{ bottom: 20px; right: 20px; padding: 10px;}
+    .speak-fab .fab-text{ display: none;}
+    .speak-fab .fab-pulse{ top: 10px; left: 10px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-frame">
+
+    <header class="topbar">
+      <button class="pill-explore" id="menuBtn" aria-label="Explore" aria-expanded="false">
+        <span class="ham"><span></span><span></span><span></span></span>
+        <span class="pill-text">Explore the school</span>
+      </button>
+
+      <a href="index.html" class="brand">
+        <span class="brand-mark">
+          <img src="chrysalis-logo.png" alt="Chrysalis">
+        </span>
+        <span class="brand-text">
+          <span class="b1">Chrysalis</span>
+          <span class="b2">School</span>
+        </span>
+      </a>
+
+      <nav class="nav-right">
+        <a href="#login" class="nav-login">Student Login</a>
+        <a href="#admissions" class="nav-reg">
+          <span class="reg-dot" aria-hidden="true"></span>
+          <span class="reg-text">Registration open · <strong>Sep 2026</strong></span>
+        </a>
+      </nav>
+    </header>
+
+    <h1 class="hero-headline">
+      <div class="row"><span>BUILT FOR</span></div>
+      <div class="row"><span><em>learning</em>.</span></div>
+    </h1>
+
+    <p class="hero-sub"><em>Designed</em> for online learning — not adapted to it. We built the online experience first, then built the school around it.</p>
+
+    <div class="hero-links">
+      <a href="#about" class="hero-link">
+        <span class="hl-label">About</span>
+        <svg class="hl-arr" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 11 L11 3 M5 3 L11 3 L11 9"/></svg>
+      </a>
+      <a href="#why" class="hero-link">
+        <span class="hl-label">Why Chrysalis</span>
+        <svg class="hl-arr" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 11 L11 3 M5 3 L11 3 L11 9"/></svg>
+      </a>
+      <a href="#admission" class="hero-link">
+        <span class="hl-label">Admission</span>
+        <svg class="hl-arr" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 11 L11 3 M5 3 L11 3 L11 9"/></svg>
+      </a>
+      <a href="#curriculum" class="hero-link">
+        <span class="hl-label">Curriculum</span>
+        <svg class="hl-arr" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 11 L11 3 M5 3 L11 3 L11 9"/></svg>
+      </a>
+      <a href="#parents" class="hero-link">
+        <span class="hl-label">Parent Resources</span>
+        <svg class="hl-arr" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 11 L11 3 M5 3 L11 3 L11 9"/></svg>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- Backdrop + drawer -->
+<div class="menu-backdrop" id="menuBackdrop" aria-hidden="true"></div>
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu-overlay-inner">
+    <div class="menu-eyebrow">// Explore the school</div>
+    <nav class="menu-links">
+
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>About</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="about.html#welcome">Welcome Message from Principal</a>
+          <a href="about.html#vision">Vision and Mission</a>
+          <a href="about.html#team">Our Team</a>
+          <a href="about.html#documents">Key Documents and Policies</a>
+        </div>
+      </div>
+
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Why Chrysalis School</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="why.html#innovation">Innovation</a>
+          <a href="why.html#life">Life at Chrysalis</a>
+          <a href="concierge.html">Education Concierge</a>
+          <a href="why.html#promise">Our Promise</a>
+        </div>
+      </div>
+
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Admission</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="admission.html#process">Process</a>
+          <a href="admission.html#fee">Fee</a>
+          <a href="admission.html#register">Register</a>
+        </div>
+      </div>
+
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Curriculum</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="curriculum.html#overview">Overview</a>
+          <a href="curriculum.html#secondary">Secondary</a>
+          <a href="curriculum.html#approaches">Learning Approaches</a>
+        </div>
+      </div>
+
+      
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Dexter</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="dexter/solutions.html">Overview</a>
+          <a href="dexter/dexter-vs.html">10 Reasons</a>
+          <a href="dexter/a-day-with-dexter.html">A Day with Dexter</a>
+          <a href="dexter/behind-dexter.html">Behind Dexter</a>
+        </div>
+      </div>
+
+<div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Parent Resources</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="parent-resources.html#news">News</a>
+          <a href="parent-resources.html#calendar">Calendar</a>
+          <a href="parent-resources.html#portal">Parent Portal</a>
+          <a href="library.html">Knowledge Library</a>
+          <a href="community.html">Community</a>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <a href="careers.html" class="menu-section-head menu-section-flat">
+          <span>Careers</span>
+        </a>
+      </div>
+
+      <div class="menu-section" data-collapsible>
+        <button class="menu-section-head" type="button" aria-expanded="false">
+          <span>Support Center</span>
+          <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4 L6 8 L10 4"/></svg>
+        </button>
+        <div class="menu-sub">
+          <a href="support.html#chat">Chat</a>
+          <a href="support.html#faqs">FAQs</a>
+        </div>
+      </div>
+
+    </nav>
+    <div class="menu-foot">
+      <a href="index.html" class="menu-foot-link">↗ Back to Chrysalis</a>
+      <a href="concierge.html" class="menu-foot-link">↗ EDU Concierge</a>
+      <a href="dexter/solutions.html" class="menu-foot-link">↗ Dexter</a>
+      <a href="mailto:hello@chrysalis.education" class="menu-foot-email">hello@chrysalis.education</a>
+    </div>
+  </div>
+</div>
+
+<!-- Speak FAB -->
+<a href="mailto:hello@chrysalis.education?subject=I%27d%20like%20to%20speak%20with%20you" class="speak-fab" aria-label="Speak to us now">
+  <span class="fab-pulse" aria-hidden="true"></span>
+  <span class="fab-icon">
+    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6">
+      <path d="M3 4 Q3 2.5 4.5 2.5 L9.5 2.5 Q11 2.5 11 4 L11 8 Q11 9.5 9.5 9.5 L7 9.5 L4.5 11.5 L4.5 9.5 Q3 9.5 3 8 Z"/>
+      <circle cx="5.5" cy="6" r="0.6" fill="currentColor"/>
+      <circle cx="7" cy="6" r="0.6" fill="currentColor"/>
+      <circle cx="8.5" cy="6" r="0.6" fill="currentColor"/>
+    </svg>
+  </span>
+  <span class="fab-text">Speak to us</span>
+</a>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }});
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  const menuBtn = document.getElementById('menuBtn');
+  const menuOverlay = document.getElementById('menuOverlay');
+  const menuBackdrop = document.getElementById('menuBackdrop');
+  function toggleMenu(force){
+    const isOpen = force !== undefined ? force : !menuOverlay.classList.contains('open');
+    menuOverlay.classList.toggle('open', isOpen);
+    menuBackdrop.classList.toggle('open', isOpen);
+    menuBtn.setAttribute('aria-expanded', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+  menuBtn.addEventListener('click', () => toggleMenu());
+  menuOverlay.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
+  menuBackdrop.addEventListener('click', () => toggleMenu(false));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
+
+  // Collapsible sections in the drawer
+  menuOverlay.querySelectorAll('.menu-section[data-collapsible] .menu-section-head').forEach(head => {
+    head.addEventListener('click', () => {
+      const section = head.closest('.menu-section');
+      const isOpen = section.classList.toggle('open');
+      head.setAttribute('aria-expanded', isOpen);
+    });
+  });
+</script>
+
+</body>
+</html>
